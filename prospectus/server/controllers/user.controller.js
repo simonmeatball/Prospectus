@@ -45,6 +45,7 @@ const updateUser = async (req, res) => {
       req.body,
       {
         new: true,
+        runValidators: true,
       }
     );
     if (!updatedUser)
