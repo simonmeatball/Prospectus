@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mui/base": "^5.0.0-beta.61",
     "formik": "^2.4.6",
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
