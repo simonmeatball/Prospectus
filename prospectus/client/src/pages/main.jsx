@@ -1,12 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Navbar from "../components/Navbar.jsx";
-import Profile from "../components/Profile.jsx"
+import '../styles/App.css';
+import Navbar from "./Navbar.jsx";
+import PostPage from "./PostPage.jsx";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Navbar />
-    <Profile />
+    <PostPage />
   </React.StrictMode>
 );
