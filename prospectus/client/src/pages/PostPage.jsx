@@ -1,7 +1,29 @@
 import React, { useState } from 'react'
-import Masonry from 'react-masonry-css'
 import Review from '../components/PostPage/Review'
 import { Heart, MessageCircle, Star } from 'lucide-react'
+
+function generateRandomISO8601Date() {
+    // Random year between 2000 and 2025
+    const year = Math.floor(Math.random() * 26) + 2000;
+
+    // Random month between 1 and 12
+    const month = Math.floor(Math.random() * 12) + 1;
+
+    // Random day depending on the month
+    const day = Math.floor(Math.random() * 28) + 1; // Keeps days within safe range (1-28)
+
+    // Random hour, minute, second, and millisecond
+    const hour = Math.floor(Math.random() * 24);
+    const minute = Math.floor(Math.random() * 60);
+    const second = Math.floor(Math.random() * 60);
+    const millisecond = Math.floor(Math.random() * 1000);
+
+    // Create the Date object
+    const randomDate = new Date(year, month - 1, day, hour, minute, second, millisecond);
+
+    // Return the ISO 8601 string (UTC format)
+    return randomDate.toISOString();
+}
 
 function generateRandomReview() {
     const starRating = Math.floor(Math.random() * 5) + 1; // Random star rating between 1 and 5
@@ -18,16 +40,18 @@ function generateRandomReview() {
         "I have been using this product for about a month and I can say it has definitely made a positive impact on my daily routine. The build quality is top-notch, and the performance is outstanding. However, there is a slight issue with the battery life, which could definitely be improved. Despite that, I would still recommend this to others because of its overall utility and ease of use.", // Long review
         "This is hands down one of the best purchases I've made in a while! The product is well-made, easy to use, and incredibly effective. The quality is unmatched, and it’s obvious that a lot of thought went into the design. I use it daily, and it has helped me streamline my workflow. There were no defects when it arrived, and the packaging was very secure. The only downside I encountered was a slight delay in delivery, but customer service was quick to resolve that. If you're looking for something in this category, I would highly recommend this product without hesitation. It’s worth every penny!" // Very long review
     ];
-    const timeOptions = ['1 hour ago', '2 hours ago', '3 hours ago', '1 day ago', '2 days ago', '3 days ago', '1 week ago'];
     const reviewer = reviewerNames[Math.floor(Math.random() * reviewerNames.length)];
     const text = reviewTexts[Math.floor(Math.random() * reviewTexts.length)];
-    const time = timeOptions[Math.floor(Math.random() * timeOptions.length)];
 
     return {
         stars: starRating,
         text: text,
         reviewer: reviewer,
-        time: time
+        time: new Date(generateRandomISO8601Date()),
+        reviewerProfile: {
+            name: reviewer,
+            avatar: 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'
+        }
     };
 };
 
@@ -76,6 +100,21 @@ function getTagColor(tag) {
     }
 }
 
+function sortReviews(reviews, sortBy) {
+    switch (sortBy) {
+        case 'Most recent':
+            return reviews.sort((a,b) => b.time - a.time)
+        case 'Least recent':
+            return reviews.sort((a,b) => a.time - b.time)
+        case 'Highest rating':
+            return reviews.sort((a,b) => b.stars - a.stars)
+        case 'Lowest rating':
+            return reviews.sort((a,b) => a.stars - b.stars)
+        default:
+            return reviews.sort()
+    }
+}
+
 const post = {
     time: '5 hrs ago',
     title: 'Idk whats wrong with my resume. Help.',
@@ -88,7 +127,8 @@ const post = {
     stars: 4.2,
     posterProfile: {
         name: 'Amanda',
-        username: 'amanda'
+        username: 'amanda',
+        avatar: 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'
     },
     reviews: randReviews
 }
@@ -97,14 +137,14 @@ export default function PostPage() {
     const [liked, setLiked] = useState(false)
     const [sortBy, setSortBy] = useState('Most recent')
     const [dropdownShown, setDropdownShown] = useState(false)
-    
+
     return (
         <div>
             <div className='flex gap-8 m-8 justify-center'>
                 <div className='flex flex-col items-center'>
                     <div className="avatar mb-2">
                         <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
-                            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                            <img src={post.posterProfile.avatar} />
                         </div>
                     </div>
                     {post.posterProfile.name}
@@ -112,7 +152,7 @@ export default function PostPage() {
                     <p className='text-gray-500 mb-4'>{post.time}</p>
                     <div className="flex flex-col gap-2">
                         <div className="flex gap-2">
-                            <Heart className={'hover:text-red-400 ' + (liked ? 'text-red-500' : '')} onClick={() => setLiked(!liked)}/>
+                            <Heart className={'hover:text-red-400 ' + (liked ? 'text-red-500' : '')} onClick={() => setLiked(!liked)} />
                             {post.likes + (liked ? 1 : 0)}
                         </div>
                         <div className="flex gap-2">
@@ -152,15 +192,15 @@ export default function PostPage() {
                         </ul>
                     )}
                 </div>
-                <Masonry
-                    breakpointCols={5}
-                    className="flex">
-                    {post.reviews.map(reviewItem => (
-                        <div className="mb-4">
-                            <Review review={reviewItem}/>
-                        </div>
-                    ))}
-                </Masonry>
+                <div className='grid grid-cols-5'>
+                    {sortReviews(post.reviews, sortBy).map(
+                        reviewItem => (
+                            <div className="mb-4">
+                                <Review review={reviewItem} />
+                            </div>
+                        )
+                    )}
+                </div>
             </div>
         </div>
     )

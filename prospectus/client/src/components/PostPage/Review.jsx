@@ -1,5 +1,6 @@
 import React from "react"
 import { Star } from 'lucide-react'
+import { formatDistance } from 'date-fns'
 
 export default function Review({ review }) {
     return (
@@ -16,15 +17,15 @@ export default function Review({ review }) {
             <div className="flex gap-2 items-center">
                 <div className="avatar">
                     <div className="ring-primary ring-offset-base-100 w-8 rounded-full ring ring-offset-2 m-2">
-                        <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        <img src={review.reviewerProfile.avatar} />
                     </div>
                 </div>
                 <div className="text-sm text-gray-500">
-                    {review.reviewer}
+                    {review.reviewerProfile.name}
                     <br />
-                    {review.time}
+                    {formatDistance(review.time, Date(), { addSuffix: true })}
                 </div>
             </div>
-         </div>
+        </div>
     )
 }
