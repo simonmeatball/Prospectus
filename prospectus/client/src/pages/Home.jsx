@@ -1,4 +1,5 @@
 import React from 'react';
+import LoginButton from '../components/Loginbutton.jsx';
 
 function Home() {
     return (
@@ -11,6 +12,7 @@ function Home() {
                 <div className = "pt-8 text-2xl italic text-center"> your resume's new best friend.</div>
 
 
+{/* email and password form */}
 <form class="max-w-sm mx-auto mt-12 bg-local">
   <div class="mb-9">
     <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Your Email:</label>
@@ -35,7 +37,7 @@ function Home() {
   <button type="submit" class="text-white bg-yellow-700 hover:bg-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700">Register new account</button>
 
   {/* This button allows users to navigate to the login page, if they already have an account and don't want to register a new one. */}
-  <button type="button" class="text-white ml-8 bg-yellow-700 hover:bg-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 "> Login to an account</button>
+  <LoginButton/>
   </div>
 </form>
 

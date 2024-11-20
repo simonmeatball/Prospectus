@@ -1,25 +1,20 @@
-import { useState } from "react";
-import Home from "./pages/Home.jsx"
 import React from "react";
+import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import Login from "./pages/Login.jsx";
 
 
 
 function App() {
-  const [page, setPage] = useState("Home");
- 
   return (
-    <div>
-      {
-      
-      /* <nav>
-        <button onClick={() => setPage("Home")}>Home</button>
-       
-      </nav> */}
+    <Router>
+       <Routes> 
+        <Route path = "/" element = {<Home />} /> {/*Home page */}
+        <Route path = "/login" element = {<Login/>} />  {/*Login page */}
 
 
-      {page === "Home" && <Home />}
-      
-    </div>
+       </Routes>
+    </Router>
   );
 }
 
