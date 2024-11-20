@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Review from '../components/PostPage/Review'
-import { Heart, MessageCircle, Star } from 'lucide-react'
+import { Heart, MessageCircle, Star, Plus } from 'lucide-react'
+import { formatDistance } from 'date-fns'
 
 function generateRandomISO8601Date() {
     // Random year between 2000 and 2025
@@ -46,7 +47,6 @@ function generateRandomReview() {
     return {
         stars: starRating,
         text: text,
-        reviewer: reviewer,
         time: new Date(generateRandomISO8601Date()),
         reviewerProfile: {
             name: reviewer,
@@ -103,20 +103,20 @@ function getTagColor(tag) {
 function sortReviews(reviews, sortBy) {
     switch (sortBy) {
         case 'Most recent':
-            return reviews.sort((a,b) => b.time - a.time)
+            return reviews.sort((a, b) => b.time - a.time)
         case 'Least recent':
-            return reviews.sort((a,b) => a.time - b.time)
+            return reviews.sort((a, b) => a.time - b.time)
         case 'Highest rating':
-            return reviews.sort((a,b) => b.stars - a.stars)
+            return reviews.sort((a, b) => b.stars - a.stars)
         case 'Lowest rating':
-            return reviews.sort((a,b) => a.stars - b.stars)
+            return reviews.sort((a, b) => a.stars - b.stars)
         default:
             return reviews.sort()
     }
 }
 
 const post = {
-    time: '5 hrs ago',
+    time: new Date(generateRandomISO8601Date()),
     title: 'Idk whats wrong with my resume. Help.',
     tags: ['SWE', 'New Grad', 'PhD', 'Intern', 'Data Science', 'Machine Learning'],
     text: `
@@ -127,7 +127,7 @@ const post = {
     stars: 4.2,
     posterProfile: {
         name: 'Amanda',
-        username: 'amanda',
+        username: 'amandatheadventurer',
         avatar: 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'
     },
     reviews: randReviews
@@ -149,7 +149,7 @@ export default function PostPage() {
                     </div>
                     {post.posterProfile.name}
                     <p className='text-gray-500'>{post.posterProfile.username}</p>
-                    <p className='text-gray-500 mb-4'>{post.time}</p>
+                    <p className='text-gray-500 mb-4'>{formatDistance(post.time, Date(), { addSuffix: true })}</p>
                     <div className="flex flex-col gap-2">
                         <div className="flex gap-2">
                             <Heart className={'hover:text-red-400 ' + (liked ? 'text-red-500' : '')} onClick={() => setLiked(!liked)} />
@@ -178,19 +178,27 @@ export default function PostPage() {
             </div>
             <div className="w-11/12 mx-auto h-px bg-gray-500"></div>
             <div className='w-11/12 mx-auto'>
-                Sort by:
-                <div className="dropdown dropdown-bottom">
-                    <div tabIndex={0} role="button" className="btn m-1" onClick={() => setDropdownShown(!dropdownShown)}>{sortBy}</div>
-                    {dropdownShown && (
-                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                            {['Most recent', 'Least recent', 'Highest rating', 'Lowest rating'].map(option => (
-                                <li><a onClick={() => {
-                                    setSortBy(option)
-                                    setDropdownShown(false)
-                                }}>{option}</a></li>
-                            ))}
-                        </ul>
-                    )}
+                <div className='flex justify-between items-center'>
+                    <div>
+                        Sort by:
+                        <div className="dropdown dropdown-bottom">
+                            <div tabIndex={0} role="button" className="btn m-1" onClick={() => setDropdownShown(!dropdownShown)}>{sortBy}</div>
+                            {dropdownShown && (
+                                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                    {['Most recent', 'Least recent', 'Highest rating', 'Lowest rating'].map(option => (
+                                        <li><a onClick={() => {
+                                            setSortBy(option)
+                                            setDropdownShown(false)
+                                        }}>{option}</a></li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
+                    <button className='btn'>
+                        Add a review
+                        <Plus />
+                    </button>
                 </div>
                 <div className='grid grid-cols-5'>
                     {sortReviews(post.reviews, sortBy).map(
