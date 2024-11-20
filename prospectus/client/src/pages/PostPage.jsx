@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Review from '../components/PostPage/Review'
 import { Heart, MessageCircle, Star, Plus } from 'lucide-react'
 import { formatDistance } from 'date-fns'
+import Navbar from './Navbar.jsx'
 
 function generateRandomISO8601Date() {
     // Random year between 2000 and 2025
@@ -140,6 +141,7 @@ export default function PostPage() {
 
     return (
         <div>
+            <Navbar />
             <div className='flex gap-8 m-8 justify-center'>
                 <div className='flex flex-col items-center'>
                     <div className="avatar mb-2">
