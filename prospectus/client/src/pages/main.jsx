@@ -11,9 +11,9 @@ root.render(
   <React.StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} /> {/*Home page */}
-        <Route path="/login" element={<LoginPage />} /> {/*Login page */}
-        <Route path="/post" element={<PostPage />} /> {/*Post page */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/post" element={<PostPage />} />
       </Routes>
     </Router>
   </React.StrictMode>
