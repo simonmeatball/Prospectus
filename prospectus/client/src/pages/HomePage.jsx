@@ -1,23 +1,30 @@
 import React from "react";
 import LoginButton from "../components/HomePage/Loginbutton.jsx";
 import Navbar from "./Navbar.jsx";
+import Homenavbar from "./Homenavbar.jsx"
+import Logo from "../images/logo.png"
 
 function HomePage() {
   return (
     <div>
-      <Navbar />
+      
+      <Homenavbar />
       <div className="font-sans">
+
         <div class="bg-[url('../images/homebg.png')] h-64 w-full bg-cover bg-no-repeat bg-center h-screen w-full">
           <div className=" font-bold italic text-8xl tracking-wide pt-12 text-center ">
             prospectus
           </div>
           <div className="pt-8 text-2xl italic text-center">
-            {" "}
+            {" "} 
             your resume's new best friend.
           </div>
 
           {/* email and password form */}
-          <form class="max-w-sm mx-auto mt-12 bg-local">
+          
+          <form class=" max-w-sm mx-auto mt-12 bg-local">
+          <img src= {Logo} className="hover:animate-spin absolute left-0  w-2/5 h-3/5" alt="Positioned Image" />
+            
             <div class="mb-9">
               <label
                 for="email"
@@ -85,11 +92,10 @@ function HomePage() {
                 </a>
               </label>
             </div>
-            <div>
-              <button
+            <div className = "flex">
+              <button 
                 type="submit"
-                class="text-white bg-yellow-700 hover:bg-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700"
-              >
+                className="btn btn-primary w-50 h-10 text-white ml-15 bg-yellow-700 hover:bg-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 ">
                 Register new account
               </button>
 
