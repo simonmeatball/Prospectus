@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar.jsx";
-import { Heart, MessageCircle, Star, StarHalf, Plus } from "lucide-react";
+import { Heart, MessageCircle, Star, StarHalf, Plus, X } from "lucide-react";
 import { formatDistance } from "date-fns";
 import Review from "../components/PostPage/Review";
 
@@ -28,7 +28,7 @@ const tags = {
   "Business Intelligence Analyst": "bg-yellow-400 text-black",
 };
 
-function generateRandomReview() {
+function generateRandomReview(rating, text) {
   const reviewTexts = [
     "Great product!", // Very short review
     "Love it! Highly recommend.", // Short review
@@ -43,8 +43,10 @@ function generateRandomReview() {
   ];
 
   return {
-    rating: Math.floor(Math.random() * 5) + 1,
-    text: reviewTexts[Math.floor(Math.random() * reviewTexts.length)],
+    rating: rating ? rating : Math.floor(Math.random() * 5) + 1,
+    text: text
+      ? text
+      : reviewTexts[Math.floor(Math.random() * reviewTexts.length)],
     reviewerProfile: {
       name: names[Math.floor(Math.random() * names.length)],
       avatar:
@@ -52,10 +54,12 @@ function generateRandomReview() {
         (Math.floor(Math.random() * 100) + 1) +
         "/500",
     },
-    time: new Date(
-      Math.floor(Math.random() * 25) + 2000,
-      Math.floor(Math.random() * 12)
-    ),
+    time: text
+      ? new Date()
+      : new Date(
+          Math.floor(Math.random() * 25) + 2000,
+          Math.floor(Math.random() * 12)
+        ),
   };
 }
 
@@ -64,7 +68,7 @@ for (let i = 0; i < 50; i++) {
   reviews.push(generateRandomReview());
 }
 
-const post = {
+const mainPost = {
   posterProfile: {
     name: names[Math.floor(Math.random() * names.length)],
     username: "username",
@@ -87,7 +91,7 @@ const post = {
     for (const review of this.reviews) {
       sum += review.rating;
     }
-    return sum / this.numReviews();
+    return (sum / this.numReviews()).toFixed(1);
   },
   title: "Idk whats wrong with my resume. Help.",
   text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -104,18 +108,12 @@ export default function PostPage() {
   const [liked, setLiked] = useState(false);
   const [sortBy, setSortBy] = useState("Most recent");
   const [dropdownShown, setDropdownShown] = useState(false);
-
-  function updateLikes() {
-    setLiked(!liked);
-    // TODO: update the actual post object's likes
-  }
-
-  function addReview() {
-    // TODO: implement this
-  }
+  const [reviewFormShown, setReviewFormShown] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [post, setPost] = useState(mainPost);
 
   function getStars() {
-    const roundedRating = Math.floor(post.avgRating() * 2) / 2; // round down to nearest half
+    const roundedRating = Math.round(post.avgRating() * 2) / 2; // round to nearest half
     const fullStars = Math.floor(roundedRating);
     const halfStar = roundedRating % 1 === 0.5;
     const starsLeft = halfStar ? 5 - fullStars - 1 : 5 - fullStars;
@@ -123,13 +121,13 @@ export default function PostPage() {
     return (
       <div className="flex">
         {Array.from({ length: fullStars }, () => (
-          <Star size={36} absoluteStrokeWidth fill="#fcba03" />
+          <Star size={36} absoluteStrokeWidth fill="#000000" />
         ))}
         {halfStar && (
           <StarHalf
             size={36}
             absoluteStrokeWidth
-            fill="#fcba03"
+            fill="#000000"
             className="-mr-9"
           />
         )}
@@ -150,9 +148,19 @@ export default function PostPage() {
       case "Least recent":
         return reviews.sort((a, b) => a.time - b.time);
       case "Highest rating":
-        return reviews.sort((a, b) => b.rating - a.rating);
+        return reviews.sort((a, b) => {
+          if (b.rating === a.rating) {
+            return b.time - a.time;
+          }
+          return b.rating - a.rating;
+        });
       case "Lowest rating":
-        return reviews.sort((a, b) => a.rating - b.rating);
+        return reviews.sort((a, b) => {
+          if (a.rating === b.rating) {
+            return b.time - a.time;
+          }
+          return a.rating - b.rating;
+        });
       default:
         return reviews.sort();
     }
@@ -182,16 +190,30 @@ export default function PostPage() {
                   "cursor-pointer marker:hover:text-red-400 " +
                   (liked ? "text-red-500" : "")
                 }
-                onClick={updateLikes}
+                onClick={() => {
+                  liked
+                    ? setPost((prevPost) => ({
+                        ...prevPost,
+                        likes: prevPost.likes - 1,
+                      }))
+                    : setPost((prevPost) => ({
+                        ...prevPost,
+                        likes: prevPost.likes + 1,
+                      }));
+                  setLiked(!liked);
+                }}
               />
-              {post.likes + (liked ? 1 : 0)}
+              {post.likes}
             </div>
             <div className="flex gap-2 items-center">
               <MessageCircle
                 size={36}
                 absoluteStrokeWidth
                 className="cursor-pointer"
-                onClick={addReview}
+                onClick={() => {
+                  setReviewFormShown(!reviewFormShown);
+                  setInputText("");
+                }}
               />
               {post.numReviews()}
             </div>
@@ -217,7 +239,7 @@ export default function PostPage() {
       <div className="w-11/12 mx-auto h-px bg-gray-500"></div>
       <div className="w-11/12 mx-auto">
         <div className="flex justify-between items-center">
-          <div>
+          <div className={reviewFormShown ? "invisible" : ""}>
             Sort by:
             <div className="dropdown dropdown-bottom">
               <div
@@ -254,11 +276,117 @@ export default function PostPage() {
               )}
             </div>
           </div>
-          <button className="btn" onClick={addReview}>
-            Add a review
-            <Plus />
+          <button
+            className="btn"
+            onClick={() => {
+              setReviewFormShown(!reviewFormShown);
+              setInputText("");
+            }}
+          >
+            {reviewFormShown ? (
+              <div className="flex items-center gap-2">
+                Cancel
+                <X />
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                Add a review
+                <Plus />
+              </div>
+            )}
           </button>
         </div>
+        {reviewFormShown && (
+          <div>
+            <div className="max-w-3xl mx-auto p-4 border rounded-lg shadow">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!inputText) {
+                    return;
+                  }
+                  setPost((prevPost) => ({
+                    ...prevPost,
+                    reviews: [
+                      ...prevPost.reviews,
+                      generateRandomReview(
+                        +document.querySelector(
+                          'input[name="rating-8"]:checked'
+                        ).value,
+                        inputText
+                      ),
+                    ],
+                  }));
+                  setReviewFormShown(!reviewFormShown);
+                  setInputText("");
+                }}
+              >
+                <h1 className="text-2xl mb-2">Add a review</h1>
+                <div className="rating rating-md mb-4">
+                  {[1, 2, 3, 4].map((value) => (
+                    <input
+                      type="radio"
+                      name="rating-8"
+                      value={value}
+                      className="mask mask-star-2"
+                    />
+                  ))}
+                  <input
+                    type="radio"
+                    name="rating-8"
+                    value={5}
+                    className="mask mask-star-2"
+                    defaultChecked
+                  />
+                </div>
+                <input
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  className="p-2 border rounded-lg w-full mb-4"
+                  placeholder="Review"
+                />
+                <button className="btn">Post</button>
+              </form>
+            </div>
+            <div>
+              Sort by:
+              <div className="dropdown dropdown-bottom">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn m-1"
+                  onClick={() => setDropdownShown(!dropdownShown)}
+                >
+                  {sortBy}
+                </div>
+                {dropdownShown && (
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                  >
+                    {[
+                      "Most recent",
+                      "Least recent",
+                      "Highest rating",
+                      "Lowest rating",
+                    ].map((option) => (
+                      <li>
+                        <a
+                          onClick={() => {
+                            setSortBy(option);
+                            setDropdownShown(false);
+                          }}
+                        >
+                          {option}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
         <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center">
           {sortReviews(post.reviews, sortBy).map((reviewItem) => (
             <div className="mb-4">
