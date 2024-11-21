@@ -2,7 +2,8 @@ import React from "react";
 import LoginButton from "../components/HomePage/Loginbutton.jsx";
 import Navbar from "./Navbar.jsx";
 import Homenavbar from "./Homenavbar.jsx"
-import Logo from "../images/logo.png"
+import Logo1 from "../images/logo1.png"
+import Logo2 from "../images/logo2.png"
 
 function HomePage() {
   return (
@@ -12,10 +13,10 @@ function HomePage() {
       <div className="font-sans">
 
         <div class="bg-[url('../images/homebg.png')] h-64 w-full bg-cover bg-no-repeat bg-center h-screen w-full">
-          <div className=" font-bold italic text-8xl tracking-wide pt-12 text-center ">
+          <div className="  text-amber-500 font-bold italic text-8xl tracking-wide pt-12 text-center ">
             prospectus
           </div>
-          <div className="pt-8 text-2xl italic text-center">
+          <div className="animate-pulse pt-8 text-2xl italic text-center">
             {" "} 
             your resume's new best friend.
           </div>
@@ -23,8 +24,8 @@ function HomePage() {
           {/* email and password form */}
           
           <form class=" max-w-sm mx-auto mt-12 bg-local">
-          <img src= {Logo} className="hover:animate-spin absolute left-0  w-2/5 h-3/5" alt="Positioned Image" />
-            
+          <img src= {Logo1} className=" animate-bounce  m-0 p-0 border-0 absolute left-0 -ml-10 max-w-full h-auto" alt="Positioned Image" />
+          <img src= {Logo2} className=" animate-bounce m-0 p-0 border-0 absolute right-0 -mr-10 max-w-full h-auto" alt="Positioned Image" />  
             <div class="mb-9">
               <label
                 for="email"
@@ -68,13 +69,13 @@ function HomePage() {
                 required
               />
             </div>
-            <div class="flex items-start mb-9">
+            <div class="right-30 flex items-start mb-9">
               <div class="flex items-center h-5">
                 <input
                   id="terms"
                   type="checkbox"
                   value=""
-                  class="w-4 h-4 border border-gray-300 rounded bg-white focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-white-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+                  class="w-4 h-4  border border-gray-300 rounded bg-white focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-white-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                   required
                 />
               </div>
