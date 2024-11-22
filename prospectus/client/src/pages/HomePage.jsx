@@ -1,6 +1,5 @@
 import React from "react";
 import LoginButton from "../components/HomePage/Loginbutton.jsx";
-import Navbar from "./Navbar.jsx";
 import Homenavbar from "../components/HomePage/Homenavbar.jsx"
 import Logo1 from "../images/logo1.png"
 import Logo2 from "../images/logo2.png"
