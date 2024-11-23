@@ -120,7 +120,7 @@ function HomePage() {
         <p className = "text-center mt-8 mb-10 text-2xl font-semibold ">Boost your career search with Prospectus!</p>
 
         
-      <div className = "flex justify-left" alt = "Reasons">
+      <div className = "flex justify-left p-8" alt = "Reasons">
         
         <div className = "mb-10 " alt="Reason1">   
           <ClipboardPenLine size={64} color = "#1ed5f6" />  
