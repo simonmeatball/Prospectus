@@ -2,13 +2,18 @@ import React from "react";
 import Loginnavbar from "../components/LoginPage/Loginnavbar.jsx";
 import Homebutton from "../components/LoginPage/Homebutton.jsx";
 
+import Login1 from "../images/login1.jpg"
+import Login2 from "../images/login2.jpg"
+import Login3 from "../images/login3.jpg"
+import Login4 from "../images/login4.jpg"
+
 function LoginPage() {
   return (
     
-    <div className = "font-sans" >
+    <div className = "font-sans bg-cyan-100" >
       <Loginnavbar/>
       
-    <div className = "text-blue-600 mt-36 ml-20">
+    <div className = "absolute text-cyan-500 mt-36 ml-20 bg-white rounded-3xl p-5">
       <h1 className = "font-bold text-7xl"> Welcome Back!</h1>
       <p className = "ml-2 mt-3"> Please enter your details</p>
 
@@ -46,15 +51,50 @@ function LoginPage() {
             </div>
 
       <button type="submit"
-      className = "btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-500 dark:hover:bg-blue-600 w-full"> Sign In</button>
+      className = "btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 w-full"> Sign In</button>
       
+
     </form>
 
+    
     <Homebutton/>
-    
-
-    
     </div>
+  
+    <div className="carousel h-screen w-screen">
+  <div id="slide1" className="carousel-item w-full">
+    <img
+      src={Login1}
+      className="w-full h-3/5 object-cover" />
+    
+  </div>
+  <div id="slide2" className="carousel-item w-full">
+    <img
+      src={Login2}
+      className="w-full h-3/5 object-cover" />
+  </div>
+  <div id="slide3" className="carousel-item w-full">
+    <img
+      src={Login3}
+      className="w-full h-3/5 object-cover" />
+  </div>
+  <div id="slide4" className="carousel-item w-full">
+    <img
+      src={Login4}
+      className="w-full h-3/5 object-cover" />
+  </div>
+</div>
+
+<div className="w-full flex justify-end pr-52" alt = "Testimonal">
+  <p className="italic max-w-md -mt-60">
+    
+    <span className="animate-pulse">
+    "Prospectus transformed my job application process! The personalized feedback was spot-on, and the clear, actionable suggestions helped me craft a resume that stood out to employers. Thanks to Prospectus, I landed my dream internship this summer. I can't recommend it enough!" 
+    </span>
+
+    <span className="animate-none not-italic font-bold">- Jason Ni</span>
+  </p>
+</div>
+    
 
     </div>
   );

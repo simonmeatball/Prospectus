@@ -26,10 +26,12 @@ function HomePage() {
           </div>
 
           {/* email and password form */}
+
+          <img src= {Logo1} className="absolute animate-bounce  p-0 border-0 left-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />
+          <img src= {Logo2} className="absolute animate-bounce  p-0 border-0 right-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />  
           
-          <form class=" max-w-sm mx-auto mt-12 bg-local">
-          <img src= {Logo1} className=" animate-bounce  m-0 p-0 border-0 absolute left-0 -ml-10 max-w-full h-auto" alt="Positioned Image" draggable="false" />
-          <img src= {Logo2} className=" animate-bounce m-0 p-0 border-0 absolute right-0 -mr-10 max-w-full h-auto" alt="Positioned Image" draggable="false" />  
+          <form class=" relative max-w-sm mx-auto mt-12 bg-local">
+          
 
             <div class="mb-9">
               <label
@@ -101,7 +103,7 @@ function HomePage() {
             <div className = "flex">
               <button 
                 type="submit"
-                className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-500 dark:hover:bg-blue-600 ">
+                className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 ">
                 Register new account
               </button>
 
@@ -116,7 +118,7 @@ function HomePage() {
 
         <div className = "bg-white text-black">
         
-        <h1 className = " text-center mt-8 text-7xl text-blue-500 font-semibold"> Not a member yet?</h1>
+        <h1 className = " text-center mt-8 text-7xl text-cyan-600 font-semibold"> Not a member yet?</h1>
         <p className = "text-center mt-8 mb-10 text-2xl font-semibold ">Boost your career search with Prospectus!</p>
 
         
