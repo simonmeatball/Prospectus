@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./HomePage.jsx";
 import LoginPage from "./LoginPage.jsx";
 import PostPage from "./PostPage.jsx";
+import ProfilePage from "./ProfilePage.jsx";
 import "../styles/App.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -14,6 +15,7 @@ root.render(
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/post" element={<PostPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </Router>
   </React.StrictMode>
