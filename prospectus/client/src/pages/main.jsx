@@ -14,7 +14,7 @@ root.render(
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/post" element={<PostPage />} />
+        <Route path="/post/:postID" element={<PostPage />} />
         <Route path="/profile/:username" element={<ProfilePage />} />
       </Routes>
     </Router>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import {
   tags,
@@ -18,7 +18,8 @@ import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
 
 export default function PostPage() {
-  const [post, setPost] = useState(randomElement(allPosts));
+  const { postID } = useParams();
+  const [post, setPost] = useState(allPosts[postID]);
   const profile = allProfiles[post.profileID];
   const reviews = post.reviewIDs.map((reviewID) => allReviews[reviewID]);
   const [liked, setLiked] = useState(false);

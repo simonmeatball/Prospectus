@@ -7,12 +7,17 @@ import {
   getStars,
   allReviews,
 } from "../../utility.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function MiniPost({ post }) {
   const reviews = post.reviewIDs.map((reviewID) => allReviews[reviewID]);
+  const navigate = useNavigate();
 
   return (
-    <div className="w-11/12 mx-auto max-h-64 border-2 p-2 rounded-lg cursor-pointer">
+    <div
+      className="w-11/12 mx-auto max-h-64 border-2 p-2 rounded-lg cursor-pointer"
+      onClick={() => navigate(`/post/${post.id}`)}
+    >
       <p className="p-2 text-3xl">{post.title}</p>
       <div className="flex gap-2 p-2">
         {post.tags.map((tag) => (
