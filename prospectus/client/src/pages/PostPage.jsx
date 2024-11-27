@@ -1,22 +1,41 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
+import {
+  tags,
+  randomElement,
+  randomInt,
+  generateReview,
+  allProfiles,
+  allPosts,
+  allReviews,
+} from "../generate";
 import { Heart, MessageCircle, Star, StarHalf, Plus, X } from "lucide-react";
 import { formatDistance } from "date-fns";
 import Review from "../components/PostPage/Review";
-import { useNavigate } from "react-router-dom";
-import { tags, generateReview, generatePost } from "../generate";
+import DropdownMenu from "../components/PostPage/DropdownMenu";
 
 export default function PostPage() {
+  const [post, setPost] = useState(randomElement(allPosts));
+  const profile = allProfiles[post.profileID];
+  const reviews = post.reviewIDs.map((reviewID) => allReviews[reviewID]);
   const [liked, setLiked] = useState(false);
-  const [sortBy, setSortBy] = useState("Most recent");
-  const [dropdownShown, setDropdownShown] = useState(false);
   const [reviewFormShown, setReviewFormShown] = useState(false);
   const [inputText, setInputText] = useState("");
-  const [post, setPost] = useState(generatePost());
+  const [dropdownShown, setDropdownShown] = useState(false);
+  const [sortBy, setSortBy] = useState("Most recent");
   const navigate = useNavigate();
 
+  function getAverageRating() {
+    let sum = 0;
+    for (const review of reviews) {
+      sum += review.rating;
+    }
+    return (sum / reviews.length).toFixed(1);
+  }
+
   function getStars() {
-    const roundedRating = Math.round(post.avgRating() * 2) / 2; // round to nearest half
+    const roundedRating = Math.round(getAverageRating() * 2) / 2; // round to nearest half
     const fullStars = Math.floor(roundedRating);
     const halfStar = roundedRating % 1 === 0.5;
     const starsLeft = halfStar ? 5 - fullStars - 1 : 5 - fullStars;
@@ -44,26 +63,20 @@ export default function PostPage() {
     );
   }
 
-  function sortReviews(reviews, sortBy) {
+  function sortReviews() {
     switch (sortBy) {
       case "Most recent":
         return reviews.sort((a, b) => b.time - a.time);
       case "Least recent":
         return reviews.sort((a, b) => a.time - b.time);
       case "Highest rating":
-        return reviews.sort((a, b) => {
-          if (b.rating === a.rating) {
-            return b.time - a.time;
-          }
-          return b.rating - a.rating;
-        });
+        return reviews.sort((a, b) =>
+          b.rating === a.rating ? b.time - a.time : b.rating - a.rating
+        );
       case "Lowest rating":
-        return reviews.sort((a, b) => {
-          if (a.rating === b.rating) {
-            return b.time - a.time;
-          }
-          return a.rating - b.rating;
-        });
+        return reviews.sort((a, b) =>
+          a.rating === b.rating ? b.time - a.time : a.rating - b.rating
+        );
       default:
         return reviews.sort();
     }
@@ -76,14 +89,14 @@ export default function PostPage() {
         <div className="flex flex-col items-center">
           <div
             className="avatar mb-2 cursor-pointer"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate(`/profile/${profile.username}`)}
           >
             <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
-              <img src={post.posterProfile.avatar} />
+              <img src={profile.avatar} />
             </div>
           </div>
-          {post.posterProfile.name}
-          <p className="text-gray-500">@{post.posterProfile.username}</p>
+          {profile.name}
+          <p className="text-gray-500">@{profile.username}</p>
           <div>
             <p
               className="text-gray-500 mb-4 tooltip tooltip-primary tooltip-bottom"
@@ -97,20 +110,14 @@ export default function PostPage() {
               <Heart
                 size={36}
                 absoluteStrokeWidth
-                className={
-                  "cursor-pointer marker:hover:text-red-400 " +
-                  (liked ? "text-red-500" : "")
-                }
+                className={`cursor-pointer marker:hover:text-red-400 ${
+                  liked && "text-red-500"
+                }`}
                 onClick={() => {
-                  liked
-                    ? setPost((prevPost) => ({
-                        ...prevPost,
-                        likes: prevPost.likes - 1,
-                      }))
-                    : setPost((prevPost) => ({
-                        ...prevPost,
-                        likes: prevPost.likes + 1,
-                      }));
+                  setPost((prevPost) => ({
+                    ...prevPost,
+                    likes: prevPost.likes + (liked ? -1 : 1),
+                  }));
                   setLiked(!liked);
                 }}
               />
@@ -126,11 +133,11 @@ export default function PostPage() {
                   setInputText("");
                 }}
               />
-              {post.numReviews()}
+              {reviews.length}
             </div>
             <div className="flex gap-2 items-center">
               {getStars()}
-              {post.avgRating()}
+              {getAverageRating()}
             </div>
           </div>
         </div>
@@ -138,7 +145,7 @@ export default function PostPage() {
           <h1 className="text-3xl mb-2">{post.title}</h1>
           <div className="flex gap-2 mb-2">
             {post.tags.map((tag) => (
-              <div className={"rounded-lg p-1.5 " + tags[tag]}>{tag}</div>
+              <div className={`rounded-lg p-1.5 ${tags[tag]}`}>{tag}</div>
             ))}
           </div>
           <div className="mb-2">{post.text}</div>
@@ -150,42 +157,13 @@ export default function PostPage() {
       <div className="w-11/12 mx-auto h-px bg-gray-500"></div>
       <div className="w-11/12 mx-auto">
         <div className="flex justify-between items-center">
-          <div className={reviewFormShown ? "invisible" : ""}>
-            Sort by:
-            <div className="dropdown dropdown-bottom">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn m-1"
-                onClick={() => setDropdownShown(!dropdownShown)}
-              >
-                {sortBy}
-              </div>
-              {dropdownShown && (
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-                >
-                  {[
-                    "Most recent",
-                    "Least recent",
-                    "Highest rating",
-                    "Lowest rating",
-                  ].map((option) => (
-                    <li>
-                      <a
-                        onClick={() => {
-                          setSortBy(option);
-                          setDropdownShown(false);
-                        }}
-                      >
-                        {option}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+          <div className={reviewFormShown && "invisible"}>
+            <DropdownMenu
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              dropdownShown={dropdownShown}
+              setDropdownShown={setDropdownShown}
+            />
           </div>
           <button
             className="btn"
@@ -216,20 +194,18 @@ export default function PostPage() {
                   if (!inputText) {
                     return;
                   }
-                  setPost((prevPost) => ({
-                    ...prevPost,
-                    reviews: [
-                      ...prevPost.reviews,
-                      generateReview(
-                        +document.querySelector(
-                          'input[name="rating-8"]:checked'
-                        ).value,
-                        inputText
-                      ),
-                    ],
-                  }));
-                  setReviewFormShown(!reviewFormShown);
-                  setInputText("");
+                  const review = generateReview(
+                    allReviews.length,
+                    inputText,
+                    +document.querySelector('input[name="rating-8"]:checked')
+                      .value
+                  );
+                  review.profileID = randomInt(0, 9);
+                  review.postID = post.id;
+                  allReviews.push(review);
+                  allProfiles[review.profileID].reviewIDs.push(review.id);
+                  allPosts[post.id].reviewIDs.push(review.id);
+                  setReviewFormShown(false);
                 }}
               >
                 <h1 className="text-2xl mb-2">Add a review</h1>
@@ -260,46 +236,17 @@ export default function PostPage() {
               </form>
             </div>
             <div>
-              Sort by:
-              <div className="dropdown dropdown-bottom">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="btn m-1"
-                  onClick={() => setDropdownShown(!dropdownShown)}
-                >
-                  {sortBy}
-                </div>
-                {dropdownShown && (
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-                  >
-                    {[
-                      "Most recent",
-                      "Least recent",
-                      "Highest rating",
-                      "Lowest rating",
-                    ].map((option) => (
-                      <li>
-                        <a
-                          onClick={() => {
-                            setSortBy(option);
-                            setDropdownShown(false);
-                          }}
-                        >
-                          {option}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <DropdownMenu
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                dropdownShown={dropdownShown}
+                setDropdownShown={setDropdownShown}
+              />
             </div>
           </div>
         )}
         <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center">
-          {sortReviews(post.reviews, sortBy).map((reviewItem) => (
+          {sortReviews().map((reviewItem) => (
             <div className="mb-4">
               <Review review={reviewItem} />
             </div>

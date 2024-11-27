@@ -1,9 +1,14 @@
 import React from "react";
 import Navbar from "./Navbar";
-import { generateProfile } from "../generate";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { allProfiles } from "../generate";
 
 export default function ProfilePage() {
-  const profile = generateProfile();
+  const { username } = useParams();
+  const profile = allProfiles.find((profile) => profile.username === username);
+  const [view, setView] = useState("posts");
+
   return (
     <div>
       <Navbar />
@@ -16,9 +21,15 @@ export default function ProfilePage() {
         <p className="text-3xl">{profile.name}</p>
         <p className="text-gray-500 text-lg mb-4">@{profile.username}</p>
         <div className="flex gap-4">
-          <button className="btn">Posts</button>
-          <button className="btn">Reviews</button>
+          <button className="btn" onClick={() => setView("posts")}>
+            Posts
+          </button>
+          <button className="btn" onClick={() => setView("reviews")}>
+            Reviews
+          </button>
         </div>
+        {view === "posts" && <div>Posts</div>}
+        {view === "reviews" && <div>Reviews</div>}
       </div>
     </div>
   );
