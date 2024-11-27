@@ -1,3 +1,6 @@
+import React from "react";
+import { Star, StarHalf } from "lucide-react";
+
 export const tags = {
   "Software Engineer": "bg-blue-300 text-black",
   "Data Scientist": "bg-green-300 text-black",
@@ -19,6 +22,43 @@ export const tags = {
   "Automation Engineer": "bg-blue-400 text-black",
   "Business Intelligence Analyst": "bg-yellow-400 text-black",
 };
+
+export function getAverageRating(reviews) {
+  let sum = 0;
+  for (const review of reviews) {
+    sum += review.rating;
+  }
+  return (sum / reviews.length).toFixed(1);
+}
+
+export function getStars(reviews, size = 36) {
+  const roundedRating = Math.round(getAverageRating(reviews) * 2) / 2; // round to nearest half
+  const fullStars = Math.floor(roundedRating);
+  const halfStar = roundedRating % 1 === 0.5;
+  const starsLeft = halfStar ? 5 - fullStars - 1 : 5 - fullStars;
+
+  return (
+    <div className="flex">
+      {Array.from({ length: fullStars }, () => (
+        <Star size={size} absoluteStrokeWidth fill="#000000" />
+      ))}
+      {halfStar && (
+        <StarHalf
+          size={size}
+          absoluteStrokeWidth
+          fill="#000000"
+          className={"-mr-" + (size / 4)}
+        />
+      )}
+      {halfStar && (
+        <StarHalf size={size} absoluteStrokeWidth className="-scale-x-100" />
+      )}
+      {Array.from({ length: starsLeft }, () => (
+        <Star size={size} absoluteStrokeWidth />
+      ))}
+    </div>
+  );
+}
 
 export function randomElement(array) {
   return array[Math.floor(Math.random() * array.length)];

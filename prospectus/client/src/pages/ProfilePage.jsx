@@ -2,7 +2,9 @@ import React from "react";
 import Navbar from "./Navbar";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { allProfiles } from "../generate";
+import { allProfiles, allPosts, allReviews } from "../utility.jsx";
+import MiniPost from "../components/ProfilePage/MiniPost";
+import MiniReview from "../components/ProfilePage/MiniReview";
 
 export default function ProfilePage() {
   const { username } = useParams();
@@ -20,7 +22,7 @@ export default function ProfilePage() {
         </div>
         <p className="text-3xl">{profile.name}</p>
         <p className="text-gray-500 text-lg mb-4">@{profile.username}</p>
-        <div className="flex gap-4">
+        <div className="flex gap-4 mb-4">
           <button className="btn" onClick={() => setView("posts")}>
             Posts
           </button>
@@ -28,9 +30,20 @@ export default function ProfilePage() {
             Reviews
           </button>
         </div>
-        {view === "posts" && <div>Posts</div>}
-        {view === "reviews" && <div>Reviews</div>}
       </div>
+      {view === "posts" &&
+        profile.postIDs.map((postID) => (
+          <div className="mb-4">
+            <MiniPost post={allPosts[postID]} />
+          </div>
+        ))}
+      {view === "reviews" &&
+        profile.reviewIDs.map((reviewID) => (
+          <div className="mb-4">
+            <MiniPost post={allPosts[allReviews[reviewID].postID]} />
+            <MiniReview review={allReviews[reviewID]} />
+          </div>
+        ))}
     </div>
   );
 }

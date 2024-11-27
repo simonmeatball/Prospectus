@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 import { formatDistance } from "date-fns";
-import { allProfiles } from "../../generate";
+import { allProfiles } from "../../utility.jsx";
 
 export default function Review({ review }) {
   const navigate = useNavigate();

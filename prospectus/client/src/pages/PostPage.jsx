@@ -3,14 +3,16 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import {
   tags,
+  getAverageRating,
+  getStars,
   randomElement,
   randomInt,
   generateReview,
   allProfiles,
   allPosts,
   allReviews,
-} from "../generate";
-import { Heart, MessageCircle, Star, StarHalf, Plus, X } from "lucide-react";
+} from "../utility.jsx";
+import { Heart, MessageCircle, Plus, X } from "lucide-react";
 import { formatDistance } from "date-fns";
 import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
@@ -25,43 +27,6 @@ export default function PostPage() {
   const [dropdownShown, setDropdownShown] = useState(false);
   const [sortBy, setSortBy] = useState("Most recent");
   const navigate = useNavigate();
-
-  function getAverageRating() {
-    let sum = 0;
-    for (const review of reviews) {
-      sum += review.rating;
-    }
-    return (sum / reviews.length).toFixed(1);
-  }
-
-  function getStars() {
-    const roundedRating = Math.round(getAverageRating() * 2) / 2; // round to nearest half
-    const fullStars = Math.floor(roundedRating);
-    const halfStar = roundedRating % 1 === 0.5;
-    const starsLeft = halfStar ? 5 - fullStars - 1 : 5 - fullStars;
-
-    return (
-      <div className="flex">
-        {Array.from({ length: fullStars }, () => (
-          <Star size={36} absoluteStrokeWidth fill="#000000" />
-        ))}
-        {halfStar && (
-          <StarHalf
-            size={36}
-            absoluteStrokeWidth
-            fill="#000000"
-            className="-mr-9"
-          />
-        )}
-        {halfStar && (
-          <StarHalf size={36} absoluteStrokeWidth className="-scale-x-100" />
-        )}
-        {Array.from({ length: starsLeft }, () => (
-          <Star size={36} absoluteStrokeWidth />
-        ))}
-      </div>
-    );
-  }
 
   function sortReviews() {
     switch (sortBy) {
@@ -136,8 +101,8 @@ export default function PostPage() {
               {reviews.length}
             </div>
             <div className="flex gap-2 items-center">
-              {getStars()}
-              {getAverageRating()}
+              {getStars(reviews)}
+              {getAverageRating(reviews)}
             </div>
           </div>
         </div>
