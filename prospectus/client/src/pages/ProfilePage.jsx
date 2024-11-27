@@ -40,7 +40,7 @@ export default function ProfilePage() {
       {view === "reviews" &&
         profile.reviewIDs.map((reviewID) => (
           <div className="mb-4">
-            <MiniPost post={allPosts[allReviews[reviewID].postID]} />
+            <MiniPost notOwner post={allPosts[allReviews[reviewID].postID]} />
             <MiniReview review={allReviews[reviewID]} />
           </div>
         ))}

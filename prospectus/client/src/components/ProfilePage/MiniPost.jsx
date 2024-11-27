@@ -5,12 +5,14 @@ import {
   tags,
   getAverageRating,
   getStars,
+  allProfiles,
   allReviews,
 } from "../../utility.jsx";
 import { useNavigate } from "react-router-dom";
 
-export default function MiniPost({ post }) {
+export default function MiniPost({ post, notOwner }) {
   const reviews = post.reviewIDs.map((reviewID) => allReviews[reviewID]);
+  const otherProfile = allProfiles[post.profileID]; // only needed if notOwner
   const navigate = useNavigate();
 
   return (
@@ -18,6 +20,22 @@ export default function MiniPost({ post }) {
       className="w-11/12 mx-auto max-h-64 border-2 p-2 rounded-lg cursor-pointer"
       onClick={() => navigate(`/post/${post.id}`)}
     >
+      {notOwner && (
+        <div className="flex items-center gap-2">
+          <div
+            className="avatar cursor-pointer"
+            onClick={() => navigate(`/profile/${otherProfile.username}`)}
+          >
+            <div className="ring-primary ring-offset-base-100 w-8 rounded-full ring ring-offset-2 m-2">
+              <img src={otherProfile.avatar} />
+            </div>
+          </div>
+          <div className="text-gray-500">
+            {otherProfile.name}
+            <br />@{otherProfile.username}
+          </div>
+        </div>
+      )}
       <p className="p-2 text-3xl">{post.title}</p>
       <div className="flex gap-2 p-2">
         {post.tags.map((tag) => (
