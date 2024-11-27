@@ -23,6 +23,7 @@ jspm_packages/
 *.ntvs*
 *.njsproj
 *.sln
+node_modules
 
 # OS-specific files
 .DS_Store
