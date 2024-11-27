@@ -1,10 +1,13 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
     <div className="navbar bg-base-100 fixed top-0 z-10">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <Link className="btn btn-ghost font-bold italic text-xl" to="..\">
+          prospectus
+        </Link>
       </div>
       <div className="flex-none gap-2">
         <div className="form-control">
