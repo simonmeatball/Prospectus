@@ -1,5 +1,8 @@
 const Post = require("../models/post.model.js");
+const multer = require("multer");
+const path = require("path");
 
+// Fetch all posts
 const getPosts = async (req, res) => {
   try {
     const posts = await Post.find();
@@ -10,14 +13,23 @@ const getPosts = async (req, res) => {
   }
 };
 
+// Create a new post
 const createPost = async (req, res) => {
+  // Multer will add the uploaded file to the `req.file` property
   const post = req.body;
+  if (req.file) {
+    post.image = req.file.path; // Save the image path to the post object
+  }
+
   console.log("Received Post Data:", post);
+
+  // Check for required fields (name, description, or image)
   if (!post.name || (!post.description && !post.image)) {
     return res
       .status(400)
       .json({ success: false, message: "Fill in all data fields" });
   }
+
   const newPost = new Post(post);
   try {
     await newPost.save();
@@ -28,6 +40,7 @@ const createPost = async (req, res) => {
   }
 };
 
+// Delete a post by ID
 const deletePost = async (req, res) => {
   const { id } = req.params;
   try {
@@ -38,6 +51,7 @@ const deletePost = async (req, res) => {
   }
 };
 
+// Like a post
 const likePost = async (req, res) => {
   const { id } = req.params;
   try {
@@ -56,6 +70,7 @@ const likePost = async (req, res) => {
   }
 };
 
+// Unlike a post
 const unlikePost = async (req, res) => {
   const { id } = req.params;
   try {

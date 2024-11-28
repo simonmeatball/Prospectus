@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar.jsx";
+import axios from "axios";
 
 // change the character limit of title and body here
 const TITLELIMIT = 75;
@@ -40,33 +41,26 @@ function UploadPage() {
   const isBodyLimitReached = bodyCount >= BODYLIMIT;
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    const formData = {
+      name: title,
+      description: body,
+      image: file,
+    };
 
-    const formData = new FormData();
-    formData.append("name", title);
-    if (body) formData.append("description", body);
-    if (file) formData.append("image", file);
-
-    const formDataObject = formDataToObject(formData);
-
-    // Log form data before submission
-    console.log("Form Data:", formDataObject);
-
-    try {
-      const response = await fetch("http://localhost:8080/api/posts", {
-        method: "POST",
-        body: formDataObject,
+    axios
+      .post("http://localhost:8080/api/posts", formData)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
       });
 
-      if (response.ok) {
-        alert("Post created successfully!");
-      } else {
-        alert("Did not receive a successful response from the server.");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Failed to create post!");
-    }
+    this.setState({
+      title: "",
+      body: "",
+      file: null,
+    });
   };
 
   return (
