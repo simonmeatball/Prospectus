@@ -36,7 +36,7 @@ const TermsModal = () => {
           <div className="bg-white p-6 rounded-lg max-w-lg max-h-[70vh] overflow-y-auto">
 
             <p>  {/* Terms and Conditions */}
-              <h2 className="text-2xl"> Terms and Conditions</h2>
+              <h2 className="text-2xl"> Terms and Conditions 🤝</h2>
               <br />
               1. Use of Our Services:
               You agree to use our Services in compliance with all applicable laws and regulations. You must be at least 18 years old or the legal age in your jurisdiction to use our Services. You may not use our Services for any unlawful or prohibited purpose.

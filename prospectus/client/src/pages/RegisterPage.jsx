@@ -1,5 +1,5 @@
 import React from "react";
-import{ useState } from "react";
+import { useState } from "react";
 import Swal from 'sweetalert2'
 import LoginButton from "../components/HomePage/Loginbutton.jsx";
 import Homenavbar from "../components/HomePage/Homenavbar.jsx"
@@ -52,59 +52,59 @@ function RegisterPage() {
       })
     }
 
-  if(validAccount) {
-    try {
-      // Send the data to the server.
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts", { // this is a placeholder server
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    if (validAccount) {
+      try {
+        // Send the data to the server.
+        const response = await fetch("https://jsonplaceholder.typicode.com/posts", { // this is a placeholder server
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
 
-      const data = await response.json();
-      
+        const data = await response.json();
 
-      console.log("Server Response:", data);
 
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+        console.log("Server Response:", data);
+
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again later.");
+      }
     }
-  }
 
-  
-    
+
+
   };
 
   return (
     <div style={{ userSelect: "none" }}>
-      
+      <Homenavbar />
+
       <div className="font-sans">
 
-      <Homenavbar/>
         <div class="bg-[url('../images/homebg.png')] h-64 w-full bg-cover bg-no-repeat bg-center h-screen w-full">
 
           <div className="  text-amber-500 font-bold italic text-8xl tracking-wide pt-12 text-center ">
             prospectus
           </div>
           <div className="animate-pulse pt-8 text-2xl italic text-center">
-            {" "} 
+            {" "}
             your resume's new best friend.
           </div>
 
           {/* email and password form */}
 
-          <img src= {Logo1} className="absolute animate-bounce  p-0 border-0 left-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />
-          <img src= {Logo2} className="absolute animate-bounce  p-0 border-0 right-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />  
-          
+          <img src={Logo1} className="absolute animate-bounce  p-0 border-0 left-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />
+          <img src={Logo2} className="absolute animate-bounce  p-0 border-0 right-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />
+
           <form onSubmit={handleSubmit} class=" relative max-w-sm mx-auto mt-12 bg-local">
-          
+
 
             <div class="mb-9">
               <label
@@ -158,7 +158,7 @@ function RegisterPage() {
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 required
               />
-              
+
             </div>
             <div class="right-30 flex items-start mb-9">
               <div class="flex items-center h-5">
@@ -177,11 +177,11 @@ function RegisterPage() {
                 for="terms"
                 class="ms-2 text-sm font-medium text-gray-900 dark:text-black"
               >
-               <Terms/>
+                <Terms />
               </label>
             </div>
 
-            <div className = "flex">  
+            <div className="flex">
               <button   // REGISTER BUTTON
                 type="submit"
                 className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 ">
@@ -193,51 +193,51 @@ function RegisterPage() {
             </div>
           </form>
 
-         
+
 
         </div>
 
-        <div className = "bg-white text-black">
-        
-        <h1 className = " text-center mt-8 text-7xl text-cyan-600 font-semibold"> Not a member yet?</h1>
-        <p className = "text-center mt-8 mb-10 text-2xl font-semibold ">Boost your career search with Prospectus!</p>
+        <div className="bg-white text-black">
 
-        
-      <div className = "flex justify-left p-8" alt = "Reasons">
-        
-        <div className = "mb-10 " alt="Reason1">   
-          <ClipboardPenLine size={64} color = "#1ed5f6" />  
-          <p className = "ml-4 text-2xl font-medium "> Tailored Suggestions:  <br/> <p className = "mt-1 text-xl font-normal">  Learn how to customize your resume for particular job applications, increasing your chances of standing out. </p> </p>
+          <h1 className=" text-center mt-8 text-7xl text-cyan-600 font-semibold"> Not a member yet?</h1>
+          <p className="text-center mt-8 mb-10 text-2xl font-semibold ">Boost your career search with Prospectus!</p>
+
+
+          <div className="flex justify-left p-8" alt="Reasons">
+
+            <div className="mb-10 " alt="Reason1">
+              <ClipboardPenLine size={64} color="#1ed5f6" />
+              <p className="ml-4 text-2xl font-medium "> Tailored Suggestions:  <br /> <p className="mt-1 text-xl font-normal">  Learn how to customize your resume for particular job applications, increasing your chances of standing out. </p> </p>
+            </div>
+
+            <div alt="Reason2">
+              <UserCheck size={64} color="#b456e9" />
+              <p className="ml-4 text-2xl font-medium "> Expert Feedback: <br /> <p className="mt-1 text-xl font-normal">  Receive guidance from professionals, and get insights on formatting, grammar, and tailoring your resume for specific industries. </p> </p>
+            </div>
+
+            <div alt="Reason3">
+              <BadgeDollarSign size={64} color="#43e654" />
+              <p className="ml-4 text-2xl font-medium "> Affordable and Accessible: <br /> <p className="mt-1 text-xl font-normal"> Our resume reviewer app provide cost-effective options compared to hiring a professional resume writer. </p> </p>
+            </div>
+
+            <div alt="Reason4">
+              <BicepsFlexed size={64} color="#f7be4c" />
+              <p className="ml-4 text-2xl font-medium "> Stay Competitive: <br /> <p className="mt-1 text-xl font-normal">  Learn about trends in resume writing to stay up-to-date in an ever-evolving job market. </p> </p>
+            </div>
+
+
+          </div>
         </div>
 
-        <div alt="Reason2">   
-          <UserCheck size={64} color = "#b456e9"/>  
-          <p className = "ml-4 text-2xl font-medium "> Expert Feedback: <br/> <p className = "mt-1 text-xl font-normal">  Receive guidance from professionals, and get insights on formatting, grammar, and tailoring your resume for specific industries. </p> </p>
-        </div>
 
-        <div alt="Reason3">   
-          <BadgeDollarSign size={64} color = "#43e654" />  
-          <p className = "ml-4 text-2xl font-medium "> Affordable and Accessible: <br/> <p className = "mt-1 text-xl font-normal"> Our resume reviewer app provide cost-effective options compared to hiring a professional resume writer. </p> </p>
-        </div>
 
-        <div alt="Reason4">   
-          <BicepsFlexed size={64} color = "#f7be4c"/>  
-          <p className = "ml-4 text-2xl font-medium "> Stay Competitive: <br/> <p className = "mt-1 text-xl font-normal">  Learn about trends in resume writing to stay up-to-date in an ever-evolving job market. </p> </p>
-        </div>
+
 
 
       </div>
-      </div>
 
+    </div>
 
-        
-        
-
-        
-      </div>
-       
-      </div>
-    
   );
 }
 

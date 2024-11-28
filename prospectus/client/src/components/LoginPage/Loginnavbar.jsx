@@ -6,12 +6,12 @@ export default function Homenavbar() {
   return (
     <div className="navbar bg-base-100">
       <div className="flex-2">
-        <img className = "w-16" src = {Logo1} draggable = "false"/>
-        
-        <h1 className = "text-amber-500 font-bold italic text-2xl tracking-wide"> prospectus</h1>
+        <img className="w-16" src={Logo1} draggable="false" />
+
+        <h1 className="text-amber-500 font-bold italic text-2xl tracking-wide"> prospectus</h1>
       </div>
 
-        </div>
-      
+    </div>
+
   );
 }

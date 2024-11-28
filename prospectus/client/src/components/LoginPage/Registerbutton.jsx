@@ -3,12 +3,12 @@ import { Link } from "react-router-dom"
 
 
 function Registerbutton() {
-    return ( 
-    <div className = "mt-3 flex"> 
-    <p> Don't have account? </p>
-    
-    <Link to = "/"  className = "ml-2 underline"> Sign up.</Link>
-    </div>)
+    return (
+        <div className="mt-3 flex">
+            <p> Don't have account? </p>
+
+            <Link to="/" className="ml-2 underline"> Sign up.</Link>
+        </div>)
 }
 
 export default Registerbutton
