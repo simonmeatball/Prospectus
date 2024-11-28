@@ -2,7 +2,7 @@ import React from "react"
 import { Link } from "react-router-dom"
 
 
-function Homebutton() {
+function Registerbutton() {
     return ( 
     <div className = "mt-3 flex"> 
     <p> Don't have account? </p>
@@ -11,4 +11,4 @@ function Homebutton() {
     </div>)
 }
 
-export default Homebutton
+export default Registerbutton

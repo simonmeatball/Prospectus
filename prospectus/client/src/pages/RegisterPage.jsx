@@ -3,9 +3,10 @@ import{ useState } from "react";
 import Swal from 'sweetalert2'
 import LoginButton from "../components/HomePage/Loginbutton.jsx";
 import Homenavbar from "../components/HomePage/Homenavbar.jsx"
+import Terms from "../components/HomePage/Terms.jsx"
+
 import Logo1 from "../images/logo1.png"
 import Logo2 from "../images/logo2.png"
-
 import { ClipboardPenLine } from 'lucide-react';
 import { UserCheck } from 'lucide-react';
 import { BicepsFlexed } from 'lucide-react';
@@ -76,11 +77,13 @@ function RegisterPage() {
       alert("An error occurred. Please try again later.");
     }
   }
+
+  
     
   };
 
   return (
-    <div>
+    <div style={{ userSelect: "none" }}>
       
       <div className="font-sans">
 
@@ -174,13 +177,7 @@ function RegisterPage() {
                 for="terms"
                 class="ms-2 text-sm font-medium text-gray-900 dark:text-black"
               >
-                I agree with the{" "}
-                <a
-                  href="#"
-                  class="text-cyan-600 hover:underline dark:text-cyan-500"
-                >
-                  terms and conditions
-                </a>
+               <Terms/>
               </label>
             </div>
 
