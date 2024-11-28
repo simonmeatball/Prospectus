@@ -106,11 +106,35 @@ const getUserPosts = async (req, res) => {
   }
 };
 
+const getUserByUsername = async (req, res) => {
+  try { 
+    const user = await User.findOne({ username: req.params.username}); 
+    if (!user) return res.status(404).json({massage: "User not found"}); 
+
+    //get user's posts 
+    const posts = await Post.find({userId: user.userId}); 
+
+    res.status(200).json({
+      userId: user.userId, 
+      username: user.username,
+      name: user.name,
+      email: user.email, 
+      accountType: user.accountType,
+      university: user.university, 
+      posts: posts
+    });
+  } catch (error) { 
+    res.status(500).json({ message: error.message}); 
+  }
+}
+
+
 module.exports = { 
   getAllUsers, 
   getUser, 
   createUser, 
   updateUser, 
   deleteUser, 
-  getUserPosts 
+  getUserPosts, 
+  getUserByUsername
 };
