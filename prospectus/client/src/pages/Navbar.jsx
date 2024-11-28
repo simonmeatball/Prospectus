@@ -48,6 +48,9 @@ export default function Navbar() {
             </li>
           </ul>
         </div>
+        <Link to="/posts" className="...">
+          Posts
+        </Link>
       </div>
     </div>
   );

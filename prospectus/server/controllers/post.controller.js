@@ -45,6 +45,7 @@ const createPost = async (req, res) => {
           .on("error", reject)
           .on("finish", () => {
             postData.image = uploadStream.id; // Store the GridFS file ID
+            postData.fileType = req.file.mimetype; // Store the file type
             resolve();
           });
       });

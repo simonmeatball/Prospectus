@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar.jsx";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // change the character limit of title and body here
 const TITLELIMIT = 75;
@@ -15,6 +16,7 @@ const formDataToObject = (formData) => {
 };
 
 function UploadPage() {
+  const navigate = useNavigate();
   const [titleCount, setTitleCount] = useState(0);
   const [bodyCount, setBodyCount] = useState(0);
   const [title, setTitle] = useState("");
@@ -69,6 +71,8 @@ function UploadPage() {
         setFile(null);
         setTitleCount(0);
         setBodyCount(0);
+        // Redirect to posts page
+        navigate("/posts");
       }
     } catch (error) {
       console.error(

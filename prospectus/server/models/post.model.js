@@ -15,6 +15,10 @@ const postSchema = new mongoose.Schema(
       ref: "uploads.files",
       required: false,
     },
+    fileType: {
+      type: String,
+      required: false,
+    },
     likes: {
       type: Number,
       default: 0,
