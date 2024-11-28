@@ -8,19 +8,12 @@ const {
   deletePost,
   likePost,
   unlikePost,
+  getFile,
 } = require("../controllers/post.controller.js");
 
-// Configure multer for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "../uploads/"); // Specify the folder to save files in
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
-  },
-});
+// Configure multer for memory storage
+const storage = multer.memoryStorage();
 
-// Filter to allow only image files
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|pdf/;
   const extname = allowedTypes.test(
@@ -29,20 +22,28 @@ const fileFilter = (req, file, cb) => {
   const mimetype = allowedTypes.test(file.mimetype);
 
   if (extname && mimetype) {
-    return cb(null, true); // Accept file
+    cb(null, true);
   } else {
-    return cb(new Error("Only image files are allowed"), false); // Reject file
+    cb(new Error("Invalid file type"), false);
   }
 };
 
-// Set up multer middleware for single image upload (this will handle 'image' field)
-const upload = multer({ storage, fileFilter });
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
 
 // Route for getting all posts
 router.get("/", getPosts);
 
 // Route for creating a post (with multer middleware to handle file upload)
-router.post("/", upload.single("image"), createPost); // 'image' is the form field name for the file
+router.post("/", upload.single("file"), createPost);
+
+// Route for getting a file by ID
+router.get("/file/:id", getFile);
 
 // Route for deleting a post by ID
 router.delete("/:id", deletePost);

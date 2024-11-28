@@ -41,25 +41,42 @@ function UploadPage() {
   const isBodyLimitReached = bodyCount >= BODYLIMIT;
 
   const handleSubmit = async (event) => {
+    event.preventDefault();
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("body", body);
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
+    }
 
-    axios
-      .post("http://localhost:8080/api/posts", formData)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/posts",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-    this.setState({
-      title: "",
-      body: "",
-      file: null,
-    });
+      if (response.data.success) {
+        console.log("Post created successfully:", response.data);
+        // Reset form
+        setTitle("");
+        setBody("");
+        setFile(null);
+        setTitleCount(0);
+        setBodyCount(0);
+      }
+    } catch (error) {
+      console.error(
+        "Error creating post:",
+        error.response?.data || error.message
+      );
+      // You might want to show an error message to the user here
+    }
   };
 
   return (

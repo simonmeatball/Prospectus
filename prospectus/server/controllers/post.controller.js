@@ -1,6 +1,13 @@
 const Post = require("../models/post.model.js");
-const multer = require("multer");
-const path = require("path");
+const mongoose = require("mongoose");
+const { GridFSBucket } = require("mongodb");
+
+let bucket;
+mongoose.connection.once("open", () => {
+  bucket = new GridFSBucket(mongoose.connection.db, {
+    bucketName: "uploads",
+  });
+});
 
 // Fetch all posts
 const getPosts = async (req, res) => {
@@ -15,27 +22,48 @@ const getPosts = async (req, res) => {
 
 // Create a new post
 const createPost = async (req, res) => {
-  // Multer will add the uploaded file to the `req.file` property
-  const post = req.body;
-  if (req.file) {
-    post.image = req.file.path; // Save the image path to the post object
-  }
-
-  console.log("Received Post Data:", post);
-
-  // Check for required fields (name, description, or image)
-  if (!post.name || (!post.description && !post.image)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Fill in all data fields" });
-  }
-
-  const newPost = new Post(post);
   try {
+    const { title, body } = req.body;
+
+    const postData = {
+      title,
+      body,
+    };
+
+    if (req.file) {
+      // Create a readable stream from the uploaded file buffer
+      const readableStream = require("stream").Readable.from(req.file.buffer);
+
+      // Upload to GridFS
+      const uploadStream = bucket.openUploadStream(req.file.originalname, {
+        contentType: req.file.mimetype,
+      });
+
+      await new Promise((resolve, reject) => {
+        readableStream
+          .pipe(uploadStream)
+          .on("error", reject)
+          .on("finish", () => {
+            postData.image = uploadStream.id; // Store the GridFS file ID
+            resolve();
+          });
+      });
+    }
+
+    // Validate required fields
+    if (!title || !body) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and body are required",
+      });
+    }
+
+    const newPost = new Post(postData);
     await newPost.save();
+
     res.status(201).json({ success: true, data: newPost });
   } catch (err) {
-    console.error("Error saving post", err.message);
+    console.error("Error saving post", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
@@ -91,4 +119,35 @@ const unlikePost = async (req, res) => {
   }
 };
 
-module.exports = { getPosts, createPost, deletePost, likePost, unlikePost };
+// Add this new route to serve files
+const getFile = async (req, res) => {
+  try {
+    const file = await bucket
+      .find({ _id: new mongoose.Types.ObjectId(req.params.id) })
+      .toArray();
+
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "File not found",
+      });
+    }
+
+    res.set("Content-Type", file[0].contentType);
+    const downloadStream = bucket.openDownloadStream(
+      new mongoose.Types.ObjectId(req.params.id)
+    );
+    downloadStream.pipe(res);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = {
+  getPosts,
+  createPost,
+  deletePost,
+  likePost,
+  unlikePost,
+  getFile,
+};
