@@ -16,6 +16,7 @@ import { formatDistance } from "date-fns";
 import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 export default function PostPage() {
   const { postID } = useParams();
@@ -27,15 +28,23 @@ export default function PostPage() {
   const [dropdownShown, setDropdownShown] = useState(false);
   const [sortBy, setSortBy] = useState("Most recent");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/posts/${postID}`
+          `http://localhost:8080/api/posts/${postID}`,
+          {
+            params: {
+              userId: user?.userId
+            }
+          }
         );
         if (response.data.success) {
+          console.log("Post data received:", response.data.data);
           setPost(response.data.data);
+          setLiked(response.data.data.isLiked);
         }
       } catch (err) {
         console.error("Error fetching post:", err);
@@ -45,7 +54,34 @@ export default function PostPage() {
     };
 
     fetchPost();
-  }, [postID]);
+  }, [postID, user]);
+
+  const handleLike = async () => {
+    try {
+      if (!user) {
+        console.error('No user logged in');
+        return;
+      }
+
+      const endpoint = liked ? 'unlike' : 'like';
+      const response = await axios.patch(
+        `http://localhost:8080/api/posts/${postID}/${endpoint}`,
+        {
+          userId: user.userId
+        }
+      );
+      
+      if (response.data.success) {
+        setLiked(!liked);
+        setPost(prevPost => ({
+          ...prevPost,
+          likes: response.data.data.likes
+        }));
+      }
+    } catch (err) {
+      console.error('Error toggling like:', err);
+    }
+  };
 
   if (loading || !post) {
     return (
@@ -59,12 +95,15 @@ export default function PostPage() {
   }
 
   // Temporary mock data for profile and reviews until we implement those features
+  console.log("Current post data:", post);
   const profile = {
-    name: "User",
-    username: post.userID,
+    name: post.user?.name || "User",
+    username: post.user?.username || post.userID,
     avatar:
+      post.user?.profilePic ||
       "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
   };
+  console.log("Profile data:", profile);
   const reviews = [];
 
   function sortReviews() {
@@ -104,22 +143,20 @@ export default function PostPage() {
             </p>
           </div>
           <div className="flex flex-col gap-4 items-center">
-            <div className="flex gap-2 items-center">
-              <Heart
-                size={36}
-                absoluteStrokeWidth
-                className={`cursor-pointer marker:hover:text-red-400 ${
-                  liked && "text-red-500"
-                }`}
-                onClick={() => {
-                  setPost((prevPost) => ({
-                    ...prevPost,
-                    likes: prevPost.likes + (liked ? -1 : 1),
-                  }));
-                  setLiked(!liked);
-                }}
-              />
-              {post.likes}
+            <div className="flex items-center gap-4 mt-4">
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-2 ${
+                  liked ? 'text-red-500 hover:text-red-600' : 'text-gray-600 hover:text-gray-700'
+                } transition-colors duration-200`}
+              >
+                <Heart 
+                  className={`w-8 h-8 transition-transform duration-200 hover:scale-110 ${
+                    liked ? 'fill-red-500 stroke-red-500' : 'stroke-current hover:fill-gray-200'
+                  }`} 
+                />
+                <span className="text-lg font-medium">{post?.likes || 0}</span>
+              </button>
             </div>
             <div className="flex gap-2 items-center">
               <MessageCircle
