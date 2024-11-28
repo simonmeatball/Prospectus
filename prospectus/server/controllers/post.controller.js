@@ -12,7 +12,8 @@ const getPosts = async (req, res) => {
 
 const createPost = async (req, res) => {
   const post = req.body;
-  if (!post.name || !post.description || !post.image) {
+  console.log("Received Post Data:", post);
+  if (!post.name || (!post.description && !post.image)) {
     return res
       .status(400)
       .json({ success: false, message: "Fill in all data fields" });

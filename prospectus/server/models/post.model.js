@@ -4,7 +4,7 @@ const postSchema = new mongoose.Schema(
   {
     postID: {
       type: String,
-      required: true,
+      required: false,
     },
     userID: {
       type: String,
@@ -26,7 +26,7 @@ const postSchema = new mongoose.Schema(
     likes: {
       type: Number,
       default: 0,
-      required: true,
+      required: false,
     },
   },
   {
