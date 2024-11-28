@@ -65,22 +65,29 @@ function LoginPage() {
     <img
       src={Login1}
       className="w-full h-3/5 object-cover" />
+
     
   </div>
   <div id="slide2" className="carousel-item w-full">
     <img
       src={Login2}
       className="w-full h-3/5 object-cover" />
+
   </div>
+
   <div id="slide3" className="carousel-item w-full">
     <img
       src={Login3}
       className="w-full h-3/5 object-cover" />
+
+
   </div>
+  
   <div id="slide4" className="carousel-item w-full">
     <img
       src={Login4}
       className="w-full h-3/5 object-cover" />
+
   </div>
 </div>
 

@@ -1,14 +1,84 @@
 import React from "react";
+import{ useState } from "react";
+import Swal from 'sweetalert2'
 import LoginButton from "../components/HomePage/Loginbutton.jsx";
 import Homenavbar from "../components/HomePage/Homenavbar.jsx"
 import Logo1 from "../images/logo1.png"
 import Logo2 from "../images/logo2.png"
+
 import { ClipboardPenLine } from 'lucide-react';
 import { UserCheck } from 'lucide-react';
 import { BicepsFlexed } from 'lucide-react';
 import { BadgeDollarSign } from 'lucide-react';
 
-function HomePage() {
+function RegisterPage() {
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    repeatPassword: "",
+    agreeToTerms: false,
+  });
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { id, type, value, checked } = e.target;
+    setFormData({
+      ...formData,
+      [id]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    let validAccount = false
+    e.preventDefault(); // Prevent the default form submission
+
+    // Check if passwords match
+    if (formData.password !== formData.repeatPassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Passwords do not match!',
+        text: 'Please check your password entries.'
+      })
+    }
+    else {
+      validAccount = true
+      Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful!',
+        text: 'Redirecting you...'
+      })
+    }
+
+  if(validAccount) {
+    try {
+      // Send the data to the server.
+      const response = await fetch("https://jsonplaceholder.typicode.com/posts", { // this is a placeholder server
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+      
+
+      console.log("Server Response:", data);
+
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again later.");
+    }
+  }
+    
+  };
+
   return (
     <div>
       
@@ -30,7 +100,7 @@ function HomePage() {
           <img src= {Logo1} className="absolute animate-bounce  p-0 border-0 left-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />
           <img src= {Logo2} className="absolute animate-bounce  p-0 border-0 right-0  mt-12 max-w-full h-auto" alt="Positioned Image" draggable="false" />  
           
-          <form class=" relative max-w-sm mx-auto mt-12 bg-local">
+          <form onSubmit={handleSubmit} class=" relative max-w-sm mx-auto mt-12 bg-local">
           
 
             <div class="mb-9">
@@ -43,6 +113,9 @@ function HomePage() {
               <input
                 type="email"
                 id="email"
+                value={formData.email} // The value of the user's email
+                onChange={handleChange} // Capture input
+
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 placeholder="name@ucla.com"
                 required
@@ -55,9 +128,13 @@ function HomePage() {
               >
                 Your Password:
               </label>
+
               <input
                 type="password"
                 id="password"
+                value={formData.password} // The value of the user's password.
+                onChange={handleChange} // Capture input
+
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 required
               />
@@ -71,18 +148,24 @@ function HomePage() {
               </label>
               <input
                 type="password"
-                id="repeat-password"
+                id="repeatPassword"
+                value={formData.repeatPassword} // The value of the user's repeated password.
+                onChange={handleChange} // Capture input
+
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 required
               />
+              
             </div>
             <div class="right-30 flex items-start mb-9">
               <div class="flex items-center h-5">
                 <input
-                  id="terms"
+                  id="agreeToTerms"
                   type="checkbox"
-                  value=""
-                  class="w-4 h-4  border border-gray-300 rounded bg-white focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-white-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+
+                  checked={formData.agreeToTerms} // Whether or not the user checked the box
+                  onChange={handleChange} // Capture checkbox state
+                  class="w-4 h-4  border border-gray-300 rounded bg-white focus:ring-3 focus:ring-cyan-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-white-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                   required
                 />
               </div>
@@ -94,14 +177,15 @@ function HomePage() {
                 I agree with the{" "}
                 <a
                   href="#"
-                  class="text-blue-600 hover:underline dark:text-blue-500"
+                  class="text-cyan-600 hover:underline dark:text-cyan-500"
                 >
                   terms and conditions
                 </a>
               </label>
             </div>
-            <div className = "flex">
-              <button 
+
+            <div className = "flex">  
+              <button   // REGISTER BUTTON
                 type="submit"
                 className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 ">
                 Register new account
@@ -160,4 +244,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default RegisterPage;
