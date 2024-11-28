@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import Loginnavbar from "../components/LoginPage/Loginnavbar.jsx";
 import Registerbutton from "../components/LoginPage/Registerbutton.jsx";
+import Reviewcarousel from "../components/LoginPage/reviewCarousel.jsx"
 
 import Login1 from "../images/login1.jpg"
 import Login2 from "../images/login2.jpg"
@@ -151,11 +152,13 @@ function LoginPage() {
       <div className="w-full flex justify-end pr-52" alt="Testimonal">
         <p className="italic max-w-md -mt-60">
 
-          <span className="animate-pulse">
+        <Reviewcarousel/>
+
+          {/* <span className="animate-pulse">
             "Prospectus transformed my job application process! The personalized feedback was spot-on, and the clear, actionable suggestions helped me craft a resume that stood out to employers. Thanks to Prospectus, I landed my dream internship this summer. I can't recommend it enough!"
           </span>
 
-          <span className="animate-none not-italic font-bold">- Jason Ni</span>
+          <span className="animate-none not-italic font-bold">- Jason Ni</span> */}
         </p>
       </div>
 
