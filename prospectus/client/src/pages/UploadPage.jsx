@@ -41,11 +41,10 @@ function UploadPage() {
   const isBodyLimitReached = bodyCount >= BODYLIMIT;
 
   const handleSubmit = async (event) => {
-    const formData = {
-      name: title,
-      description: body,
-      image: file,
-    };
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("body", body);
+    formData.append("file", file);
 
     axios
       .post("http://localhost:8080/api/posts", formData)
