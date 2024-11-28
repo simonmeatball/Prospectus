@@ -6,11 +6,12 @@ import Login1 from "../images/login1.jpg"
 import Login2 from "../images/login2.jpg"
 import Login3 from "../images/login3.jpg"
 import Login4 from "../images/login4.jpg"
+import ducks from "../images/ducks.png"
 
 function LoginPage() {
   return (
     
-    <div className = "font-sans bg-cyan-100" >
+    <div className = "bg-cyan-100 font-sans" >
       <Loginnavbar/>
       
     <div className = "absolute text-cyan-500 mt-36 ml-20 bg-white rounded-3xl p-5">
@@ -18,7 +19,7 @@ function LoginPage() {
       <p className = "ml-2 mt-3"> Please enter your details</p>
 
       <form className=" max-w-sm mt-5 bg-local">
-      <div className="mb-9">
+      <div className="mb-6">
               <label
                 for="email"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
@@ -61,21 +62,30 @@ function LoginPage() {
     </div>
   
     <div className="carousel h-screen w-screen">
+    
   <div id="slide1" className="carousel-item w-full">
+    <img
+      src={ducks} draggable = "false" 
+      className=" w-full h-3/5 object-cover" />
+
+    
+  </div>
+      
+  <div id="slide2" className="carousel-item w-full">
     <img
       src={Login1}
       className="w-full h-3/5 object-cover" />
 
     
   </div>
-  <div id="slide2" className="carousel-item w-full">
+  <div id="slide3" className="carousel-item w-full">
     <img
       src={Login2}
       className="w-full h-3/5 object-cover" />
 
   </div>
 
-  <div id="slide3" className="carousel-item w-full">
+  <div id="slide4" className="carousel-item w-full">
     <img
       src={Login3}
       className="w-full h-3/5 object-cover" />
@@ -83,7 +93,7 @@ function LoginPage() {
 
   </div>
   
-  <div id="slide4" className="carousel-item w-full">
+  <div id="slide5" className="carousel-item w-full">
     <img
       src={Login4}
       className="w-full h-3/5 object-cover" />
