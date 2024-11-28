@@ -1,6 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const PostCard = ({ post }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/post/${post._id}`);
+  };
+
   const getFileType = (contentType) => {
     if (!contentType) return null;
     if (contentType.includes("image")) return "image";
@@ -41,7 +48,10 @@ const PostCard = ({ post }) => {
   };
 
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg m-4 bg-white">
+    <div
+      className="max-w-sm rounded overflow-hidden shadow-lg m-4 bg-white cursor-pointer hover:shadow-xl transition-shadow"
+      onClick={handleClick}
+    >
       {post.image && renderFile()}
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{post.title}</div>

@@ -22,6 +22,7 @@ function UploadPage() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [file, setFile] = useState(null);
+  const [userID, setUserID] = useState("");
 
   const handleTitleChange = (event) => {
     const newTitle = event.target.value;
@@ -39,6 +40,10 @@ function UploadPage() {
     setFile(event.target.files[0]);
   };
 
+  const handleUserIDChange = (event) => {
+    setUserID(event.target.value);
+  };
+
   const isTitleLimitReached = titleCount >= TITLELIMIT;
   const isBodyLimitReached = bodyCount >= BODYLIMIT;
 
@@ -48,6 +53,7 @@ function UploadPage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("body", body);
+    formData.append("userID", userID);
     if (file) {
       formData.append("file", file);
     }
@@ -69,6 +75,7 @@ function UploadPage() {
         setTitle("");
         setBody("");
         setFile(null);
+        setUserID("");
         setTitleCount(0);
         setBodyCount(0);
         // Redirect to posts page
@@ -93,6 +100,23 @@ function UploadPage() {
             className="max-w-sm mx-auto mt-12 bg-local"
           >
             <div className="text-2xl font-bold pb-4">Create Post</div>
+            <div className="mb-7">
+              <label
+                htmlFor="userID"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+              >
+                User ID<span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="userID"
+                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                placeholder="Enter your user ID"
+                value={userID}
+                onChange={handleUserIDChange}
+                required
+              />
+            </div>
             <div className="mb-7">
               <label
                 htmlFor="title"

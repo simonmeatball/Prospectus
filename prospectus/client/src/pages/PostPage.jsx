@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import {
@@ -15,18 +15,57 @@ import { Heart, MessageCircle, Plus, X } from "lucide-react";
 import { formatDistance } from "date-fns";
 import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
+import axios from "axios";
 
 export default function PostPage() {
   const { postID } = useParams();
-  const [post, setPost] = useState(allPosts[postID]);
-  const profile = allProfiles[post.profileID];
-  const reviews = post.reviewIDs.map((reviewID) => allReviews[reviewID]);
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [reviewFormShown, setReviewFormShown] = useState(false);
   const [inputText, setInputText] = useState("");
   const [dropdownShown, setDropdownShown] = useState(false);
   const [sortBy, setSortBy] = useState("Most recent");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/posts/${postID}`
+        );
+        if (response.data.success) {
+          setPost(response.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching post:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [postID]);
+
+  if (loading || !post) {
+    return (
+      <div>
+        <Navbar />
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Temporary mock data for profile and reviews until we implement those features
+  const profile = {
+    name: "User",
+    username: post.userID,
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+  };
+  const reviews = [];
 
   function sortReviews() {
     switch (sortBy) {
@@ -52,22 +91,16 @@ export default function PostPage() {
       <Navbar />
       <div className="flex gap-8 m-8 justify-center">
         <div className="flex flex-col items-center">
-          <div
-            className="avatar mb-2 cursor-pointer"
-            onClick={() => navigate(`/profile/${profile.username}`)}
-          >
+          <div className="avatar mb-2 cursor-pointer">
             <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
-              <img src={profile.avatar} />
+              <img src={profile.avatar} alt="Profile" />
             </div>
           </div>
           {profile.name}
           <p className="text-gray-500">@{profile.username}</p>
           <div>
-            <p
-              className="text-gray-500 mb-4 tooltip tooltip-primary tooltip-bottom"
-              data-tip={post.time.toLocaleString()}
-            >
-              {formatDistance(post.time, Date(), { addSuffix: true })}
+            <p className="text-gray-500 mb-4">
+              {new Date(post.createdAt).toLocaleString()}
             </p>
           </div>
           <div className="flex flex-col gap-4 items-center">
@@ -93,30 +126,31 @@ export default function PostPage() {
                 size={36}
                 absoluteStrokeWidth
                 className="cursor-pointer"
-                onClick={() => {
-                  setReviewFormShown(!reviewFormShown);
-                  setInputText("");
-                }}
               />
               {reviews.length}
-            </div>
-            <div className="flex gap-2 items-center">
-              {getStars(reviews, 36)}
-              {getAverageRating(reviews)}
             </div>
           </div>
         </div>
         <div className="w-3/4">
           <h1 className="text-3xl mb-2">{post.title}</h1>
-          <div className="flex gap-2 mb-2">
-            {post.tags.map((tag) => (
-              <div className={`rounded-lg p-1.5 ${tags[tag]}`}>{tag}</div>
-            ))}
-          </div>
-          <div className="mb-2">{post.text}</div>
-          <div className="bg-gray-200 h-64 flex justify-center items-center">
-            Sample Resume
-          </div>
+          <div className="mb-2">{post.body}</div>
+          {post.image && (
+            <div className="bg-gray-200 min-h-64 flex justify-center items-center">
+              {post.fileType === "application/pdf" ? (
+                <embed
+                  src={`http://localhost:8080/api/posts/file/${post.image}`}
+                  type="application/pdf"
+                  className="w-full h-[600px]"
+                />
+              ) : (
+                <img
+                  src={`http://localhost:8080/api/posts/file/${post.image}`}
+                  alt={post.title}
+                  className="max-w-full"
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
       <div className="w-11/12 mx-auto h-px bg-gray-500"></div>

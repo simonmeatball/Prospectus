@@ -23,11 +23,12 @@ const getPosts = async (req, res) => {
 // Create a new post
 const createPost = async (req, res) => {
   try {
-    const { title, body } = req.body;
+    const { title, body, userID } = req.body;
 
     const postData = {
       title,
       body,
+      userID,
     };
 
     if (req.file) {
@@ -52,10 +53,10 @@ const createPost = async (req, res) => {
     }
 
     // Validate required fields
-    if (!title || !body) {
+    if (!title || !body || !userID) {
       return res.status(400).json({
         success: false,
-        message: "Title and body are required",
+        message: "Title, body, and userID are required",
       });
     }
 
@@ -144,8 +145,26 @@ const getFile = async (req, res) => {
   }
 };
 
+// Add this new function to your existing controller
+const getPost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+    res.status(200).json({ success: true, data: post });
+  } catch (err) {
+    console.error("Error fetching post", err.message);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 module.exports = {
   getPosts,
+  getPost, // Add this to the exports
   createPost,
   deletePost,
   likePost,

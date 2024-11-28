@@ -9,6 +9,7 @@ const {
   likePost,
   unlikePost,
   getFile,
+  getPost,
 } = require("../controllers/post.controller.js");
 
 // Configure multer for memory storage
@@ -53,5 +54,8 @@ router.patch("/:id/like", likePost);
 
 // Route for unliking a post
 router.patch("/:id/unlike", unlikePost);
+
+// Route for getting a post by ID
+router.get("/:id", getPost);
 
 module.exports = router;

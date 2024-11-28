@@ -27,7 +27,7 @@ const postSchema = new mongoose.Schema(
     userID: {
       type: String,
       ref: "User",
-      required: false,
+      required: true,
     },
   },
   {
