@@ -245,14 +245,3 @@ allPosts.forEach((post) => {
     }
   }
 });
-
-console.log(allProfiles);
-console.log(allPosts);
-console.log(allReviews);
-
-console.log(allProfiles.filter((profile) => profile.postIDs.length === 0));
-console.log(allProfiles.filter((profile) => profile.reviewIDs.length === 0));
-console.log(allPosts.filter((post) => post.profileID === null));
-console.log(allPosts.filter((post) => post.reviewIDs.length === 0));
-console.log(allReviews.filter((review) => review.profileID === null));
-console.log(allReviews.filter((review) => review.postID === null));

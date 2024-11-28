@@ -23,10 +23,16 @@ export default function ProfilePage() {
         <p className="text-3xl">{profile.name}</p>
         <p className="text-gray-500 text-lg mb-4">@{profile.username}</p>
         <div className="flex gap-4 mb-4">
-          <button className="btn" onClick={() => setView("posts")}>
+          <button
+            className={`btn ${view === "posts" ? "btn-primary" : ""}`}
+            onClick={() => setView("posts")}
+          >
             Posts
           </button>
-          <button className="btn" onClick={() => setView("reviews")}>
+          <button
+            className={`btn ${view === "reviews" ? "btn-primary" : ""}`}
+            onClick={() => setView("reviews")}
+          >
             Reviews
           </button>
         </div>
