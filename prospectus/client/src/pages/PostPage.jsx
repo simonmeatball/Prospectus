@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
-import {
-  tags,
-  getAverageRating,
-  getStars,
-  randomInt,
-  generateReview,
-  allProfiles,
-  allPosts,
-  allReviews,
-} from "../utility.jsx";
 import { Heart, MessageCircle } from "lucide-react";
 import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
@@ -256,82 +246,99 @@ export default function PostPage() {
     ));
   };
 
-  const renderComments = () => (
-    <div className="mt-8 max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
-        <DropdownMenu
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          dropdownShown={dropdownShown}
-          setDropdownShown={setDropdownShown}
-        />
-      </div>
-      {user ? (
-        <form onSubmit={handleCommentSubmit} className="mb-6">
-          <textarea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Write a comment..."
-            className="w-full p-2 border rounded-lg mb-2"
+  const sortComments = (comments) => {
+    return comments.sort((a, b) => {
+      if (sortBy === "Most recent") {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      } else if (sortBy === "Least recent") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+      return 0;
+    });
+  };
+
+  const renderComments = () => {
+    const sortedComments = sortComments(comments);
+
+    return (
+      <div className="mt-8 max-w-3xl mx-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">
+            Comments ({comments.length})
+          </h2>
+          <DropdownMenu
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            dropdownShown={dropdownShown}
+            setDropdownShown={setDropdownShown}
           />
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={!commentText.trim()}
-          >
-            Post Comment
-          </button>
-        </form>
-      ) : (
-        <p className="text-gray-500 mb-6">Please login to comment</p>
-      )}
-      <div className="space-y-4">
-        {comments.map((comment) => (
-          <div key={comment._id} className="p-4 bg-white rounded-lg border">
-            <p className="text-sm font-medium">@{comment.username}</p>
-            <p className="mt-1">{comment.text}</p>
-            <p className="text-xs text-gray-500 mt-2">
-              {new Date(comment.createdAt).toLocaleString()}
-            </p>
-            {user && (
-              <button
-                className="text-blue-500 text-sm mt-2"
-                onClick={() => setReplyingTo(comment._id)}
-              >
-                Reply
-              </button>
-            )}
-            {replyingTo === comment._id && (
-              <form onSubmit={handleReplySubmit} className="mt-2">
-                <textarea
-                  value={replyText} // Use replyText instead of commentText
-                  onChange={(e) => setReplyText(e.target.value)} // Use setReplyText instead of setCommentText
-                  placeholder="Write a reply..."
-                  className="w-full p-2 border rounded-lg mb-2"
-                />
+        </div>
+        {user ? (
+          <form onSubmit={handleCommentSubmit} className="mb-6">
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Write a comment..."
+              className="w-full p-2 border rounded-lg mb-2"
+            />
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={!commentText.trim()}
+            >
+              Post Comment
+            </button>
+          </form>
+        ) : (
+          <p className="text-gray-500 mb-6">Please login to comment</p>
+        )}
+        <div className="space-y-4">
+          {sortedComments.map((comment) => (
+            <div key={comment._id} className="p-4 bg-white rounded-lg border">
+              <p className="text-sm font-medium">@{comment.username}</p>
+              <p className="mt-1">{comment.text}</p>
+              <p className="text-xs text-gray-500 mt-2">
+                {new Date(comment.createdAt).toLocaleString()}
+              </p>
+              {user && (
                 <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={!replyText.trim()} // Use replyText instead of commentText
+                  className="text-blue-500 text-sm mt-2"
+                  onClick={() => setReplyingTo(comment._id)}
                 >
-                  Post Reply
+                  Reply
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-secondary ml-2"
-                  onClick={() => setReplyingTo(null)}
-                >
-                  Cancel
-                </button>
-              </form>
-            )}
-            {renderReplies(comment.replies)}
-          </div>
-        ))}
+              )}
+              {replyingTo === comment._id && (
+                <form onSubmit={handleReplySubmit} className="mt-2">
+                  <textarea
+                    value={replyText} // Use replyText instead of commentText
+                    onChange={(e) => setReplyText(e.target.value)} // Use setReplyText instead of setCommentText
+                    placeholder="Write a reply..."
+                    className="w-full p-2 border rounded-lg mb-2"
+                  />
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={!replyText.trim()} // Use replyText instead of commentText
+                  >
+                    Post Reply
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary ml-2"
+                    onClick={() => setReplyingTo(null)}
+                  >
+                    Cancel
+                  </button>
+                </form>
+              )}
+              {renderReplies(comment.replies)}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (loading || !post) {
     return (
