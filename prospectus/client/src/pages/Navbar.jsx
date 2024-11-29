@@ -54,9 +54,6 @@ export default function Navbar() {
                 <span className="badge">New</span>
               </Link>
             </li>
-            <li>
-              <a>Settings</a>
-            </li>
             {isAuthenticated && (
               <li>
                 <Link to="/upload">Upload Post</Link>

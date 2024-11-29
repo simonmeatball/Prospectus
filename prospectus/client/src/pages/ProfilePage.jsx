@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { useParams } from "react-router-dom";
 import MiniPost from "../components/ProfilePage/MiniPost";
+import PostCard from "../components/PostCard";
 import axios from "axios";
+
 
 export default function ProfilePage() {
   const { username } = useParams();
@@ -10,13 +12,22 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [view, setView] = useState("posts");
+  const [posts, setPosts] = useState([]);
+
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/users/username/${username}`);
+
         setProfile(response.data);
         setLoading(false);
+
+
+       console.log("fetched:", response.data.userId); 
+       const response2 = await axios.get(`http://localhost:8080/api/users/${response.data.userId}/posts`);
+       console.log("r2.data.data", response2.data.data.posts);
+       setPosts(response2.data.data.posts);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load profile");
         setLoading(false);
@@ -25,6 +36,10 @@ export default function ProfilePage() {
 
     fetchProfile();
   }, [username]);
+
+  useEffect(()=> {
+    console.log("posts", posts);;
+  }, [posts]);
 
   if (loading) {
     return (
@@ -73,6 +88,7 @@ export default function ProfilePage() {
           </button>
         </div>
       </div>
+{/*
       {view === "posts" && profile.posts && profile.posts.length > 0 ? (
         <div className="container mx-auto px-4">
           {profile.posts.map((post) => (
@@ -80,12 +96,22 @@ export default function ProfilePage() {
               <MiniPost post={post} />
             </div>
           ))}
-        </div>
-      ) : (
-        <div className="text-center text-gray-500 mt-8">
-          No posts yet
-        </div>
-      )}
-    </div>
-  );
+        </div>*/}
+
+
+     {view == "posts" && posts.length > 0? (
+        <div className="container mx-auto px-4">
+          {posts.map((post) => (
+            //<div key={post._id} className="mb-4">
+              <PostCard key={post._id} post={post} /> 
+            //</div>
+          ))}
+        </div>
+      ):(
+        <div className="text-center text-gray-500 mt-8">
+          No posts yet
+        </div>
+      )}
+      </div>
+); 
 }
