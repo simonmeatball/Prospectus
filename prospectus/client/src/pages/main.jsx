@@ -15,7 +15,7 @@ root.render(
     <div class="pt-16">
       <Router>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/post/:postID" element={<PostPage />} />
           <Route path="/upload" element={<UploadPage />} />
