@@ -21,6 +21,7 @@ function LoginPage() {
         password: "",
     });
 
+    const [error, setError] = useState("");
     const navigate = useNavigate();
     const { login } = useAuth();
 
@@ -123,8 +124,6 @@ function LoginPage() {
                 </form>
 
 
-
-
                 <Registerbutton />
             </div>
 
@@ -136,10 +135,6 @@ function LoginPage() {
                     <img
                         src={ducks} draggable="false"
                         className=" w-full h-3/5 object-cover" />
-
-
-
-
                 </div>
 
 
@@ -147,9 +142,6 @@ function LoginPage() {
                     <img
                         src={Login1}
                         className="w-full h-3/5 object-cover" />
-
-
-
 
                 </div>
                 <div id="slide3" className="carousel-item w-full">
@@ -166,17 +158,12 @@ function LoginPage() {
                         src={Login3}
                         className="w-full h-3/5 object-cover" />
 
-
-
-
                 </div>
-
 
                 <div id="slide5" className="carousel-item w-full">
                     <img
                         src={Login4}
                         className="w-full h-3/5 object-cover" />
-
 
                 </div>
             </div>
@@ -188,18 +175,8 @@ function LoginPage() {
 
                     <Reviewcarousel />
 
-
-                    {/* <span className="animate-pulse">
-            "Prospectus transformed my job application process! The personalized feedback was spot-on, and the clear, actionable suggestions helped me craft a resume that stood out to employers. Thanks to Prospectus, I landed my dream internship this summer. I can't recommend it enough!"
-          </span>
-
-
-          <span className="animate-none not-italic font-bold">- Jason Ni</span> */}
                 </p>
             </div>
-
-
-
 
         </div>
     );

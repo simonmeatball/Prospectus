@@ -31,7 +31,7 @@ root.render(
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/posts" element={<PostsPage />} />
             <Route path="/profile/:username" element={<ProfilePage />} />
-            
+
           </Routes>
         </Router>
       </div>

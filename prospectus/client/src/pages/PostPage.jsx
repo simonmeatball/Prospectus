@@ -244,18 +244,16 @@ export default function PostPage() {
             <div className="flex items-center gap-4 mt-4">
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-2 ${
-                  liked
+                className={`flex items-center gap-2 ${liked
                     ? "text-red-500 hover:text-red-600"
                     : "text-gray-600 hover:text-gray-700"
-                } transition-colors duration-200`}
+                  } transition-colors duration-200`}
               >
                 <Heart
-                  className={`w-8 h-8 transition-transform duration-200 hover:scale-110 ${
-                    liked
+                  className={`w-8 h-8 transition-transform duration-200 hover:scale-110 ${liked
                       ? "fill-red-500 stroke-red-500"
                       : "stroke-current hover:fill-gray-200"
-                  }`}
+                    }`}
                 />
                 <span className="text-lg font-medium">{post?.likes || 0}</span>
               </button>
