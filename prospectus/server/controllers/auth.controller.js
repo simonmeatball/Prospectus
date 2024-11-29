@@ -5,17 +5,20 @@ const { v4: uuidv4 } = require("uuid");
 // Register a new user
 const register = async (req, res) => {
   try {
+   
     const { email, password, name, accountType = "candidate", university, username } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log("YEET")
       return res.status(400).json({ message: "Email already registered" });
     }
 
     // Check if username is taken
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
+      console.log("YEET")
       return res.status(400).json({ message: "Username already taken" });
     }
 
