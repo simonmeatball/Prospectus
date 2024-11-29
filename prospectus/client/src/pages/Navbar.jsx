@@ -12,7 +12,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="navbar bg-base-100 fixed top-0 z-10">
+    <div className="navbar bg-blue-100 fixed top-0 z-10">
       <div className="flex-1">
         <Link className="btn btn-ghost font-bold italic text-xl" to="/">
           prospectus
