@@ -7,6 +7,8 @@ import PostPage from "./PostPage.jsx";
 import UploadPage from "./UploadPage.jsx";
 import PostsPage from "./PostsPage.jsx";
 import ProfilePage from "./ProfilePage.jsx";
+
+import RegisterPage from "./RegisterPage.jsx"
 import { AuthProvider } from "../context/AuthContext";
 import "../styles/App.css";
 
@@ -19,7 +21,7 @@ root.render(
           <Routes>
             <Route path="/" element={<PostsPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/post/:postID" element={<PostPage />} />
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/posts" element={<PostsPage />} />

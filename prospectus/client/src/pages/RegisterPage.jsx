@@ -1,9 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import Swal from 'sweetalert2'
-import LoginButton from "../components/RegisterPage/Loginbutton.jsx";
-import Homenavbar from "../components/HomePage/Homenavbar.jsx"
-import Terms from "../components/HomePage/Terms.jsx"
+
+import LoginButton from "../components/RegisterPage/LoginButton.jsx";
+import Registernavbar from "../components/RegisterPage/Registernavbar.jsx"
+import Terms from "../components/RegisterPage/Terms.jsx"
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -84,8 +85,7 @@ function RegisterPage() {
 
 return (
   <div style={{ userSelect: "none" }}>
-    <Homenavbar />
-
+    <Registernavbar />
 
     <div className="font-sans">
 
@@ -203,7 +203,7 @@ return (
 
 
             {/* This button allows users to navigate to the login page, if they already have an account and don't want to register a new one. */}
-            <LoginButton />  {/* onClick={toggleMode} */}
+            <LoginButton /> 
           </div>
         </form>
 
