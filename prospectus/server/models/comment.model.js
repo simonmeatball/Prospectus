@@ -5,7 +5,14 @@ const commentSchema = new mongoose.Schema(
     postID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
-      required: true,
+      default: null,
+      required: false,
+    },
+    parentCommentID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+      required: false,
     },
     username: {
       type: String,
