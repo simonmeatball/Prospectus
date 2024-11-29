@@ -15,6 +15,8 @@ import { Heart, MessageCircle, Plus, X } from "lucide-react";
 import { formatDistance } from "date-fns";
 import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
+import ReplyForm from "../components/PostPage/ReplyForm";
+import Reply from "../components/PostPage/Reply";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
@@ -29,6 +31,8 @@ export default function PostPage() {
   const [sortBy, setSortBy] = useState("Most recent");
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [replyText, setReplyText] = useState(""); // Add new state for reply text
+  const [replyingTo, setReplyingTo] = useState(null);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -62,7 +66,7 @@ export default function PostPage() {
     const fetchComments = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/comments`, {
-          params: { postID: postID }, // Use URL param postID instead of post._id
+          params: { postID: postID },
         });
         if (response.data.success) {
           setComments(response.data.data);
@@ -73,7 +77,6 @@ export default function PostPage() {
     };
 
     if (postID) {
-      // Changed from post?._id to postID
       fetchComments();
     }
   }, [postID]); // Changed dependency from post to postID
@@ -120,6 +123,7 @@ export default function PostPage() {
         text: commentText,
         postID: postID, // Use URL param postID
         username: user.username, // Use username instead of userID
+        replies: [],
       });
 
       if (response.data.success) {
@@ -142,6 +146,193 @@ export default function PostPage() {
       );
     }
   };
+
+  const handleReplySubmit = async (e) => {
+    e.preventDefault();
+    if (!replyText.trim() || !user || !replyingTo) return;
+
+    try {
+      console.log("Submitting reply:", {
+        text: replyText,
+        postID: null, // Set postID to null
+        username: user.username,
+        parentCommentID: replyingTo, // Include parentCommentID
+      });
+
+      const response = await axios.post("http://localhost:8080/api/comments", {
+        text: replyText,
+        postID: null, // Set postID to null
+        username: user.username,
+        parentCommentID: replyingTo, // Include parentCommentID
+        replies: [],
+      });
+
+      if (response.data.success) {
+        const newReply = response.data.data;
+
+        // Update the parent comment's replies array
+        const updateReplies = (comments, parentId, newReply) => {
+          return comments.map((comment) => {
+            if (comment._id === parentId) {
+              return {
+                ...comment,
+                replies: [...comment.replies, newReply],
+              };
+            }
+            if (comment.replies && comment.replies.length > 0) {
+              return {
+                ...comment,
+                replies: updateReplies(comment.replies, parentId, newReply),
+              };
+            }
+            return comment;
+          });
+        };
+
+        setComments((prevComments) =>
+          updateReplies(prevComments, replyingTo, newReply)
+        );
+
+        setReplyText(""); // Clear reply text
+        setReplyingTo(null);
+      }
+    } catch (err) {
+      console.error("Error posting reply:", err.response?.data || err);
+      alert(
+        "Error posting reply: " + (err.response?.data?.message || err.message)
+      );
+    }
+  };
+
+  const handleReply = (newReply) => {
+    setComments((prevComments) => [...prevComments, newReply]);
+  };
+
+  const renderReplies = (replies) => {
+    if (!replies) return null; // Add check to ensure replies is defined
+    return replies.map((reply) => (
+      <div key={reply._id} className="ml-8 mt-4">
+        <div className="p-4 bg-gray-100 rounded-lg border">
+          <p className="text-sm font-medium">@{reply.username || "Unknown"}</p>{" "}
+          {/* Ensure username is displayed */}
+          <p className="mt-1">{reply.text || "No content"}</p>{" "}
+          {/* Ensure text is displayed */}
+          <p className="text-xs text-gray-500 mt-2">
+            {reply.createdAt
+              ? new Date(reply.createdAt).toLocaleString()
+              : "Invalid Date"}{" "}
+            {/* Ensure date is displayed */}
+          </p>
+          <button
+            className="text-blue-500 text-sm mt-2"
+            onClick={() => setReplyingTo(reply._id)}
+          >
+            Reply
+          </button>
+          {replyingTo === reply._id && (
+            <form onSubmit={handleReplySubmit} className="mt-2">
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Write a reply..."
+                className="w-full p-2 border rounded-lg mb-2"
+              />
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={!replyText.trim()}
+              >
+                Post Reply
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary ml-2"
+                onClick={() => setReplyingTo(null)}
+              >
+                Cancel
+              </button>
+            </form>
+          )}
+          {renderReplies(reply.replies)}
+        </div>
+      </div>
+    ));
+  };
+
+  const renderComments = () => (
+    <div className="mt-8 max-w-3xl mx-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
+        <DropdownMenu
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          dropdownShown={dropdownShown}
+          setDropdownShown={setDropdownShown}
+        />
+      </div>
+      {user ? (
+        <form onSubmit={handleCommentSubmit} className="mb-6">
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Write a comment..."
+            className="w-full p-2 border rounded-lg mb-2"
+          />
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!commentText.trim()}
+          >
+            Post Comment
+          </button>
+        </form>
+      ) : (
+        <p className="text-gray-500 mb-6">Please login to comment</p>
+      )}
+      <div className="space-y-4">
+        {comments.map((comment) => (
+          <div key={comment._id} className="p-4 bg-white rounded-lg border">
+            <p className="text-sm font-medium">@{comment.username}</p>
+            <p className="mt-1">{comment.text}</p>
+            <p className="text-xs text-gray-500 mt-2">
+              {new Date(comment.createdAt).toLocaleString()}
+            </p>
+            <button
+              className="text-blue-500 text-sm mt-2"
+              onClick={() => setReplyingTo(comment._id)}
+            >
+              Reply
+            </button>
+            {replyingTo === comment._id && (
+              <form onSubmit={handleReplySubmit} className="mt-2">
+                <textarea
+                  value={replyText} // Use replyText instead of commentText
+                  onChange={(e) => setReplyText(e.target.value)} // Use setReplyText instead of setCommentText
+                  placeholder="Write a reply..."
+                  className="w-full p-2 border rounded-lg mb-2"
+                />
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={!replyText.trim()} // Use replyText instead of commentText
+                >
+                  Post Reply
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary ml-2"
+                  onClick={() => setReplyingTo(null)}
+                >
+                  Cancel
+                </button>
+              </form>
+            )}
+            {renderReplies(comment.replies)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   if (loading || !post) {
     return (
@@ -184,44 +375,6 @@ export default function PostPage() {
         return reviews.sort();
     }
   }
-
-  const renderComments = () => (
-    <div className="mt-8 max-w-3xl mx-auto">
-      <h2 className="text-xl font-semibold mb-4">
-        Comments ({comments.length})
-      </h2>
-      {user ? (
-        <form onSubmit={handleCommentSubmit} className="mb-6">
-          <textarea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Write a comment..."
-            className="w-full p-2 border rounded-lg mb-2"
-          />
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={!commentText.trim()}
-          >
-            Post Comment
-          </button>
-        </form>
-      ) : (
-        <p className="text-gray-500 mb-6">Please login to comment</p>
-      )}
-      <div className="space-y-4">
-        {comments.map((comment) => (
-          <div key={comment._id} className="p-4 bg-white rounded-lg border">
-            <p className="text-sm font-medium">@{comment.username}</p>
-            <p className="mt-1">{comment.text}</p>
-            <p className="text-xs text-gray-500 mt-2">
-              {new Date(comment.createdAt).toLocaleString()}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 
   return (
     <div>
@@ -295,96 +448,7 @@ export default function PostPage() {
       <div className="w-11/12 mx-auto h-px bg-gray-500"></div>
       <div className="w-11/12 mx-auto">
         {renderComments()}
-        <div className="flex justify-between items-center">
-          <div className={reviewFormShown && "invisible"}>
-            <DropdownMenu
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              dropdownShown={dropdownShown}
-              setDropdownShown={setDropdownShown}
-            />
-          </div>
-          <button
-            className="btn"
-            onClick={() => {
-              setReviewFormShown(!reviewFormShown);
-              setInputText("");
-            }}
-          >
-            {reviewFormShown ? (
-              <div className="flex items-center gap-2">
-                Cancel
-                <X />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                Add a review
-                <Plus />
-              </div>
-            )}
-          </button>
-        </div>
-        {reviewFormShown && (
-          <div>
-            <div className="max-w-3xl mx-auto p-4 border rounded-lg shadow">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (!inputText) {
-                    return;
-                  }
-                  const review = generateReview(
-                    allReviews.length,
-                    inputText,
-                    +document.querySelector('input[name="rating-8"]:checked')
-                      .value
-                  );
-                  review.profileID = randomInt(0, 9);
-                  review.postID = post.id;
-                  allReviews.push(review);
-                  allProfiles[review.profileID].reviewIDs.push(review.id);
-                  allPosts[post.id].reviewIDs.push(review.id);
-                  setReviewFormShown(false);
-                }}
-              >
-                <h1 className="text-2xl mb-2">Add a review</h1>
-                <div className="rating rating-md mb-4">
-                  {[1, 2, 3, 4].map((value) => (
-                    <input
-                      type="radio"
-                      name="rating-8"
-                      value={value}
-                      className="mask mask-star-2"
-                    />
-                  ))}
-                  <input
-                    type="radio"
-                    name="rating-8"
-                    value={5}
-                    className="mask mask-star-2"
-                    defaultChecked
-                  />
-                </div>
-                <input
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  className="p-2 border rounded-lg w-full mb-4"
-                  placeholder="Review"
-                />
-                <button className="btn">Post</button>
-              </form>
-            </div>
-            <div>
-              <DropdownMenu
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-                dropdownShown={dropdownShown}
-                setDropdownShown={setDropdownShown}
-              />
-            </div>
-          </div>
-        )}
-        <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center">
+        <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center pb-8">
           {sortReviews().map((reviewItem) => (
             <div className="mb-4">
               <Review review={reviewItem} />
