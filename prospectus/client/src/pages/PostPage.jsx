@@ -11,12 +11,9 @@ import {
   allPosts,
   allReviews,
 } from "../utility.jsx";
-import { Heart, MessageCircle, Plus, X } from "lucide-react";
-import { formatDistance } from "date-fns";
+import { Heart, MessageCircle } from "lucide-react";
 import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
-import ReplyForm from "../components/PostPage/ReplyForm";
-import Reply from "../components/PostPage/Reply";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
@@ -25,8 +22,6 @@ export default function PostPage() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
-  const [reviewFormShown, setReviewFormShown] = useState(false);
-  const [inputText, setInputText] = useState("");
   const [dropdownShown, setDropdownShown] = useState(false);
   const [sortBy, setSortBy] = useState("Most recent");
   const [comments, setComments] = useState([]);
@@ -223,12 +218,14 @@ export default function PostPage() {
               : "Invalid Date"}{" "}
             {/* Ensure date is displayed */}
           </p>
-          <button
-            className="text-blue-500 text-sm mt-2"
-            onClick={() => setReplyingTo(reply._id)}
-          >
-            Reply
-          </button>
+          {user && (
+            <button
+              className="text-blue-500 text-sm mt-2"
+              onClick={() => setReplyingTo(reply._id)}
+            >
+              Reply
+            </button>
+          )}
           {replyingTo === reply._id && (
             <form onSubmit={handleReplySubmit} className="mt-2">
               <textarea
@@ -297,12 +294,14 @@ export default function PostPage() {
             <p className="text-xs text-gray-500 mt-2">
               {new Date(comment.createdAt).toLocaleString()}
             </p>
-            <button
-              className="text-blue-500 text-sm mt-2"
-              onClick={() => setReplyingTo(comment._id)}
-            >
-              Reply
-            </button>
+            {user && (
+              <button
+                className="text-blue-500 text-sm mt-2"
+                onClick={() => setReplyingTo(comment._id)}
+              >
+                Reply
+              </button>
+            )}
             {replyingTo === comment._id && (
               <form onSubmit={handleReplySubmit} className="mt-2">
                 <textarea
