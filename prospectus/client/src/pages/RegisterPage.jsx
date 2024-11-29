@@ -97,7 +97,7 @@ function RegisterPage() {
       <div className="font-sans">
 
 
-        <div class="bg-[url('../images/homebg.png')]  w-full bg-cover bg-no-repeat bg-center  w-full">
+        <div class="bg-[url('../images/homebg.png')]  w-full bg-cover bg-no-repeat bg-center">
 
 
           <div className="  text-amber-500 font-bold italic text-8xl tracking-wide pt-12 text-center ">
@@ -261,6 +261,7 @@ function RegisterPage() {
 
 
             <div className="flex">
+              
               <button   // REGISTER BUTTON
                 type="submit"
                 className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 ">
