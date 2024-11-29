@@ -9,6 +9,7 @@ import Login2 from "../images/login2.jpg"
 import Login3 from "../images/login3.jpg"
 import Login4 from "../images/login4.jpg"
 import ducks from "../images/ducks.png"
+import Swal from 'sweetalert2'
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -60,7 +61,14 @@ function LoginPage() {
                 navigate("/");
             }
         } catch (err) {
+            console.log("bob")
             setError(err.response?.data?.message || "Login failed");
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Registration Failed!',
+                text: err.response?.data?.message || "Registration failed"
+              });
         }
 
     }

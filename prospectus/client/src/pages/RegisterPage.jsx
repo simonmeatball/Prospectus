@@ -58,14 +58,7 @@ function RegisterPage() {
       setError("Passwords do not match!");
       return;
     }
-    else {
-      Swal.fire({
-        icon: 'success',
-        title: 'Registration Successful!',
-        text: 'Redirecting you...'
-      })
 
-    }
 
     try {
       const response = await axios.post("http://localhost:8080/api/auth/register", {
@@ -83,10 +76,28 @@ function RegisterPage() {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         login(response.data.user);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful!',
+          text: 'Redirecting you...'
+        })
+        
         navigate("/");  // Redirect to home page!
       }
     } catch (err) {
-      setError("Registration failed");
+      console.error('Registration failed:', err.response || err);
+  
+      setError(err.response?.data?.message || "Registration failed");
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed!',
+        text: err.response?.data?.message || "Registration failed"
+      });
+
+      
+
     }
 
   };
@@ -97,7 +108,7 @@ function RegisterPage() {
       <Registernavbar />
 
       <div className="font-sans">
-
+      {error && <div className="error-message">{error}</div>}
 
         <div class="bg-[url('../images/homebg.png')]  w-full bg-cover bg-no-repeat bg-center">
 
@@ -120,6 +131,7 @@ function RegisterPage() {
 
           <form onSubmit={handleSubmit} class=" relative max-w-sm mx-auto mt-12 bg-local">
 
+         
             <div class="mb-6">
               <label
                 for="email"
