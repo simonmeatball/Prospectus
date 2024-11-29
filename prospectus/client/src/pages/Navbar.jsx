@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
@@ -12,7 +12,9 @@ export default function Navbar() {
   const [results, setResults] = useState([]); 
   const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null); 
-  const [hasSearched, setHasSearched] = useState(false);
+  const [showResults, setShowResults] = useState(false); 
+
+  const resultContainer = useRef(null);
 
   const handleLogout = () => {
     logout();
@@ -22,20 +24,23 @@ export default function Navbar() {
   const handleSearchChange = (event) => { 
       setSearchQuery(event.target.value);
       console.log(event.target.value); 
+      setShowResults(true);
   }
 
   const handleSearch = async() => { 
-    if (!searchQuery.trim()) return; 
-
+    if (!searchQuery.trim()) {
+      setShowResults(false);
+      return; 
+    }
     setLoading(true);
     setError(null); 
-    setHasSearched(true);
+    console.log("search initiated:", searchQuery);
     
     try { 
       const response = await axios.get("http://localhost:8080/api/posts");
       if (response.data.success) { 
         const allPosts = response.data.data
-        console.log(response.data.data);
+        console.log("all posts fetched:", response.data.data);
       
       const filteredPosts = allPosts.filter((post) => 
         post.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -51,9 +56,27 @@ export default function Navbar() {
     }
   }; 
 
+  const handleResultClick = (postId) => {
+    navigate(`/post/${postId}`);
+    setShowResults(false);
+  }
+
+  const handleSelection = (index) => { 
+    if (results[index]) {
+      handleResultClick(results[index]._id);
+    }
+  };
+
+  const renderItem = (item) => { 
+    return (
+      <div className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2">
+        {item.title}
+      </div>
+    );
+  };
 
   return (
-    <div className="navbar bg-blue-100 fixed top-0 z-10">
+    <div className="navbar bg-blue-100 fixed top-0 z-10 w-full">
       <div className="flex-1">
         <Link className="btn btn-ghost font-bold italic text-xl" to="/">
           prospectus
@@ -65,7 +88,7 @@ export default function Navbar() {
             Upload Post
           </Link>
         )}
-        <div className="form-control">
+        <div className="form-control relative">
           <input
             type="text"
             placeholder="Search"
@@ -73,26 +96,37 @@ export default function Navbar() {
             value={searchQuery} 
             onChange={handleSearchChange}
             onKeyDown={(e) => {  
-              if (e.key == "Enter") handleSearch(); 
+              if (e.key == "Enter") {
+                handleSearch(); 
+              }
             }}
           />
         </div>
 
-        <div className="search-results mt-4">
-          {loading && <p>Loading...</p>}
-          {error && <p className="test-red-500">{error}</p>}
-          {hasSearched && results.length === 0 && !loading && (
-            <p>No results found</p>
-          )}
-          {results.length > 0 ? (
-            results.map((result) => (
-              <div key={results._id} className="result-item">
-                <h3>{result.title}</h3>
+        { showResults && (
+          <div 
+          className="absolute mt-2 w-full p-2 bg-white shadow-lg rounded-b max-h-56 overflow-y-auto z-[1]"
+          style = {{
+            top: 60 + "px",
+          }}
+          >
+            {results.map((item, index) => {
+              return (
+                <div 
+                  key={item._id}
+                  onMouseDown={() => handleSelection(index)}
+                  ref={index === focusedIndex ? resultContainer : null}
+                  style={{
+                    backgroundColor: index === focusedIndex ? "rgba(0,0,0,0.1)" : "",
+                  }}
+                className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2"
+                >
+                  {renderItem(item)} 
                 </div>
-            ))
-          ): null }
-        </div>
-
+              );
+            })}
+            </div> 
+            )}
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
