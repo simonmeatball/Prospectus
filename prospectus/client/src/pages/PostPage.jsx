@@ -27,6 +27,8 @@ export default function PostPage() {
   const [inputText, setInputText] = useState("");
   const [dropdownShown, setDropdownShown] = useState(false);
   const [sortBy, setSortBy] = useState("Most recent");
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -37,8 +39,8 @@ export default function PostPage() {
           `http://localhost:8080/api/posts/${postID}`,
           {
             params: {
-              userId: user?.userId
-            }
+              userId: user?.userId,
+            },
           }
         );
         if (response.data.success) {
@@ -56,30 +58,88 @@ export default function PostPage() {
     fetchPost();
   }, [postID, user]);
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/comments`, {
+          params: { postID: postID }, // Use URL param postID instead of post._id
+        });
+        if (response.data.success) {
+          setComments(response.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching comments:", err.response || err);
+      }
+    };
+
+    if (postID) {
+      // Changed from post?._id to postID
+      fetchComments();
+    }
+  }, [postID]); // Changed dependency from post to postID
+
   const handleLike = async () => {
     try {
       if (!user) {
-        console.error('No user logged in');
+        console.error("No user logged in");
         return;
       }
 
-      const endpoint = liked ? 'unlike' : 'like';
+      const endpoint = liked ? "unlike" : "like";
       const response = await axios.patch(
         `http://localhost:8080/api/posts/${postID}/${endpoint}`,
         {
-          userId: user.userId
+          userId: user.userId,
         }
       );
-      
+
       if (response.data.success) {
         setLiked(!liked);
-        setPost(prevPost => ({
+        setPost((prevPost) => ({
           ...prevPost,
-          likes: response.data.data.likes
+          likes: response.data.data.likes,
         }));
       }
     } catch (err) {
-      console.error('Error toggling like:', err);
+      console.error("Error toggling like:", err);
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim() || !user) return;
+
+    try {
+      console.log("Submitting comment:", {
+        text: commentText,
+        postID: postID,
+        username: user.username, // Use username instead of userID
+      });
+
+      const response = await axios.post("http://localhost:8080/api/comments", {
+        text: commentText,
+        postID: postID, // Use URL param postID
+        username: user.username, // Use username instead of userID
+      });
+
+      if (response.data.success) {
+        // Refresh comments after posting
+        const commentsResponse = await axios.get(
+          "http://localhost:8080/api/comments",
+          {
+            params: { postID: postID },
+          }
+        );
+        if (commentsResponse.data.success) {
+          setComments(commentsResponse.data.data);
+        }
+        setCommentText("");
+      }
+    } catch (err) {
+      console.error("Error posting comment:", err.response?.data || err);
+      alert(
+        "Error posting comment: " + (err.response?.data?.message || err.message)
+      );
     }
   };
 
@@ -125,6 +185,44 @@ export default function PostPage() {
     }
   }
 
+  const renderComments = () => (
+    <div className="mt-8 max-w-3xl mx-auto">
+      <h2 className="text-xl font-semibold mb-4">
+        Comments ({comments.length})
+      </h2>
+      {user ? (
+        <form onSubmit={handleCommentSubmit} className="mb-6">
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Write a comment..."
+            className="w-full p-2 border rounded-lg mb-2"
+          />
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!commentText.trim()}
+          >
+            Post Comment
+          </button>
+        </form>
+      ) : (
+        <p className="text-gray-500 mb-6">Please login to comment</p>
+      )}
+      <div className="space-y-4">
+        {comments.map((comment) => (
+          <div key={comment._id} className="p-4 bg-white rounded-lg border">
+            <p className="text-sm font-medium">@{comment.username}</p>
+            <p className="mt-1">{comment.text}</p>
+            <p className="text-xs text-gray-500 mt-2">
+              {new Date(comment.createdAt).toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div>
       <Navbar />
@@ -147,13 +245,17 @@ export default function PostPage() {
               <button
                 onClick={handleLike}
                 className={`flex items-center gap-2 ${
-                  liked ? 'text-red-500 hover:text-red-600' : 'text-gray-600 hover:text-gray-700'
+                  liked
+                    ? "text-red-500 hover:text-red-600"
+                    : "text-gray-600 hover:text-gray-700"
                 } transition-colors duration-200`}
               >
-                <Heart 
+                <Heart
                   className={`w-8 h-8 transition-transform duration-200 hover:scale-110 ${
-                    liked ? 'fill-red-500 stroke-red-500' : 'stroke-current hover:fill-gray-200'
-                  }`} 
+                    liked
+                      ? "fill-red-500 stroke-red-500"
+                      : "stroke-current hover:fill-gray-200"
+                  }`}
                 />
                 <span className="text-lg font-medium">{post?.likes || 0}</span>
               </button>
@@ -164,7 +266,7 @@ export default function PostPage() {
                 absoluteStrokeWidth
                 className="cursor-pointer"
               />
-              {reviews.length}
+              <span className="text-lg font-medium">{comments.length}</span>
             </div>
           </div>
         </div>
@@ -192,6 +294,7 @@ export default function PostPage() {
       </div>
       <div className="w-11/12 mx-auto h-px bg-gray-500"></div>
       <div className="w-11/12 mx-auto">
+        {renderComments()}
         <div className="flex justify-between items-center">
           <div className={reviewFormShown && "invisible"}>
             <DropdownMenu
