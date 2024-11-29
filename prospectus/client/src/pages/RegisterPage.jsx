@@ -25,6 +25,9 @@ function RegisterPage() {
     password: "",
     repeatPassword: "",
     agreeToTerms: false,
+    accountType: "candidate",
+    university: "",
+    username: "",
   });
 
   const [error, setError] = useState("");
@@ -32,7 +35,7 @@ function RegisterPage() {
   const { login } = useAuth();
 
   // Handle input changes
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { id, type, value, checked } = e.target;
     setFormData({
       ...formData,
@@ -69,6 +72,10 @@ function RegisterPage() {
         password: formData.password,
         repeatPassword: formData.repeatPassword,
         agreeToTerms: formData.agreeToTerms,
+        accountType: formData.accountType,
+        university: formData.university,
+        username: formData.username,
+
       });
 
       if (response.data.token) {
@@ -90,7 +97,7 @@ function RegisterPage() {
       <div className="font-sans">
 
 
-        <div class="bg-[url('../images/homebg.png')] h-64 w-full bg-cover bg-no-repeat bg-center h-screen w-full">
+        <div class="bg-[url('../images/homebg.png')]  w-full bg-cover bg-no-repeat bg-center  w-full">
 
 
           <div className="  text-amber-500 font-bold italic text-8xl tracking-wide pt-12 text-center ">
@@ -111,7 +118,7 @@ function RegisterPage() {
 
           <form onSubmit={handleSubmit} class=" relative max-w-sm mx-auto mt-12 bg-local">
 
-            <div class="mb-9">
+            <div class="mb-6">
               <label
                 for="email"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
@@ -122,7 +129,7 @@ function RegisterPage() {
                 type="email"
                 id="email"
                 value={formData.email} // The value of the user's email
-                onChange={handleChange} // Capture input
+                onChange={handleInputChange} // Capture input
 
 
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -130,7 +137,7 @@ function RegisterPage() {
                 required
               />
             </div>
-            <div class="mb-9">
+            <div class="mb-6">
               <label
                 for="password"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
@@ -143,14 +150,15 @@ function RegisterPage() {
                 type="password"
                 id="password"
                 value={formData.password} // The value of the user's password.
-                onChange={handleChange} // Capture input
+                onChange={handleInputChange} // Capture input
 
 
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 required
               />
             </div>
-            <div class="mb-9">
+
+            <div class="mb-6">
               <label
                 for="repeat-password"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
@@ -161,7 +169,7 @@ function RegisterPage() {
                 type="password"
                 id="repeatPassword"
                 value={formData.repeatPassword} // The value of the user's repeated password.
-                onChange={handleChange} // Capture input
+                onChange={handleInputChange} // Capture input
 
 
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -170,7 +178,65 @@ function RegisterPage() {
 
 
             </div>
-            <div class="right-30 flex items-start mb-9">
+            <div className="mb-6">
+              <label
+                htmlFor="username"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+              >
+                Username:
+              </label>
+              <input
+                type="text"
+                id="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                placeholder="johndoe123"
+                required
+              />
+            </div>
+
+            <div className="mb-6">
+              <label
+                htmlFor="accountType"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+              >
+                Account Type:
+              </label>
+              <select
+                id="accountType"
+                value={formData.accountType}
+                onChange={handleInputChange}
+                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                required
+              >
+                <option value="candidate">Candidate</option>
+                <option value="recruiter">Recruiter</option>
+              </select>
+            </div>
+
+
+            {formData.accountType === "candidate" && (
+              <div className="mb-6">
+                <label
+                  htmlFor="university"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+                >
+                  University:
+                </label>
+                <input
+                  type="text"
+                  id="university"
+                  value={formData.university}
+                  onChange={handleInputChange}
+                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                  placeholder="e.g., UCLA"
+                />
+              </div>
+            )}
+
+
+            <div class="right-30 flex items-start mb-6">
               <div class="flex items-center h-5">
                 <input
                   id="agreeToTerms"
@@ -178,7 +244,7 @@ function RegisterPage() {
 
 
                   checked={formData.agreeToTerms} // Whether or not the user checked the box
-                  onChange={handleChange} // Capture checkbox state
+                  onChange={handleInputChange} // Capture checkbox state
                   class="w-4 h-4  border border-gray-300 rounded bg-white focus:ring-3 focus:ring-cyan-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-white-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                   required
                 />
@@ -211,7 +277,7 @@ function RegisterPage() {
         </div>
 
 
-        <div className="bg-white text-black">
+        <div className="mt-12 bg-white text-black">
 
 
           <h1 className=" text-center mt-8 text-7xl text-cyan-600 font-semibold"> Not a member yet?</h1>
@@ -248,17 +314,6 @@ function RegisterPage() {
 
           </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
 
       </div>
 

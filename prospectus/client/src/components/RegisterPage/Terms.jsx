@@ -37,7 +37,7 @@ const TermsModal = () => {
       {isModalOpen && (
         <div
           id="terms-modal"
-          className="fixed flex justify-center overflow-auto inset-0 bg-black bg-opacity-50 "
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 "
         >
           <div className="bg-white p-6 rounded-lg max-w-lg max-h-[70vh] overflow-y-auto">
 
@@ -82,7 +82,7 @@ const TermsModal = () => {
               <br />
               <br />
               8. Contact Us:
-              If you have any questions or concerns about these Terms, please contact us at prospectusucla@gmail.com.
+              If you have any questions or concerns about these Terms, please contact us at <span className="underline"> prospectusucla@gmail.com </span>.
 
 
 

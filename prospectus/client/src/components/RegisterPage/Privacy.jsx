@@ -29,7 +29,7 @@ const PrivacyModal = () => {
             {isModalOpen && (
                 <div
                     id="terms-modal"
-                    className="fixed z-50 flex justify-center overflow-auto inset-0 bg-black bg-opacity-50 "
+                    className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 "
                 >
                     <div className="font-semibold bg-white p-6 rounded-lg max-w-lg max-h-[70vh] overflow-y-auto">
 
@@ -100,7 +100,9 @@ const PrivacyModal = () => {
                             Opt-Out: You may opt out of receiving promotional communications by following the instructions in those messages.
                             <br />
                             <br />
-                            Data Deletion: You may request the deletion of your account and associated data by contacting us at prospectusucla@gmail.com.
+                            Data Deletion: You may request the deletion of your account and associated data by contacting us at <span className="underline">
+                            prospectusucla@gmail.com
+                            </span>.
                             <br />
                             <br />
 
@@ -125,9 +127,9 @@ const PrivacyModal = () => {
                             <br />
                             8. Contact Us:
                             If you have any questions or concerns about this Privacy Policy, please contact us at:
-                            <br />
+                            <br /> <span className="underline">
                             prospectusucla@gmail.com
-
+                            </span>
 
                         </p>
                         <button
