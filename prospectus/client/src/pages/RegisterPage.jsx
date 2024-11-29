@@ -186,7 +186,7 @@ function RegisterPage() {
 
 
               <label
-                for="terms"
+                htmlFor="terms"
                 class="ms-2 text-sm font-medium text-gray-900 dark:text-black"
               >
                 <Terms />
@@ -245,9 +245,6 @@ function RegisterPage() {
               <BicepsFlexed size={64} color="#f7be4c" />
               <p className="ml-4 text-2xl font-medium "> Stay Competitive: <br /> <p className="mt-1 text-xl font-normal">  Learn about trends in resume writing to stay up-to-date in an ever-evolving job market. </p> </p>
             </div>
-
-
-
 
           </div>
         </div>

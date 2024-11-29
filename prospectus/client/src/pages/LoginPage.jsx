@@ -56,7 +56,7 @@ function LoginPage() {
                 localStorage.setItem("token", response.data.token);
                 // Update auth context
                 login(response.data.user);
-                // Redirect to home page
+                // Redirect to home page!
                 navigate("/");
             }
         } catch (err) {
@@ -66,7 +66,6 @@ function LoginPage() {
     }
 
     return (
-
 
         <div style={{ userSelect: "none" }} className="bg-cyan-100 font-sans" >
             <Loginnavbar />
@@ -80,7 +79,7 @@ function LoginPage() {
                 <form onSubmit={handleSubmit} className=" max-w-sm mt-5 bg-local">
                     <div className="mb-6">
                         <label
-                            for="email"
+                            htmlFor="email"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
                         >
                             Email address:
@@ -101,7 +100,7 @@ function LoginPage() {
 
                     <div className="mb-9">
                         <label
-                            for="password"
+                            htmlFor="password"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
                         >
                             Password:
@@ -129,8 +128,6 @@ function LoginPage() {
 
 
             <div className="carousel h-screen w-screen">
-
-
                 <div id="slide1" className="carousel-item w-full">
                     <img
                         src={ducks} draggable="false"
@@ -172,7 +169,6 @@ function LoginPage() {
             <div className="w-full flex justify-end pr-52" alt="Testimonal">
                 <p className="italic max-w-md -mt-60">
 
-
                     <Reviewcarousel />
 
                 </p>
@@ -181,7 +177,6 @@ function LoginPage() {
         </div>
     );
 }
-
 
 export default LoginPage;
 
