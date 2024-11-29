@@ -28,6 +28,7 @@ function RegisterPage() {
     accountType: "candidate",
     university: "",
     username: "",
+    name:""
   });
 
   const [error, setError] = useState("");
@@ -75,6 +76,7 @@ function RegisterPage() {
         accountType: formData.accountType,
         university: formData.university,
         username: formData.username,
+        name: formData.name
 
       });
 
