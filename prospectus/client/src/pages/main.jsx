@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import HomePage from "./HomePage.jsx";
+import RegisterPage from "./RegisterPage.jsx";
 import LoginPage from "./LoginPage.jsx";
 import PostPage from "./PostPage.jsx";
 import UploadPage from "./UploadPage.jsx";
