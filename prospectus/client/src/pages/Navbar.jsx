@@ -1,15 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+
 
 export default function Navbar() {
   const { isAuthenticated, logout , user} = useAuth();
   const navigate = useNavigate();
 
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [results, setResults] = useState([]); 
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(null); 
+  const [hasSearched, setHasSearched] = useState(false);
+
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  const handleSearchChange = (event) => { 
+      setSearchQuery(event.target.value);
+      console.log(event.target.value); 
+  }
+
+  const handleSearch = async() => { 
+    if (!searchQuery.trim()) return; 
+
+    setLoading(true);
+    setError(null); 
+    setHasSearched(true);
+    
+    try { 
+      const response = await axios.get("http://localhost:8080/api/posts");
+      if (response.data.success) { 
+        const allPosts = response.data.data
+        console.log(response.data.data);
+      
+      const filteredPosts = allPosts.filter((post) => 
+        post.title.toLowerCase().includes(searchQuery.toLowerCase())
+     );
+     
+     setResults(filteredPosts);
+     console.log(filteredPosts); 
+      }
+    } catch (err)  {
+      setError("failed to search results"); 
+    } finally { 
+      setLoading(false); 
+    }
+  }; 
+
 
   return (
     <div className="navbar bg-blue-100 fixed top-0 z-10">
@@ -29,8 +70,29 @@ export default function Navbar() {
             type="text"
             placeholder="Search"
             className="input input-bordered w-24 md:w-auto"
+            value={searchQuery} 
+            onChange={handleSearchChange}
+            onKeyDown={(e) => {  
+              if (e.key == "Enter") handleSearch(); 
+            }}
           />
         </div>
+
+        <div className="search-results mt-4">
+          {loading && <p>Loading...</p>}
+          {error && <p className="test-red-500">{error}</p>}
+          {hasSearched && results.length === 0 && !loading && (
+            <p>No results found</p>
+          )}
+          {results.length > 0 ? (
+            results.map((result) => (
+              <div key={results._id} className="result-item">
+                <h3>{result.title}</h3>
+                </div>
+            ))
+          ): null }
+        </div>
+
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
