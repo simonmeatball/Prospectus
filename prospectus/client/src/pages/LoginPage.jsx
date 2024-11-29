@@ -66,8 +66,8 @@ function LoginPage() {
 
             Swal.fire({
                 icon: 'error',
-                title: 'Registration Failed!',
-                text: err.response?.data?.message || "Registration failed"
+                title: 'Login Failed!',
+                text: err.response?.data?.message || "Login failed"
               });
         }
 
