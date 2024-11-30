@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
+import Homenavbar from "../components/HomePage/Homenavbar.jsx";
 import axios from "axios";
-import PostCard from "../components/PostCard";
-import Navbar from "./Navbar";
 
-function PostsPage() {
+import PostCard from "../components/PostCard";
+import Sidebar from "./sidebar.jsx"
+
+
+function HomePage() {
+
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,7 +33,7 @@ function PostsPage() {
   if (loading) {
     return (
       <div>
-        <Navbar />
+        <Homenavbar />
         <div className="flex justify-center items-center h-screen">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
         </div>
@@ -40,7 +44,7 @@ function PostsPage() {
   if (error) {
     return (
       <div>
-        <Navbar />
+        <Homenavbar />
         <div className="flex justify-center items-center h-screen">
           <div className="text-red-500">Error: {error}</div>
         </div>
@@ -48,19 +52,39 @@ function PostsPage() {
     );
   }
 
+
   return (
-    <div>
-      <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Posts</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {posts.map((post) => (
-            <PostCard key={post._id} post={post} />
-          ))}
+    <div style={{ userSelect: "none" }}>
+      <Homenavbar />
+
+      <div className="form-control mt-9 mb-9 ">
+        <input
+          type="text"
+          placeholder="Search Prospectus"
+          className="input input-bordered mx-auto  w-3/5 border-gray-600"
+        />
+      </div>
+
+      <div className="flex justify-center mt-16">
+
+
+        <Sidebar />   {/* SIDEBAR COMPONENT */}
+
+        <div className="mr-[35rem] px-4 py-8">
+          <div className="grid grid-cols-1 ">
+            <h1 className="text-3xl text-center font-bold mb-5 drop-shadow-m " >  <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}> Editor's Choice ⭐ </span></h1> 
+            {posts.slice(0, 2).map((post) => (
+              <PostCard key={post._id} post={post} />
+            ))}
+
+
+          </div>
         </div>
       </div>
     </div>
   );
+
+
 }
 
-export default PostsPage;
+export default HomePage;

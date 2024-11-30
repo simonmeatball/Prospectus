@@ -64,7 +64,7 @@ function UploadPage() {
     try {
       console.log("Uploading post with userID:", user.userId);
       const response = await axios.post(
-        "http://localhost:8080/api/posts",
+        "http://localhost:8081/api/posts",
         formData,
         {
           headers: {
@@ -94,7 +94,10 @@ function UploadPage() {
   };
 
   return (
+    
     <div>
+
+      
       <Navbar />
       <div className="bg-[url('../images/homebg.png')] bg-cover bg-no-repeat bg-center h-screen w-full px-4">
         <div className="font-sans">

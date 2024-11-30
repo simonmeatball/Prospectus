@@ -25,7 +25,7 @@ export default function PostPage() {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/posts/${postID}`,
+          `http://localhost:8081/api/posts/${postID}`,
           {
             params: {
               userId: user?.userId,
@@ -50,7 +50,7 @@ export default function PostPage() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/comments`, {
+        const response = await axios.get(`http://localhost:8081/api/comments`, {
           params: { postID: postID },
         });
         if (response.data.success) {
@@ -75,7 +75,7 @@ export default function PostPage() {
 
       const endpoint = liked ? "unlike" : "like";
       const response = await axios.patch(
-        `http://localhost:8080/api/posts/${postID}/${endpoint}`,
+        `http://localhost:8081/api/posts/${postID}/${endpoint}`,
         {
           userId: user.userId,
         }
@@ -104,7 +104,7 @@ export default function PostPage() {
         username: user.username, // Use username instead of userID
       });
 
-      const response = await axios.post("http://localhost:8080/api/comments", {
+      const response = await axios.post("http://localhost:8081/api/comments", {
         text: commentText,
         postID: postID, // Use URL param postID
         username: user.username, // Use username instead of userID
@@ -114,7 +114,7 @@ export default function PostPage() {
       if (response.data.success) {
         // Refresh comments after posting
         const commentsResponse = await axios.get(
-          "http://localhost:8080/api/comments",
+          "http://localhost:8081/api/comments",
           {
             params: { postID: postID },
           }
@@ -144,7 +144,7 @@ export default function PostPage() {
         parentCommentID: replyingTo, // Include parentCommentID
       });
 
-      const response = await axios.post("http://localhost:8080/api/comments", {
+      const response = await axios.post("http://localhost:8081/api/comments", {
         text: replyText,
         postID: null, // Set postID to null
         username: user.username,
@@ -434,13 +434,13 @@ export default function PostPage() {
             <div className="bg-gray-200 min-h-64 flex justify-center items-center">
               {post.fileType === "application/pdf" ? (
                 <embed
-                  src={`http://localhost:8080/api/posts/file/${post.image}`}
+                  src={`http://localhost:8081/api/posts/file/${post.image}`}
                   type="application/pdf"
                   className="w-full h-[600px]"
                 />
               ) : (
                 <img
-                  src={`http://localhost:8080/api/posts/file/${post.image}`}
+                  src={`http://localhost:8081/api/posts/file/${post.image}`}
                   alt={post.title}
                   className="max-w-full"
                 />

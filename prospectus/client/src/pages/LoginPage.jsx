@@ -43,7 +43,7 @@ function LoginPage() {
 
         try {
             const response = await axios.post(
-                "http://localhost:8080/api/auth/login",
+                "http://localhost:8081/api/auth/login",
                 {
                     email: formData.email,
                     password: formData.password,
@@ -58,7 +58,7 @@ function LoginPage() {
                 // Update auth context
                 login(response.data.user);
                 // Redirect to home page!
-                navigate("/");
+                navigate("/home");
             }
         } catch (err) {
             console.log("bob")
@@ -68,7 +68,7 @@ function LoginPage() {
                 icon: 'error',
                 title: 'Login Failed!',
                 text: err.response?.data?.message || "Login failed"
-              });
+            });
         }
 
     }

@@ -28,7 +28,7 @@ function RegisterPage() {
     accountType: "candidate",
     university: "",
     username: "",
-    name:""
+    name: ""
   });
 
   const [error, setError] = useState("");
@@ -61,7 +61,7 @@ function RegisterPage() {
 
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/register", {
+      const response = await axios.post("http://localhost:8081/api/auth/register", {
         email: formData.email,
         password: formData.password,
         repeatPassword: formData.repeatPassword,
@@ -82,12 +82,12 @@ function RegisterPage() {
           title: 'Registration Successful!',
           text: 'Redirecting you...'
         })
-        
-        navigate("/");  // Redirect to home page!
+
+        navigate("/home");  // Redirect to home page!
       }
     } catch (err) {
       console.error('Registration failed:', err.response || err);
-  
+
       setError(err.response?.data?.message || "Registration failed");
 
       Swal.fire({
@@ -96,7 +96,7 @@ function RegisterPage() {
         text: err.response?.data?.message || "Registration failed"
       });
 
-      
+
 
     }
 
@@ -108,7 +108,7 @@ function RegisterPage() {
       <Registernavbar />
 
       <div className="font-sans">
-      {error && <div className="error-message">{error}</div>}
+
 
         <div class="bg-[url('../images/homebg.png')]  w-full bg-cover bg-no-repeat bg-center">
 
@@ -131,7 +131,7 @@ function RegisterPage() {
 
           <form onSubmit={handleSubmit} class=" relative max-w-sm mx-auto mt-12 bg-local">
 
-         
+
             <div class="mb-6">
               <label
                 for="email"
@@ -211,22 +211,22 @@ function RegisterPage() {
             </div>
 
             <div className="mb-6">
-                  <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-                  >
-                    Your Name:
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                    placeholder="John Doe"
-                    required
-                  />
-                </div>
+              <label
+                htmlFor="name"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+              >
+                Your Name:
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                placeholder="John Doe"
+                required
+              />
+            </div>
 
 
             <div className="mb-6">
@@ -294,7 +294,7 @@ function RegisterPage() {
 
 
             <div className="flex">
-              
+
               <button   // REGISTER BUTTON
                 type="submit"
                 className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 ">

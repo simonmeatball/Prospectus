@@ -4,13 +4,14 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import LoginPage from "./LoginPage.jsx";
 import RegisterPage from "./RegisterPage.jsx";
+import HomePage from "./HomePage.jsx";
 
 import PostPage from "./PostPage.jsx";
 import UploadPage from "./UploadPage.jsx";
 import PostsPage from "./PostsPage.jsx";
 import ProfilePage from "./ProfilePage.jsx";
 
-import LandingPage from "./LandingPage.jsx";
+
 
 import { AuthProvider } from "../context/AuthContext";
 import "../styles/App.css";
@@ -24,6 +25,7 @@ root.render(
           <Routes>
             <Route path="/" element={<PostsPage />} />
 
+            <Route path ="/home" element = {<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 

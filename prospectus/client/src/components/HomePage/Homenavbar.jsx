@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
-import Logo1 from "../images/logo1.png";
 
-export default function Navbar() {
+import Logo1 from "../../images/logo1.png";
+
+export default function Homenavbar() {
   const { isAuthenticated, logout , user} = useAuth();
   const navigate = useNavigate();
 
@@ -28,13 +29,7 @@ export default function Navbar() {
             Upload Post
           </Link>
         )}
-        <div className="form-control ">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-bordered w-24 md:w-auto border-gray-600"
-          />
-        </div>
+        
         <div className="dropdown dropdown-end ">
           <div
             tabIndex={0}
@@ -80,9 +75,8 @@ export default function Navbar() {
             )}
           </ul>
         </div>
-        
         {isAuthenticated ? (
-          <button onClick={handleLogout} className="btn btn-primary bg-blue-300 hover:bg-sky-500 border-gray-600 ">
+          <button onClick={handleLogout} className="btn btn-primary bg-blue-200 hover:bg-sky-500 border-gray-600 ">
             Sign Out
           </button>
         ) : (
