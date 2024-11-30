@@ -54,10 +54,10 @@ function HomePage() {
 
 
   return (
-    <div style={{ userSelect: "none" }}>
+    <div style={{ userSelect: "none" }} className = "bg-cyan-100 pt-10">
       <Homenavbar />
 
-      <div className="form-control mt-9 mb-9 ">
+      <div className="form-control mb-9 ">
         <input
           type="text"
           placeholder="Search Prospectus"
@@ -65,21 +65,28 @@ function HomePage() {
         />
       </div>
 
-      <div className="flex justify-center mt-16">
+      <Sidebar/>
 
+      <div className="flex justify-center items-start gap-8">
 
-        <Sidebar />   {/* SIDEBAR COMPONENT */}
-
-        <div className="mr-[35rem] px-4 py-8">
-          <div className="grid grid-cols-1 ">
-            <h1 className="text-3xl text-center font-bold mb-5 drop-shadow-m " >  <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}> Editor's Choice ⭐ </span></h1> 
-            {posts.slice(0, 2).map((post) => (
-              <PostCard key={post._id} post={post} />
-            ))}
-
-
-          </div>
+        <div className="grid grid-cols-1 px-4 h-[48rem]">
+          <h1 className="text-3xl text-center font-bold mb-4 drop-shadow-m animate-bounce">
+            <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}>Editor's Choice ⭐</span>
+          </h1>
+          {posts.slice(0, 2).map((post) => (
+            <PostCard key={post._id} post={post} />
+          ))}
         </div>
+
+        <div className="grid grid-cols-1 px-4 h-[48rem]">
+          <h1 className="text-3xl text-center font-bold mb-4 drop-shadow-m animate-bounce">
+            <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}>New ✨</span>
+          </h1>
+          {posts.slice(-2).map((post) => (
+            <PostCard key={post._id} post={post} />
+          ))}
+        </div>
+
       </div>
     </div>
   );
