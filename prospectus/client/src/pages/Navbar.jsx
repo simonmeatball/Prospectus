@@ -13,6 +13,7 @@ export default function Navbar() {
   const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null); 
   const [showResults, setShowResults] = useState(false); 
+  const [focusedIndex, setFocusedIndex] = useState(-1);
 
   const resultContainer = useRef(null);
 
