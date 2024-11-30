@@ -4,6 +4,7 @@ import axios from "axios";
 
 import PostCard from "../components/PostCard";
 import Sidebar from "./sidebar.jsx"
+import { Search } from 'lucide-react';
 
 
 function HomePage() {
@@ -54,14 +55,14 @@ function HomePage() {
 
 
   return (
-    <div style={{ userSelect: "none" }} className = "bg-cyan-100 pt-10">
+    <div style={{ userSelect: "none" }} className = " bg-[url('../images/bea.jpg')] pt-10">
       <Homenavbar />
 
       <div className="form-control mb-9 ">
         <input
           type="text"
           placeholder="Search Prospectus"
-          className="input input-bordered mx-auto  w-3/5 border-gray-600"
+          className="input input-bordered mx-auto text-black bg-cyan-100 w-3/5 border-gray-600"
         />
       </div>
 
@@ -70,7 +71,7 @@ function HomePage() {
       <div className="flex justify-center items-start gap-8">
 
         <div className="grid grid-cols-1 px-4 h-[48rem]">
-          <h1 className="text-3xl text-center font-bold mb-4 drop-shadow-m animate-bounce">
+          <h1 className="text-3xl text-center text-white font-bold mb-4 drop-shadow-m animate-bounce">
             <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}>Editor's Choice ⭐</span>
           </h1>
           {posts.slice(0, 2).map((post) => (
@@ -79,11 +80,11 @@ function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 px-4 h-[48rem]">
-          <h1 className="text-3xl text-center font-bold mb-4 drop-shadow-m animate-bounce">
+          <h1 className="text-3xl text-center text-white font-bold mb-4 drop-shadow-m animate-bounce">
             <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}>New ✨</span>
           </h1>
           {posts.slice(-2).map((post) => (
-            <PostCard key={post._id} post={post} />
+            <PostCard key={post._id} post={post} className = ""/>
           ))}
         </div>
 

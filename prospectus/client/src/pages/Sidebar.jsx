@@ -35,10 +35,10 @@ const Sidebar = () => {
             onMouseEnter={() => setIsHovered(true)} // Set hover state to true when mouse enters
             onMouseLeave={() => setIsHovered(false)} // Set hover state to false when mouse leaves
         >
-            <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">
+            <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans text-base font-normal ">
                 <div
                     role="button"
-                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-blue-200"
+                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white"
                 >
                     <div className="grid place-items-center" />
                     <House strokeWidth={3} />
@@ -47,7 +47,7 @@ const Sidebar = () => {
 
                 <div
                     role="button"
-                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-blue-200"
+                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white"
                 >
 
                     <Link to="/" className="flex items-center">
@@ -58,7 +58,7 @@ const Sidebar = () => {
 
                 <div
                     role="button"
-                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-blue-200"
+                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white"
                 >
 
                     <Link to="/upload" className="flex items-center">
@@ -69,7 +69,7 @@ const Sidebar = () => {
 
                 <div
                     role="button"
-                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-blue-200"
+                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white"
                 >
 
                     <Link to={`/profile/${user?.username}`} className="flex items-center">
@@ -81,7 +81,7 @@ const Sidebar = () => {
 
                 </div>
 
-                <button className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-blue-200">
+                <button className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white">
                     <div className="flex grid place-items-center" />
                     <Settings strokeWidth={3} />
                     <div className="ml-2">Settings</div>
@@ -89,11 +89,11 @@ const Sidebar = () => {
 
                 <button
                     onClick={handleLogout}
-                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-blue-200"
+                    className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white"
                 >
                     <div className="grid place-items-center" />
                     <LogOut strokeWidth={3} />
-                    <div className="ml-2">Log Out</div>
+                    <div className="ml-2">Logout</div>
                 </button>
 
                 <div className="ml-2 mt-3 w-12 h-12 rounded-full overflow-hidden">
