@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Homenavbar from "../components/HomePage/Homenavbar.jsx";
+
+import Navbar from "./Navbar.jsx";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
 
@@ -33,7 +35,7 @@ function HomePage() {
   if (loading) {
     return (
       <div>
-        <Homenavbar />
+        <Navbar />
         <div className="flex justify-center items-center h-screen">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
         </div>
@@ -44,7 +46,7 @@ function HomePage() {
   if (error) {
     return (
       <div>
-        <Homenavbar />
+        <Navbar />
         <div className="flex justify-center items-center h-screen">
           <div className="text-red-500">Error: {error}</div>
         </div>
@@ -57,7 +59,7 @@ function HomePage() {
       style={{ userSelect: "none" }}
       className=" bg-[url('../images/bea.jpg')] pt-10"
     >
-      <Homenavbar />
+      <Navbar />
 
       <div className="form-control mb-9 ">
         <input
@@ -69,29 +71,7 @@ function HomePage() {
 
       <Sidebar />
 
-      <div className="flex justify-center items-start gap-8">
-        <div className="grid grid-cols-1 px-4 h-[48rem]">
-          <h1 className="text-3xl text-center text-white font-bold mb-4 drop-shadow-m animate-bounce">
-            <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-              Editor's Choice ⭐
-            </span>
-          </h1>
-          {posts.slice(0, 2).map((post) => (
-            <PostCard key={post._id} post={post} />
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 px-4 h-[48rem]">
-          <h1 className="text-3xl text-center text-white font-bold mb-4 drop-shadow-m animate-bounce">
-            <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-              New ✨
-            </span>
-          </h1>
-          {posts.slice(-2).map((post) => (
-            <PostCard key={post._id} post={post} className="" />
-          ))}
-        </div>
-      </div>
+      
     </div>
   );
 }

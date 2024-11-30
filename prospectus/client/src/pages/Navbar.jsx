@@ -111,11 +111,11 @@ export default function Navbar() {
   };
 
   return (
-    <div className="navbar bg-blue-100 fixed top-0 z-10 w-full">
+    <div className="navbar bg-white fixed top-0 z-10 w-full">
       <div className="flex-1">
 
         <img className="w-16" src = {Logo1} draggable="false"/>
-        <Link className="btn btn-ghost text-amber-500 font-bold italic text-2xl tracking-wide" to="/">
+        <Link className="btn btn-ghost text-amber-500 font-bold italic text-2xl tracking-wide" to="/home">
           prospectus
         </Link>
       </div>

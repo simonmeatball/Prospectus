@@ -277,7 +277,7 @@ function RegisterPage() {
             <div className="flex">
               <button // REGISTER BUTTON
                 type="submit"
-                className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 "
+                className="btn btn-primary w-50 h-10 text-black ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-cyan-400 hover:bg-cyan-500 "
               >
                 Register new account
               </button>
