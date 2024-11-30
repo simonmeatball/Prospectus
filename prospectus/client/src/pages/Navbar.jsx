@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef , useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
@@ -16,6 +16,21 @@ export default function Navbar() {
   const [focusedIndex, setFocusedIndex] = useState(-1);
 
   const resultContainer = useRef(null);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+
+  const debounceTimeoutRef = useRef(null); 
+
+ // const debouncedSearchQuery = useDebounce(searchQuery, 500); //500 ms delay before making search request 
+
+  const handleDebounce = (value) => { 
+    if (debounceTimeoutRef.current) { 
+      clearTimeout(debounceTimeoutRef.current); 
+    }
+
+    debounceTimeoutRef.current = setTimeout(()=> { 
+      setDebouncedSearchQuery(value);
+    }, 400);
+  };
 
   const handleLogout = () => {
     logout();
@@ -23,19 +38,29 @@ export default function Navbar() {
   };
 
   const handleSearchChange = (event) => { 
-      setSearchQuery(event.target.value);
-      console.log(event.target.value); 
+      const query = event.target.value; 
+      setSearchQuery(query);
+      console.log(query); 
       setShowResults(true);
+      handleDebounce(query);
+
+      if (!debouncedSearchQuery.trim()) {
+        setResults([]);
+        return; 
+      }
+
+      handleSearch();
   }
 
   const handleSearch = async() => { 
-    if (!searchQuery.trim()) {
-      setShowResults(false);
+    if (!debouncedSearchQuery.trim()) {
+      setResults([]); 
       return; 
     }
+
     setLoading(true);
     setError(null); 
-    console.log("search initiated:", searchQuery);
+    console.log("search initiated:", debouncedSearchQuery);
     
     try { 
       const response = await axios.get("http://localhost:8080/api/posts");
@@ -43,8 +68,9 @@ export default function Navbar() {
         const allPosts = response.data.data
         console.log("all posts fetched:", response.data.data);
       
-      const filteredPosts = allPosts.filter((post) => 
-        post.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const filteredPosts = allPosts.filter((post) => {
+        const regex = new RegExp(`\\b${debouncedSearchQuery}`, 'i'); 
+        return regex.test(post.title.toLowerCase());}
      );
      
      setResults(filteredPosts);
@@ -56,6 +82,12 @@ export default function Navbar() {
       setLoading(false); 
     }
   }; 
+
+  useEffect(() => { 
+    if (debouncedSearchQuery) { 
+      handleSearch(); 
+    }
+  }, [debouncedSearchQuery]);
 
   const handleResultClick = (postId) => {
     navigate(`/post/${postId}`);
@@ -96,11 +128,6 @@ export default function Navbar() {
             className="input input-bordered w-24 md:w-auto"
             value={searchQuery} 
             onChange={handleSearchChange}
-            onKeyDown={(e) => {  
-              if (e.key == "Enter") {
-                handleSearch(); 
-              }
-            }}
           />
         </div>
 
