@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import Navbar from "./Navbar";
+import { ImageUp } from "lucide-react";
 
 // these are based on twitters limits
 const NAME_MAX = 50;
@@ -19,22 +20,47 @@ export default function ProfileSettingsPage() {
     handleSubmit,
   } = useForm({
     mode: "onBlur",
+    defaultValues: {
+      name: "", // [User's previous name]
+      username: "", // [User's previous username]
+      bio: "", // [User's previous bio]
+    },
   });
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
 
   const name = watch("name");
   const username = watch("username");
   const bio = watch("bio");
 
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <div>
       <Navbar />
       <div className="w-1/2 mx-auto mt-4 border-2 p-4 rounded-lg">
-        <h1 className="text-2xl font-bold mb-2">Profile Settings</h1>
+        <h1 className="text-2xl font-bold">Profile Settings</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="flex justify-center">
+            <Label htmlFor="avatar" className="cursor-pointer relative group">
+              <img
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" // [User's previous avatar]
+                className="rounded-full w-48 h-48 group-hover:brightness-75"
+              />
+              <ImageUp
+                size={48}
+                color="#d6d6d6"
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100"
+              />
+            </Label>
+          </div>
+          <Input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="avatar"
+            {...register("avatar")}
+          />
           <div>
             <div className="flex justify-between items-center">
               <Label htmlFor="name">Name</Label>
