@@ -3,6 +3,7 @@ import Navbar from "./Navbar";
 import { useParams } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 export default function ProfilePage() {
   const { username } = useParams();
@@ -31,8 +32,8 @@ export default function ProfilePage() {
       }
     };
 
-    fetchProfile();
-  }, [username]);
+    fetchProfile();
+  }, [username]);
 
   useEffect(()=> {
     console.log("posts", posts);;
@@ -49,19 +50,19 @@ export default function ProfilePage() {
     );
   }
 
-  if (error || !profile) {
-    return (
-      <div>
-        <Navbar />
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="alert alert-error">
-            <span>{error || "Profile not found"}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
+  if (error || !profile) {
+    return (
+      <div>
+        <Navbar />
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="alert alert-error">
+            <span>{error || "Profile not found"}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div>
       <Navbar />
@@ -86,7 +87,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-     {view == "posts" && posts.length > 0? (
+     {view == "posts" && posts && posts.length > 0? (
         <div className="container mx-auto px-4">
           {posts.map((post) => (
               <PostCard key={post._id} post={post} /> 

@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
 
+import Logo1 from "../images/logo1.png";
+
 export default function Navbar() {
   const { isAuthenticated, logout , user} = useAuth();
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   const handleSearchChange = (event) => { 
@@ -111,11 +113,13 @@ export default function Navbar() {
   return (
     <div className="navbar bg-blue-100 fixed top-0 z-10 w-full">
       <div className="flex-1">
-        <Link className="btn btn-ghost font-bold italic text-xl" to="/">
+
+        <img className="w-16" src = {Logo1} draggable="false"/>
+        <Link className="btn btn-ghost text-amber-500 font-bold italic text-2xl tracking-wide" to="/">
           prospectus
         </Link>
       </div>
-      <div className="flex-none gap-2">
+      <div className="flex-none gap-2 ">
         {isAuthenticated && (
           <Link to="/upload" className="btn btn-ghost btn-sm">
             Upload Post
@@ -161,8 +165,8 @@ export default function Navbar() {
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full">
-              <img
+            <div className="w-10 rounded-full ">
+              <img 
                 alt="Tailwind CSS Navbar component"
                 src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
               />
@@ -173,10 +177,16 @@ export default function Navbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
-              <Link to={`/profile/${user?.username}`} className = "justify-between">
+              <Link
+                to={`/profile/${user?.username}`}
+                className="justify-between"
+              >
                 Profile
                 <span className="badge">New</span>
               </Link>
+            </li>
+            <li>
+              <Link to={`/profile/${user?.username}/settings`}>Settings</Link>
             </li>
             {isAuthenticated && (
               <li>
@@ -194,16 +204,18 @@ export default function Navbar() {
             )}
           </ul>
         </div>
+        
         {isAuthenticated ? (
-          <button onClick={handleLogout} className="btn btn-primary">
+          <button onClick={handleLogout} className="btn btn-primary bg-blue-300 hover:bg-sky-500 border-gray-600 ">
             Sign Out
           </button>
         ) : (
-          <Link to="/login" className="btn btn-primary">
+          <Link to="/login" className="btn btn-primary bg-sky-300 hover:bg-sky-500 border-gray-800">
             Login
           </Link>
         )}
       </div>
     </div>
   );
+  
 }
