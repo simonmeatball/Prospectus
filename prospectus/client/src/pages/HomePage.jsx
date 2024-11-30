@@ -69,7 +69,7 @@ function HomePage() {
         />
       </div>
 
-      <Sidebar />
+      <Sidebar />   {/* THE SIDEBAR COMPONENT */}
 
       
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { House, Search, Rss, UserPen, Settings, LogOut } from 'lucide-react';
+import { Users, Search, Rss, UserPen, LogOut } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import axios from "axios";
@@ -41,14 +41,34 @@ const Sidebar = () => {
         fetchPosts();
     }, []);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+
+    const getMaxLikes = () => {
+        const likeCounts = [];
+
+        for (let i = 0; i < posts.length; i++) {
+            likeCounts.push(posts[i].likes);
+        }
+
+        const max1 = Math.max(...likeCounts);
+
+       
+        const indexOfMax1 = likeCounts.indexOf(max1);
+
+        const arrayWithoutMax1 = [...likeCounts];  
+        arrayWithoutMax1.splice(indexOfMax1, 1); 
+
+        const max2 = Math.max(...arrayWithoutMax1);
+
+        const indexOfMax2 = arrayWithoutMax1.indexOf(max2);
+
+        // Adjust the index of max2 to account for the removed value of max1
+        const finalIndexOfMax2 = (indexOfMax2 >= indexOfMax1) ? indexOfMax2 + 1 : indexOfMax2;
+
+        return [indexOfMax1, finalIndexOfMax2];
+    }
 
 
-
-    const displayPostsByCategory = () => {
+    const displayPostsByCategory = () => {   // ALL THE POST CATEGORIES 
         switch (activeCategory) {
             case 'new':
                 return (
@@ -62,6 +82,7 @@ const Sidebar = () => {
                             {posts.slice(-2).map((post) => (
                                 <PostCard key={post._id} post={post} />
                             ))}
+
                         </div>
                     </div>
                 );
@@ -71,7 +92,7 @@ const Sidebar = () => {
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    Editor's Choice ⭐ 
+                                    Editor's Choice ⭐
                                 </span>
                             </h1>
                             {posts.slice(0, 2).map((post) => (
@@ -80,7 +101,26 @@ const Sidebar = () => {
                         </div>
                     </div>
                 );
-                default:
+
+            case 'popular':
+                const maxLikes = getMaxLikes();
+                return (
+                    <div className="flex justify-start items-start ml-72 ">
+                        <div className="grid grid-cols-1 px-4">
+                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                                    Most Popular ⭐
+                                </span>
+                            </h1>
+                            
+                            <PostCard key={posts[maxLikes[0]]._id} post={posts[maxLikes[0]]} />
+                            <PostCard key={posts[maxLikes[1]]._id} post={posts[maxLikes[1]]} />
+                        </div>
+                    </div>
+                );
+
+
+            default:
                 return null;
         }
     };
@@ -126,14 +166,14 @@ const Sidebar = () => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans ">
-
-                    
+                <nav className="flex min-w-[180px] flex-col gap-1 p-2 font-sans ">
 
                     <Link to="/" className="flex items-center w-full p-3 rounded-lg hover:bg-white mt-16">
                         <Search strokeWidth={3} />
                         <div className="ml-2">Explore</div>
                     </Link>
+
+                    <hr className="border-black" />
 
                     <div className="flex items-center w-full p-3 rounded-lg ">
                         <div className="mr-3 font-semibold">TOPICS</div>
@@ -150,10 +190,12 @@ const Sidebar = () => {
                         <div className="ml-2">New</div>
                     </button>
 
-                    <button onClick={handleLogout} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
-                        <LogOut strokeWidth={3} />
-                        <div className="ml-2">Logout</div>
+                    <button onClick={() => setActiveCategory('popular')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                        <Users strokeWidth={3} />
+                        <div className="ml-2">Most Popular</div>
                     </button>
+
+
                     <div className="ml-2 mt-3 w-12 h-12 rounded-full overflow-hidden">
                         <img
                             alt="Avatar"
