@@ -9,10 +9,10 @@ import PostPage from "./PostPage.jsx";
 import UploadPage from "./UploadPage.jsx";
 import PostsPage from "./PostsPage.jsx";
 import ProfilePage from "./ProfilePage.jsx";
-
 import HomePage from "./HomePage.jsx";
-
+import ProfileSettingsPage from "./ProfileSettingsPage.jsx";
 import { AuthProvider } from "../context/AuthContext";
+import { Toaster } from "@/components/ui/sonner"
 import "../styles/App.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -33,9 +33,10 @@ root.render(
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/posts" element={<PostsPage />} />
             <Route path="/profile/:username" element={<ProfilePage />} />
-
+            <Route path="/profile/:username/settings" element={<ProfileSettingsPage />} />
           </Routes>
         </Router>
+        <Toaster />
       </div>
     </AuthProvider>
   </React.StrictMode>

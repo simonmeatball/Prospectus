@@ -62,7 +62,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <a>Settings</a>
+              <Link to={`/profile/${user?.username}/settings`}>Settings</Link>
             </li>
             {isAuthenticated && (
               <li>
