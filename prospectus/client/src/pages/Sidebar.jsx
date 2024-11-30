@@ -81,7 +81,7 @@ const Sidebar = () => {
 
                 </div>
 
-                <button className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white">
+                <button className="flex items-center w-full p-3 transition-all rounded-lg hover:bg-white" onClick={() => navigate(`/profile/${user?.username}/settings`)}>
                     <div className="flex grid place-items-center" />
                     <Settings strokeWidth={3} />
                     <div className="ml-2">Settings</div>
