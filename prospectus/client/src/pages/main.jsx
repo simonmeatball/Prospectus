@@ -9,6 +9,7 @@ import PostsPage from "./PostsPage.jsx";
 import ProfilePage from "./ProfilePage.jsx";
 import ProfileSettingsPage from "./ProfileSettingsPage.jsx";
 import { AuthProvider } from "../context/AuthContext";
+import { Toaster } from "@/components/ui/sonner"
 import "../styles/App.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -28,6 +29,7 @@ root.render(
             <Route path="/profile/:username/settings" element={<ProfileSettingsPage />} />
           </Routes>
         </Router>
+        <Toaster />
       </div>
     </AuthProvider>
   </React.StrictMode>
