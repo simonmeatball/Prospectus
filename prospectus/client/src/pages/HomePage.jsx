@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Homenavbar from "../components/HomePage/Homenavbar.jsx";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 import PostCard from "../components/PostCard";
-import Sidebar from "./sidebar.jsx"
-import { Search } from 'lucide-react';
-
+import Sidebar from "./sidebar.jsx";
+import { Search } from "lucide-react";
 
 function HomePage() {
-
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,7 +15,7 @@ function HomePage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/api/posts");
+        const response = await axios.get(`${API_BASE_URL}/posts`);
         if (response.data.success) {
           setPosts(response.data.data);
         }
@@ -53,9 +52,11 @@ function HomePage() {
     );
   }
 
-
   return (
-    <div style={{ userSelect: "none" }} className = " bg-[url('../images/bea.jpg')] pt-10">
+    <div
+      style={{ userSelect: "none" }}
+      className=" bg-[url('../images/bea.jpg')] pt-10"
+    >
       <Homenavbar />
 
       <div className="form-control mb-9 ">
@@ -66,13 +67,14 @@ function HomePage() {
         />
       </div>
 
-      <Sidebar/>
+      <Sidebar />
 
       <div className="flex justify-center items-start gap-8">
-
         <div className="grid grid-cols-1 px-4 h-[48rem]">
           <h1 className="text-3xl text-center text-white font-bold mb-4 drop-shadow-m animate-bounce">
-            <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}>Editor's Choice ⭐</span>
+            <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+              Editor's Choice ⭐
+            </span>
           </h1>
           {posts.slice(0, 2).map((post) => (
             <PostCard key={post._id} post={post} />
@@ -81,18 +83,17 @@ function HomePage() {
 
         <div className="grid grid-cols-1 px-4 h-[48rem]">
           <h1 className="text-3xl text-center text-white font-bold mb-4 drop-shadow-m animate-bounce">
-            <span style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)' }}>New ✨</span>
+            <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+              New ✨
+            </span>
           </h1>
           {posts.slice(-2).map((post) => (
-            <PostCard key={post._id} post={post} className = ""/>
+            <PostCard key={post._id} post={post} className="" />
           ))}
         </div>
-
       </div>
     </div>
   );
-
-
 }
 
 export default HomePage;

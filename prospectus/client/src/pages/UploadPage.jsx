@@ -3,6 +3,7 @@ import Navbar from "./Navbar.jsx";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../config";
 
 // change the character limit of title and body here
 const TITLELIMIT = 75;
@@ -56,22 +57,18 @@ function UploadPage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("body", body);
-    formData.append("userID", user.userId);  // Make sure we're using the correct case
+    formData.append("userID", user.userId); // Make sure we're using the correct case
     if (file) {
       formData.append("file", file);
     }
 
     try {
       console.log("Uploading post with userID:", user.userId);
-      const response = await axios.post(
-        "http://localhost:8081/api/posts",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/posts`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.data.success) {
         console.log("Post created successfully:", response.data);
@@ -94,10 +91,7 @@ function UploadPage() {
   };
 
   return (
-    
     <div>
-
-      
       <Navbar />
       <div className="bg-[url('../images/homebg.png')] bg-cover bg-no-repeat bg-center h-screen w-full px-4">
         <div className="font-sans">

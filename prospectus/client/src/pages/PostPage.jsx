@@ -6,6 +6,7 @@ import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../config";
 
 export default function PostPage() {
   const { postID } = useParams();
@@ -24,14 +25,11 @@ export default function PostPage() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8081/api/posts/${postID}`,
-          {
-            params: {
-              userId: user?.userId,
-            },
-          }
-        );
+        const response = await axios.get(`${API_BASE_URL}/posts/${postID}`, {
+          params: {
+            userId: user?.userId,
+          },
+        });
         if (response.data.success) {
           console.log("Post data received:", response.data.data);
           setPost(response.data.data);
@@ -50,7 +48,7 @@ export default function PostPage() {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get(`http://localhost:8081/api/comments`, {
+        const response = await axios.get(`${API_BASE_URL}/comments`, {
           params: { postID: postID },
         });
         if (response.data.success) {
@@ -75,7 +73,7 @@ export default function PostPage() {
 
       const endpoint = liked ? "unlike" : "like";
       const response = await axios.patch(
-        `http://localhost:8081/api/posts/${postID}/${endpoint}`,
+        `${API_BASE_URL}/posts/${postID}/${endpoint}`,
         {
           userId: user.userId,
         }
@@ -104,7 +102,7 @@ export default function PostPage() {
         username: user.username, // Use username instead of userID
       });
 
-      const response = await axios.post("http://localhost:8081/api/comments", {
+      const response = await axios.post(`${API_BASE_URL}/comments`, {
         text: commentText,
         postID: postID, // Use URL param postID
         username: user.username, // Use username instead of userID
@@ -113,12 +111,9 @@ export default function PostPage() {
 
       if (response.data.success) {
         // Refresh comments after posting
-        const commentsResponse = await axios.get(
-          "http://localhost:8081/api/comments",
-          {
-            params: { postID: postID },
-          }
-        );
+        const commentsResponse = await axios.get(`${API_BASE_URL}/comments`, {
+          params: { postID: postID },
+        });
         if (commentsResponse.data.success) {
           setComments(commentsResponse.data.data);
         }
@@ -144,7 +139,7 @@ export default function PostPage() {
         parentCommentID: replyingTo, // Include parentCommentID
       });
 
-      const response = await axios.post("http://localhost:8081/api/comments", {
+      const response = await axios.post(`${API_BASE_URL}/comments`, {
         text: replyText,
         postID: null, // Set postID to null
         username: user.username,
@@ -403,16 +398,18 @@ export default function PostPage() {
             <div className="flex items-center gap-4 mt-4">
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-2 ${liked
+                className={`flex items-center gap-2 ${
+                  liked
                     ? "text-red-500 hover:text-red-600"
                     : "text-gray-600 hover:text-gray-700"
-                  } transition-colors duration-200`}
+                } transition-colors duration-200`}
               >
                 <Heart
-                  className={`w-8 h-8 transition-transform duration-200 hover:scale-110 ${liked
+                  className={`w-8 h-8 transition-transform duration-200 hover:scale-110 ${
+                    liked
                       ? "fill-red-500 stroke-red-500"
                       : "stroke-current hover:fill-gray-200"
-                    }`}
+                  }`}
                 />
                 <span className="text-lg font-medium">{post?.likes || 0}</span>
               </button>
@@ -434,13 +431,13 @@ export default function PostPage() {
             <div className="bg-gray-200 min-h-64 flex justify-center items-center">
               {post.fileType === "application/pdf" ? (
                 <embed
-                  src={`http://localhost:8081/api/posts/file/${post.image}`}
+                  src={`${API_BASE_URL}/posts/file/${post.image}`}
                   type="application/pdf"
                   className="w-full h-[600px]"
                 />
               ) : (
                 <img
-                  src={`http://localhost:8081/api/posts/file/${post.image}`}
+                  src={`${API_BASE_URL}/posts/file/${post.image}`}
                   alt={post.title}
                   className="max-w-full"
                 />

@@ -12,10 +12,12 @@ const fs = require("fs");
 dotenv.config();
 const app = express();
 
+const VITE_PORT = process.env.VITE_APP_PORT | 5173;
+
 // Configure CORS to allow requests from your frontend
 app.use(
   cors({
-    origin: "http://localhost:5175", // Vite's default port
+    origin: `http://localhost:${VITE_PORT}`, // Vite's default port
     credentials: true,
   })
 );
@@ -35,7 +37,7 @@ if (!fs.existsSync(uploadsDir)) {
 // Add this line to serve files from the uploads directory
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT | 8080;
 
 async function startServer() {
   try {
