@@ -7,6 +7,7 @@ import PostPage from "./PostPage.jsx";
 import UploadPage from "./UploadPage.jsx";
 import PostsPage from "./PostsPage.jsx";
 import ProfilePage from "./ProfilePage.jsx";
+import ProfileSettingsPage from "./ProfileSettingsPage.jsx";
 import { AuthProvider } from "../context/AuthContext";
 import "../styles/App.css";
 
@@ -24,6 +25,7 @@ root.render(
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/posts" element={<PostsPage />} />
             <Route path="/profile/:username" element={<ProfilePage />} />
+            <Route path="/profile/:username/settings" element={<ProfileSettingsPage />} />
           </Routes>
         </Router>
       </div>
