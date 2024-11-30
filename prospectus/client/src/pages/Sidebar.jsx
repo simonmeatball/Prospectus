@@ -103,10 +103,9 @@ const Sidebar = () => {
                         className="object-cover w-full h-full"
                     />
 
-                    
                 </div>
-                <p className = "font-semibold"> {user?.username} </p>
-                
+                <p className="font-semibold"> {user?.username} </p>
+
 
             </nav>
         </div>
