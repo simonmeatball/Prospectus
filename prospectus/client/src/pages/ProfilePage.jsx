@@ -16,14 +16,14 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/users/username/${username}`);
+        const response = await axios.get(`${API_BASE_URL}/users/username/${username}`);
 
         setProfile(response.data);
         setLoading(false);
 
 
        console.log("fetched:", response.data.userId); 
-       const response2 = await axios.get(`http://localhost:8080/api/users/${response.data.userId}/posts`);
+       const response2 = await axios.get(`${API_BASE_URL}/users/${response.data.userId}/posts`);
        console.log("r2.data.data", response2.data.data.posts);
        setPosts(response2.data.data.posts);
       } catch (err) {
@@ -87,7 +87,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-     {view == "posts" && posts && posts.length > 0? (
+     {view == "posts" && posts && posts.length > 0 ? (
         <div className="container mx-auto px-4">
           {posts.map((post) => (
               <PostCard key={post._id} post={post} /> 
