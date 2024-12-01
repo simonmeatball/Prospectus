@@ -109,7 +109,7 @@ function HomePage() {
     >
 
 
-<h1 className= "flex justify-center text-6xl mb-12 font-sans font-bold drop-shadow-xl">  {greeting} {user?.username}!</h1>
+<h1 className= "flex justify-center text-6xl text-white mb-12 font-sans font-bold drop-shadow-2xl">  {greeting} {user?.username}!</h1>
 
       <div className="flex justify-between items-start px-4">
 
@@ -123,7 +123,7 @@ function HomePage() {
 
         <div className="flex justify-start items-start w-full min-h-screen">
           <div className="grid grid-cols-1 px-4">
-            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
               <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                 Today's Featured Post 📰
               </span>

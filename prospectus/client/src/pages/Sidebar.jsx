@@ -100,7 +100,7 @@ const Sidebar = () => {
                 return (
                     <div className="flex justify-end items-start transform translate-x-32 w-full min-h-screen">
                         <div className="grid grid-cols-1 px-4">
-                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     Editor's Choice ⭐
                                 </span>
@@ -116,7 +116,7 @@ const Sidebar = () => {
                 return (
                     <div className="flex justify-end items-start transform translate-x-32 w-full min-h-screen">
                         <div className="grid grid-cols-1 px-4">
-                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     New 
                                 </span>
@@ -135,7 +135,7 @@ const Sidebar = () => {
                 return (
                     <div className="flex justify-end items-start  transform translate-x-32 w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
-                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m  animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     Most Popular 🌟
                                 </span>
@@ -152,7 +152,7 @@ const Sidebar = () => {
                 return (
                     <div className="flex justify-end items-start  transform translate-x-32  w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
-                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     PDFs 📄
                                 </span>
@@ -172,7 +172,7 @@ const Sidebar = () => {
                 return (
                     <div className="flex justify-end items-start  transform translate-x-32 w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
-                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     Images 📸
                                 </span>
