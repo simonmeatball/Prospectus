@@ -12,7 +12,7 @@ const Sidebar = () => {
 
 
     const [activeCategory, setActiveCategory] = useState('editors'); // Default category to "new"
-    
+
 
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -98,7 +98,7 @@ const Sidebar = () => {
 
             case 'editors':
                 return (
-                    <div className="flex justify-start items-start ml-72 w-full min-h-screen">
+                    <div className="flex justify-end items-start transform translate-x-32 w-full min-h-screen">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -114,11 +114,11 @@ const Sidebar = () => {
 
             case 'new':
                 return (
-                    <div className="flex justify-start items-start ml-72 w-full min-h-screen">
+                    <div className="flex justify-end items-start transform translate-x-32 w-full min-h-screen">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    New ✨
+                                    New 
                                 </span>
                             </h1>
                             {posts.slice(-2).map((post) => (
@@ -133,7 +133,7 @@ const Sidebar = () => {
             case 'popular':
                 const maxLikes = getMaxLikes(); // get the indices of the 2 posts with the most likes
                 return (
-                    <div className="flex justify-start items-start ml-72 w-full min-h-screen ">
+                    <div className="flex justify-end items-start  transform translate-x-32 w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -150,7 +150,7 @@ const Sidebar = () => {
             case 'pdf':
                 const pdfs = getpdfPosts();
                 return (
-                    <div className="flex justify-start items-start ml-72 w-full min-h-screen ">
+                    <div className="flex justify-end items-start  transform translate-x-32  w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -170,7 +170,7 @@ const Sidebar = () => {
             case 'image':
                 const images = getimagePosts();
                 return (
-                    <div className="flex justify-start items-start ml-72 w-full min-h-screen ">
+                    <div className="flex justify-end items-start  transform translate-x-32 w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>

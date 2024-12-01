@@ -7,13 +7,17 @@ import { API_BASE_URL } from "../config";
 
 import PostCard from "../components/PostCard";
 import Sidebar from "./sidebar.jsx";
-
 import Pin from "../images/pin.png"
+
+import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [greeting, setGreeting] = useState(""); // State for the greeting
+
+  const {user} = useAuth();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -31,7 +35,15 @@ function HomePage() {
     };
 
     fetchPosts();
+
+  
+    const greetings = ["Welcome ", "Hello ", "Greetings ", "Salutations ", "A'hoy ", "What's good ", "Nice to see you "];
+    const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+    setGreeting(randomGreeting)
+
   }, []);
+
+  
 
   if (loading) {
     return (
@@ -53,8 +65,11 @@ function HomePage() {
         </div>
       </div>
     );
+
+  
   }
 
+  
   const getDailyPost = (posts) => {
     const currentDate = new Date().toISOString().split('T')[0]; /* "YYYY-MM-DD" The string produced by toISOSTRING() is 2024-11-30T15:00:00.000Z. 
     So that's why we split by T and take the 0 index. */
@@ -82,6 +97,8 @@ function HomePage() {
     }
   };
 
+
+
   const dailyPost = getDailyPost(posts);
 
   return (
@@ -90,6 +107,9 @@ function HomePage() {
       style={{ userSelect: "none" }}
       className="bg-[url('../images/bea.jpg')] pt-10 overflow-x-hidden"
     >
+
+
+<h1 className= "flex justify-center text-6xl mb-12 font-sans font-bold drop-shadow-xl">  {greeting} {user?.username}!</h1>
 
       <div className="flex justify-between items-start px-4">
 
@@ -120,7 +140,7 @@ function HomePage() {
                 alt="Pin"
                 style={{
                   position: 'absolute',
-                  top: '0%',
+                  top: '1%',
                   left: '0%',
                   width: '15%',
                   pointerEvents: 'none'  // so the pin doesn't block interactions with the post !
@@ -133,7 +153,7 @@ function HomePage() {
                 alt="Pin"
                 style={{
                   position: 'absolute',
-                  top: '1%',
+                  top: '2%',
                   left: '84%',
                   width: '15%',
                   pointerEvents: 'none'
