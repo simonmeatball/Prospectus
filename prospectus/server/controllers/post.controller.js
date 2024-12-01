@@ -24,13 +24,16 @@ const getPosts = async (req, res) => {
 // Create a new post
 const createPost = async (req, res) => {
   try {
-    const { title, body, userID } = req.body;
+    const { title, body, userID, tags } = req.body;
     console.log("Creating post with userID:", userID);
+
+    const parsedTags = tags ? JSON.parse(tags) : [];
 
     const postData = {
       title,
       body,
       userID,
+      tags: parsedTags,  //if no tags, default empty 
     };
 
     // Validate required fields

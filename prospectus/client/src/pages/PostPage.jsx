@@ -427,8 +427,21 @@ export default function PostPage() {
         <div className="w-3/4">
           <h1 className="text-3xl mb-2">{post.title}</h1>
           <div className="mb-2">{post.body}</div>
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {post.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
           {post.image && (
-            <div className="bg-gray-200 min-h-64 flex justify-center items-center">
+            <div className="bg-gray-200 min-h-64 mt-4 flex justify-center items-center">
               {post.fileType === "application/pdf" ? (
                 <embed
                   src={`${API_BASE_URL}/posts/file/${post.image}`}
