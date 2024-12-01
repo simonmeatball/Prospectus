@@ -65,7 +65,7 @@ export default function Navbar() {
     console.log("search initiated:", debouncedSearchQuery);
     
     try { 
-      const response = await axios.get("http://localhost:8080/api/posts");
+      const response = await axios.get("http://localhost:8081/api/posts");
       if (response.data.success) { 
         const allPosts = response.data.data
         console.log("all posts fetched:", response.data.data);

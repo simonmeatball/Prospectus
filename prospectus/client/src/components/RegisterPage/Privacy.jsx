@@ -18,7 +18,7 @@ const PrivacyModal = () => {
 
 
     return (
-        <div>
+        <div className>
             {/* Terms and conditions */}
 
 
@@ -29,7 +29,7 @@ const PrivacyModal = () => {
             {isModalOpen && (
                 <div
                     id="terms-modal"
-                    className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 "
+                    className="fixed z-100 inset-0 flex items-center justify-center bg-black bg-opacity-50 "
                 >
                     <div className="font-semibold bg-white p-6 rounded-lg max-w-lg max-h-[70vh] overflow-y-auto">
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
-import { Users, Search, Rss, UserPen, LogOut } from 'lucide-react';
+import { Users, Search, Rss, UserPen, FileText } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
 import PostCard from "../components/PostCard";
 import { useAuth } from "../context/AuthContext";
+
 
 
 
@@ -21,7 +21,7 @@ const Sidebar = () => {
     const [error, setError] = useState(null);
     const [isHovered, setIsHovered] = useState(false);
 
-    const { isAuthenticated, logout, user } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -51,11 +51,11 @@ const Sidebar = () => {
 
         const max1 = Math.max(...likeCounts);
 
-       
+
         const indexOfMax1 = likeCounts.indexOf(max1);
 
-        const arrayWithoutMax1 = [...likeCounts];  
-        arrayWithoutMax1.splice(indexOfMax1, 1); 
+        const arrayWithoutMax1 = [...likeCounts];
+        arrayWithoutMax1.splice(indexOfMax1, 1);
 
         const max2 = Math.max(...arrayWithoutMax1);
 
@@ -67,12 +67,34 @@ const Sidebar = () => {
         return [indexOfMax1, finalIndexOfMax2];
     }
 
+    const getpdfPosts = () => {
+        const pdfs = [];
+        for (let i = 0; i < posts.length; i++) {
+            if (posts[i].fileType === "application/pdf") {
+                pdfs.push(posts[i]);
+            }
+        }
+
+        return pdfs;
+    }
+
+    const getimagePosts = () => {
+        const images = [];
+        for (let i = 0; i < posts.length; i++) {
+            if (posts[i].fileType !== "application/pdf") {
+                images.push(posts[i]);
+            }
+        }
+
+        return images;
+    }
+
 
     const displayPostsByCategory = () => {   // ALL THE POST CATEGORIES 
         switch (activeCategory) {
             case 'new':
                 return (
-                    <div className="flex justify-start items-start ml-72 ">
+                    <div className="flex justify-start items-start ml-72  max-w-10xl min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -88,7 +110,7 @@ const Sidebar = () => {
                 );
             case 'editors':
                 return (
-                    <div className="flex justify-start items-start ml-72 ">
+                    <div className="flex justify-start items-start ml-72  max-w-10xl  min-h-screen">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -103,21 +125,62 @@ const Sidebar = () => {
                 );
 
             case 'popular':
-                const maxLikes = getMaxLikes();
+                const maxLikes = getMaxLikes(); // get the indices of the 2 posts with the most likes
                 return (
-                    <div className="flex justify-start items-start ml-72 ">
+                    <div className="flex justify-start items-start ml-72  max-w-10xl min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    Most Popular ⭐
+                                    Most Popular 🌟
                                 </span>
                             </h1>
-                            
+
                             <PostCard key={posts[maxLikes[0]]._id} post={posts[maxLikes[0]]} />
                             <PostCard key={posts[maxLikes[1]]._id} post={posts[maxLikes[1]]} />
                         </div>
                     </div>
                 );
+
+            case 'pdf':
+                const pdfs = getpdfPosts();
+                return (
+                    <div className="flex justify-start items-start ml-72  max-w-10xl min-h-screen ">
+                        <div className="grid grid-cols-1 px-4">
+                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                                    PDFs 📄
+                                </span>
+                            </h1>
+
+
+                            {pdfs.map((post) => (
+                                <PostCard key={post._id} post={post} />
+                            ))}
+
+                        </div>
+                    </div>
+                );
+
+            case 'image':
+                const images = getimagePosts();
+                return (
+                    <div className="flex justify-start items-start ml-72 max-w-10xl min-h-screen ">
+                        <div className="grid grid-cols-1 px-4">
+                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                                    Images 📸
+                                </span>
+                            </h1>
+
+
+                            {images.map((post) => (
+                                <PostCard key={post._id} post={post} />
+                            ))}
+
+                        </div>
+                    </div>
+                );
+
 
 
             default:
@@ -166,7 +229,7 @@ const Sidebar = () => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <nav className="flex min-w-[180px] flex-col gap-1 p-2 font-sans ">
+                <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans ">
 
                     <Link to="/" className="flex items-center w-full p-3 rounded-lg hover:bg-white mt-16">
                         <Search strokeWidth={3} />
@@ -175,6 +238,7 @@ const Sidebar = () => {
 
                     <hr className="border-black" />
 
+
                     <div className="flex items-center w-full p-3 rounded-lg ">
                         <div className="mr-3 font-semibold">TOPICS</div>
                     </div>
@@ -182,7 +246,7 @@ const Sidebar = () => {
 
                     <button onClick={() => setActiveCategory('editors')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
                         <UserPen strokeWidth={3} />
-                        <div className="ml-2">Editor's Choice</div>
+                        <div className="ml-2 z-0">Editor's Choice</div>
                     </button>
 
                     <button onClick={() => setActiveCategory('new')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
@@ -195,15 +259,32 @@ const Sidebar = () => {
                         <div className="ml-2">Most Popular</div>
                     </button>
 
+                    <button onClick={() => setActiveCategory('pdf')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                        <FileText strokeWidth={3} />
+                        <div className="ml-2">PDFs</div>
+                    </button>
 
-                    <div className="ml-2 mt-3 w-12 h-12 rounded-full overflow-hidden">
+                    <button onClick={() => setActiveCategory('image')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                        <FileText strokeWidth={3} />
+                        <div className="ml-2">Images</div>
+                    </button>
+
+                    <hr className="border-black" />
+
+                    <br />
+
+
+
+
+                    {/* <div className="ml-2 mt-3 w-12 h-12 rounded-full overflow-hidden">
                         <img
                             alt="Avatar"
                             src={user?.avatarUrl || "https://via.placeholder.com/150"}
                             className="object-cover w-full h-full"
                         />
                     </div>
-                    <p className="font-semibold">{user?.username || "Guest"}</p>
+                    <p className="font-semibold">{user?.username || "Guest"}</p> */}
+
                 </nav>
 
             </div>

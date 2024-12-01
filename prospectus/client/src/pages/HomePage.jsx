@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Homenavbar from "../components/HomePage/Homenavbar.jsx";
+//import Homenavbar from "../components/HomePage/Homenavbar.jsx";
 
 import Navbar from "./Navbar.jsx";
 import axios from "axios";
@@ -7,7 +7,6 @@ import { API_BASE_URL } from "../config";
 
 import PostCard from "../components/PostCard";
 import Sidebar from "./sidebar.jsx";
-import { Search } from "lucide-react";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -61,17 +60,10 @@ function HomePage() {
     >
       <Navbar />
 
-      <div className="form-control mb-9 ">
-        <input
-          type="text"
-          placeholder="Search Prospectus"
-          className="input input-bordered mx-auto text-black bg-cyan-100 w-3/5 border-gray-600"
-        />
-      </div>
 
       <Sidebar />   {/* THE SIDEBAR COMPONENT */}
 
-      
+
     </div>
   );
 }

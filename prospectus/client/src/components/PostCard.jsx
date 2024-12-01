@@ -18,7 +18,7 @@ const PostCard = ({ post }) => {
   const renderFile = () => {
     if (!post.image) return null;
 
-    const fileUrl = `http://localhost:8080/api/posts/file/${post.image}`;
+    const fileUrl = `http://localhost:8081/api/posts/file/${post.image}`;
 
     // For PDF files
     if (post.fileType === "application/pdf") {
