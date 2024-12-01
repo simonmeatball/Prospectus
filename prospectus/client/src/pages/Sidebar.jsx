@@ -1,28 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Search, Rss, UserPen, FileText } from 'lucide-react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { Users, Search, Rss, UserPen, FileText, Image } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
 import PostCard from "../components/PostCard";
-import { useAuth } from "../context/AuthContext";
-
 
 
 
 const Sidebar = () => {
 
+
     const [activeCategory, setActiveCategory] = useState('editors'); // Default category to "new"
-    //const [showNewPosts, setShowNewPosts] = useState(false);
-    //const [showEditorsPicks, setEditorsPicks] = useState(true);
+    
 
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isHovered, setIsHovered] = useState(false);
 
-    const { user } = useAuth();
-    const navigate = useNavigate();
+    useLayoutEffect(() => {
+        // Force a reflow
+        document.body.offsetHeight;
+    }, [posts]); // Re-run when posts change
+
+
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -40,6 +42,7 @@ const Sidebar = () => {
         };
         fetchPosts();
     }, []);
+
 
 
     const getMaxLikes = () => {
@@ -92,25 +95,10 @@ const Sidebar = () => {
 
     const displayPostsByCategory = () => {   // ALL THE POST CATEGORIES 
         switch (activeCategory) {
-            case 'new':
-                return (
-                    <div className="flex justify-start items-start ml-72  max-w-10xl min-h-screen ">
-                        <div className="grid grid-cols-1 px-4">
-                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
-                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    New ✨
-                                </span>
-                            </h1>
-                            {posts.slice(-2).map((post) => (
-                                <PostCard key={post._id} post={post} />
-                            ))}
 
-                        </div>
-                    </div>
-                );
             case 'editors':
                 return (
-                    <div className="flex justify-start items-start ml-72  max-w-10xl  min-h-screen">
+                    <div className="flex justify-start items-start ml-72 w-full min-h-screen">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -124,10 +112,28 @@ const Sidebar = () => {
                     </div>
                 );
 
+            case 'new':
+                return (
+                    <div className="flex justify-start items-start ml-72 w-full min-h-screen">
+                        <div className="grid grid-cols-1 px-4">
+                            <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                                    New ✨
+                                </span>
+                            </h1>
+                            {posts.slice(-2).map((post) => (
+                                <PostCard key={post._id} post={post} />
+                            ))}
+                        </div>
+                    </div>
+                );
+
+
+
             case 'popular':
                 const maxLikes = getMaxLikes(); // get the indices of the 2 posts with the most likes
                 return (
-                    <div className="flex justify-start items-start ml-72  max-w-10xl min-h-screen ">
+                    <div className="flex justify-start items-start ml-72 w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -144,7 +150,7 @@ const Sidebar = () => {
             case 'pdf':
                 const pdfs = getpdfPosts();
                 return (
-                    <div className="flex justify-start items-start ml-72  max-w-10xl min-h-screen ">
+                    <div className="flex justify-start items-start ml-72 w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -164,7 +170,7 @@ const Sidebar = () => {
             case 'image':
                 const images = getimagePosts();
                 return (
-                    <div className="flex justify-start items-start ml-72 max-w-10xl min-h-screen ">
+                    <div className="flex justify-start items-start ml-72 w-full min-h-screen ">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
@@ -229,7 +235,7 @@ const Sidebar = () => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <nav className="flex min-w-[240px] flex-col gap-1 p-2 font-sans ">
+                <nav className="flex min-w-[300px] flex-col gap-1 p-2 font-sans ">
 
                     <Link to="/" className="flex items-center w-full p-3 rounded-lg hover:bg-white mt-16">
                         <Search strokeWidth={3} />
@@ -265,7 +271,7 @@ const Sidebar = () => {
                     </button>
 
                     <button onClick={() => setActiveCategory('image')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
-                        <FileText strokeWidth={3} />
+                        <Image strokeWidth={3} />
                         <div className="ml-2">Images</div>
                     </button>
 
