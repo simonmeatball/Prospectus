@@ -7,6 +7,7 @@ import DropdownMenu from "../components/PostPage/DropdownMenu";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../config";
+import { Link } from "react-router-dom";
 
 export default function PostPage() {
   const { postID } = useParams();
@@ -73,8 +74,8 @@ export default function PostPage() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLike = async () => {
@@ -203,22 +204,24 @@ export default function PostPage() {
 
   const handleDelete = async () => {
     if (!user) return;
-    
+
     if (!window.confirm("Are you sure you want to delete this post?")) {
       return;
     }
 
     try {
       const response = await axios.delete(`${API_BASE_URL}/posts/${postID}`, {
-        data: { userId: user.userId }
+        data: { userId: user.userId },
       });
 
       if (response.data.success) {
-        navigate('/posts');
+        navigate("/posts");
       }
     } catch (err) {
       console.error("Error deleting post:", err);
-      alert("Failed to delete post: " + (err.response?.data?.message || err.message));
+      alert(
+        "Failed to delete post: " + (err.response?.data?.message || err.message)
+      );
     }
   };
 
@@ -483,7 +486,11 @@ export default function PostPage() {
                   </button>
                   {showMoreMenu && (
                     <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                      <div className="py-1" role="menu" aria-orientation="vertical">
+                      <div
+                        className="py-1"
+                        role="menu"
+                        aria-orientation="vertical"
+                      >
                         <button
                           onClick={handleDelete}
                           className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
