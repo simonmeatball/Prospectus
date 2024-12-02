@@ -227,14 +227,19 @@ export default function PostPage() {
     return replies.map((reply) => (
       <div key={reply._id} className="ml-8 mt-4">
         <div className="p-4 bg-gray-100 rounded-lg border">
-          <p className="text-sm font-medium">@{reply.username || "Unknown"}</p>{" "}
+          <Link
+            to={`/profile/${reply.username}`}
+            className="text-sm font-medium"
+          >
+            @{reply.username || "Unknown"}
+          </Link>
           {/* Ensure username is displayed */}
-          <p className="mt-1">{reply.text || "No content"}</p>{" "}
+          <p className="mt-1">{reply.text || "No content"}</p>
           {/* Ensure text is displayed */}
           <p className="text-xs text-gray-500 mt-2">
             {reply.createdAt
               ? new Date(reply.createdAt).toLocaleString()
-              : "Invalid Date"}{" "}
+              : "Invalid Date"}
             {/* Ensure date is displayed */}
           </p>
           {user && (
@@ -324,7 +329,12 @@ export default function PostPage() {
         <div className="space-y-4">
           {sortedComments.map((comment) => (
             <div key={comment._id} className="p-4 bg-white rounded-lg border">
-              <p className="text-sm font-medium">@{comment.username}</p>
+              <Link
+                to={`/profile/${comment.username}`}
+                className="text-sm font-medium"
+              >
+                @{comment.username}
+              </Link>
               <p className="mt-1">{comment.text}</p>
               <p className="text-xs text-gray-500 mt-2">
                 {new Date(comment.createdAt).toLocaleString()}
@@ -421,8 +431,9 @@ export default function PostPage() {
               <img src={profile.avatar} alt="Profile" />
             </div>
           </div>
-          {profile.name}
-          <p className="text-gray-500">@{profile.username}</p>
+          <Link to={`/profile/${profile.username}`} className="text-gray-500">
+            @{profile.username}
+          </Link>
           <div>
             <p className="text-gray-500 mb-4">
               {new Date(post.createdAt).toLocaleString()}
