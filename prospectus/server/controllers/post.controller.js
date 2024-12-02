@@ -102,12 +102,39 @@ const createPost = async (req, res) => {
 
 // Delete a post by ID
 const deletePost = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
+    const { userId } = req.body;
+
+    // Check if userId is provided
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+
+    // Find the post
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
+
+    // Check if the user is the owner of the post
+    if (post.userID !== userId) {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this post" });
+    }
+
+    // Delete the post
     await Post.findByIdAndDelete(id);
-    res.status(200).json({ success: true, message: "Post deleted" });
+
+    // Remove the post from user's posts array
+    await User.findOneAndUpdate(
+      { userId },
+      { $pull: { posts: id } }
+    );
+
+    res.status(200).json({ success: true, message: "Post deleted successfully" });
   } catch (err) {
-    res.status(404).json({ success: false, message: "Post not found" });
+    console.error("Error deleting post:", err);
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 

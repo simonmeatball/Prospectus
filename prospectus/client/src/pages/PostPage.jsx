@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, MoreVertical } from "lucide-react";
 import Review from "../components/PostPage/Review";
 import DropdownMenu from "../components/PostPage/DropdownMenu";
 import axios from "axios";
@@ -19,6 +19,8 @@ export default function PostPage() {
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState(""); // Add new state for reply text
   const [replyingTo, setReplyingTo] = useState(null);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuRef = useRef(null);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -63,6 +65,17 @@ export default function PostPage() {
       fetchComments();
     }
   }, [postID]); // Changed dependency from post to postID
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target)) {
+        setShowMoreMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLike = async () => {
     try {
@@ -186,6 +199,27 @@ export default function PostPage() {
 
   const handleReply = (newReply) => {
     setComments((prevComments) => [...prevComments, newReply]);
+  };
+
+  const handleDelete = async () => {
+    if (!user) return;
+    
+    if (!window.confirm("Are you sure you want to delete this post?")) {
+      return;
+    }
+
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/posts/${postID}`, {
+        data: { userId: user.userId }
+      });
+
+      if (response.data.success) {
+        navigate('/posts');
+      }
+    } catch (err) {
+      console.error("Error deleting post:", err);
+      alert("Failed to delete post: " + (err.response?.data?.message || err.message));
+    }
   };
 
   const renderReplies = (replies) => {
@@ -425,38 +459,65 @@ export default function PostPage() {
           </div>
         </div>
         <div className="w-3/4">
-          <h1 className="text-3xl mb-2">{post.title}</h1>
-          <div className="mb-2">{post.body}</div>
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {post.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm font-medium"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {post.image && (
-            <div className="bg-gray-200 min-h-64 mt-4 flex justify-center items-center">
-              {post.fileType === "application/pdf" ? (
-                <embed
-                  src={`${API_BASE_URL}/posts/file/${post.image}`}
-                  type="application/pdf"
-                  className="w-full h-[600px]"
-                />
-              ) : (
-                <img
-                  src={`${API_BASE_URL}/posts/file/${post.image}`}
-                  alt={post.title}
-                  className="max-w-full"
-                />
+          <div className="max-w-3xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
+            <div className="flex justify-between items-start mb-4">
+              <h1 className="text-3xl font-bold">{post.title}</h1>
+              {user && post.userID === user.userId && (
+                <div className="relative" ref={moreMenuRef}>
+                  <button
+                    onClick={() => setShowMoreMenu(!showMoreMenu)}
+                    className="btn btn-ghost btn-sm"
+                  >
+                    <MoreVertical size={20} />
+                  </button>
+                  {showMoreMenu && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                      <div className="py-1" role="menu" aria-orientation="vertical">
+                        <button
+                          onClick={handleDelete}
+                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                          role="menuitem"
+                        >
+                          Delete Post
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
-          )}
+            <div className="mb-2">{post.body}</div>
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {post.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm font-medium"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {post.image && (
+              <div className="bg-gray-200 min-h-64 mt-4 flex justify-center items-center">
+                {post.fileType === "application/pdf" ? (
+                  <embed
+                    src={`${API_BASE_URL}/posts/file/${post.image}`}
+                    type="application/pdf"
+                    className="w-full h-[600px]"
+                  />
+                ) : (
+                  <img
+                    src={`${API_BASE_URL}/posts/file/${post.image}`}
+                    alt={post.title}
+                    className="max-w-full"
+                  />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="w-11/12 mx-auto h-px bg-gray-500"></div>
