@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "@/config";
 
 const PostCard = ({ post }) => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const PostCard = ({ post }) => {
     if (!post.image) return null;
     
 
-    const fileUrl = `http://localhost:8081/api/posts/file/${post.image}`;
+    const fileUrl = `${API_BASE_URL}/posts/file/${post.image}`;
 
     // For PDF files
     if (post.fileType === "application/pdf") {
