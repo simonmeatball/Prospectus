@@ -2,6 +2,7 @@ import React, { useState, useRef , useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 
 import Logo1 from "../images/logo1.png";
@@ -21,8 +22,6 @@ export default function Navbar() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
   const debounceTimeoutRef = useRef(null); 
-
- // const debouncedSearchQuery = useDebounce(searchQuery, 500); //500 ms delay before making search request 
 
   const handleDebounce = (value) => { 
     if (debounceTimeoutRef.current) { 
@@ -65,15 +64,21 @@ export default function Navbar() {
     console.log("search initiated:", debouncedSearchQuery);
     
     try { 
-      const response = await axios.get("http://localhost:8080/api/posts");
+      const response = await axios.get(`${API_BASE_URL}/posts`);
       if (response.data.success) { 
         const allPosts = response.data.data
         console.log("all posts fetched:", response.data.data);
       
       const filteredPosts = allPosts.filter((post) => {
-        const regex = new RegExp(`\\b${debouncedSearchQuery}`, 'i'); 
-        return regex.test(post.title.toLowerCase());}
-     );
+        const regex = new RegExp(`\\b${debouncedSearchQuery}`, 'i');
+        const titleMatch = regex.test(post.title.toLowerCase());
+        const tagsMatch = post.tags.some((tag) => 
+          regex.test(tag.toLowerCase())
+        );
+
+        return titleMatch || tagsMatch; 
+    
+      });
      
      setResults(filteredPosts);
      console.log(filteredPosts); 
@@ -102,10 +107,29 @@ export default function Navbar() {
     }
   };
 
-  const renderItem = (item) => { 
+  const renderItem = (item, index) => { 
+    const matchingTags = item.tags.filter((tag) => 
+      tag.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+    );
     return (
-      <div className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2">
-        {item.title}
+      <div
+        key={item._id}
+        onMouseDown={() => handleSelection(index)}
+        ref={index === focusedIndex ? resultContainer : null}
+        style={{
+          backgroundColor: index === focusedIndex ? "rgba(0,0,0,0.1)" : "",
+        }}
+        className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2"
+      >
+        <div className="flex items-center gap-2">
+          {/* If there are any matching tags, display them as a bubble */}
+          {matchingTags.length > 0 && (
+            <span className="inline-block text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">
+              {matchingTags[0]} {/* Display first matching tag */}
+            </span>
+          )}
+          <span>{item.title}</span> {/* Display the post title */}
+        </div>
       </div>
     );
   };
