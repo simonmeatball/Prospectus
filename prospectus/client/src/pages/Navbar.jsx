@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import { API_BASE_URL } from "@/config";
+import { API_BASE_URL } from "../config";
 
 import Logo1 from "../images/logo1.png";
 
@@ -21,8 +21,6 @@ export default function Navbar() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
 
   const debounceTimeoutRef = useRef(null);
-
-  // const debouncedSearchQuery = useDebounce(searchQuery, 500); //500 ms delay before making search request
 
   const handleDebounce = (value) => {
     if (debounceTimeoutRef.current) {
@@ -63,25 +61,44 @@ export default function Navbar() {
     setLoading(true);
     setError(null);
     console.log("search initiated:", debouncedSearchQuery);
+    
+    try { 
+      const postsResponse = await axios.get(`${API_BASE_URL}/posts`);
+      const usersResponse = await axios.get(`${API_BASE_URL}/users`);
 
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/posts`);
-      if (response.data.success) {
-        const allPosts = response.data.data;
-        console.log("all posts fetched:", response.data.data);
+      const allPosts = postsResponse.data.success ? postsResponse.data.data : [];
+      const allUsers = usersResponse.data || [];
 
-        const filteredPosts = allPosts.filter((post) => {
-          const regex = new RegExp(`\\b${debouncedSearchQuery}`, "i");
-          return regex.test(post.title.toLowerCase());
-        });
+      console.log("all posts fetched:", postsResponse.data.data);
+      console.log("all users fetched:", usersResponse.data);
+      console.log("users:", allUsers);
+    
+      
+      const filteredPosts = allPosts.filter((post) => {
+        const regex = new RegExp(`\\b${debouncedSearchQuery}`, 'i');
+        const titleMatch = regex.test(post.title.toLowerCase());
+        const tagsMatch = post.tags.some((tag) => {
+          const regex = new RegExp(`^${debouncedSearchQuery.toLowerCase()}`, 'i');
+          return regex.test(tag.toLowerCase());
+        }
+        );    
+        return titleMatch || tagsMatch; 
+      });
 
-        setResults(filteredPosts);
-        console.log(filteredPosts);
-      }
-    } catch (err) {
-      setError("failed to search results");
-    } finally {
-      setLoading(false);
+      const filteredUsers = allUsers.filter((user) => 
+      user.username.toLowerCase().startsWith(debouncedSearchQuery.toLowerCase())
+    );
+
+     setResults([
+      ...filteredPosts.map(post => ({...post, type:'post'})),
+      ...filteredUsers.map(user => ({...user, type: 'user'}))
+     ]); 
+     console.log("search results:", results); 
+    }
+    catch (err)  {
+      setError("failed to search results"); 
+    } finally { 
+      setLoading(false); 
     }
   };
 
@@ -91,21 +108,65 @@ export default function Navbar() {
     }
   }, [debouncedSearchQuery]);
 
-  const handleResultClick = (postId) => {
-    navigate(`/post/${postId}`);
+  const handleResultClick = (id, type) => {
     setShowResults(false);
-  };
-
-  const handleSelection = (index) => {
-    if (results[index]) {
-      handleResultClick(results[index]._id);
+    
+    if (type === "post") {
+      navigate(`/post/${id}`);
+    } else if (type === "user") {
+      console.log(id); 
+      navigate(`/profile/${id}`);
     }
   };
 
-  const renderItem = (item) => {
+  const handleSelection = (type, index) => { 
+    if (results[index]) {
+      const selectedItem = results[index]; 
+    console.log(selectedItem);
+    console.log(results[index]);
+
+      if (type === 'post'){
+        handleResultClick(selectedItem._id, type);
+      }
+      else if (type === 'user') {
+        handleResultClick(selectedItem.username, type);
+      }
+    }
+  };
+
+  const renderItem = (item, index) => { 
+    const isUser = item.type === 'user';
+    const isPost = item.type === 'post';
     return (
-      <div className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2">
-        {item.title}
+      <div
+        key={item._id || item.username}
+        onMouseDown={() => handleResultClick(item._id|| item.username, item.type) }
+        ref={index === focusedIndex ? resultContainer : null}
+        style={{
+          backgroundColor: index === focusedIndex ? "rgba(0,0,0,0.1)" : "",
+        }}
+        className="cursor-pointer hover:bg-black hover:bg-opacity-10 p-2"
+      >
+        <div className="flex items-center gap-2">
+          {isUser && (
+          <span className="text-sm text-blue-500">@{item.username}</span>
+          )}
+
+          {isPost && (
+            <>
+            {item.tags && item.tags.length > 0 && (
+              item.tags.filter(tag =>
+                tag.toLowerCase().startsWith(debouncedSearchQuery.toLowerCase())
+              ).map((matchingTag, idx) => (
+                <span key={idx} className="inline-block text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">
+                  {matchingTag}
+                </span>
+              ))
+            )}
+            <span>{item.title}</span>
+            </>
+          )}
+        </div>
       </div>
     );
   };
@@ -148,7 +209,7 @@ export default function Navbar() {
               return (
                 <div
                   key={item._id}
-                  onMouseDown={() => handleSelection(index)}
+                  onMouseDown={() => handleSelection(item.type, index)}
                   ref={index === focusedIndex ? resultContainer : null}
                   style={{
                     backgroundColor:
