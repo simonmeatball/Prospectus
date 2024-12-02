@@ -17,12 +17,9 @@ const Sidebar = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isHovered, setIsHovered] = useState(false);
+    //const [isHovered, setIsHovered] = useState(false);
 
-    useLayoutEffect(() => {
-        // Force a reflow
-        document.body.offsetHeight;
-    }, [posts]); // Re-run when posts change
+
 
 
 
@@ -84,7 +81,7 @@ const Sidebar = () => {
     const getimagePosts = () => {
         const images = [];
         for (let i = 0; i < posts.length; i++) {
-            if (posts[i].fileType !== "application/pdf") {
+            if (posts[i].image && posts[i].fileType !== "application/pdf") {
                 images.push(posts[i]);
             }
         }
@@ -98,15 +95,21 @@ const Sidebar = () => {
 
             case 'editors':
                 return (
-                    <div className="flex justify-end items-start transform translate-x-32 w-full min-h-screen">
+                    <div className="flex justify-center items-center w-full min-h-screen">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     Editor's Choice ⭐
                                 </span>
                             </h1>
+
                             {posts.slice(0, 2).map((post) => (
-                                <PostCard key={post._id} post={post} />
+                                <div
+                                    key={post._id}
+                                    className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                >
+                                    <PostCard post={post} />
+                                </div>
                             ))}
                         </div>
                     </div>
@@ -114,175 +117,217 @@ const Sidebar = () => {
 
             case 'new':
                 return (
-                    <div className="flex justify-end items-start transform translate-x-32 w-full min-h-screen">
+                    <div className="flex justify-center items-center w-full min-h-screen">
                         <div className="grid grid-cols-1 px-4">
                             <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    New 
+                                    New
                                 </span>
                             </h1>
+
                             {posts.slice(-2).map((post) => (
-                                <PostCard key={post._id} post={post} />
-                            ))}
-                        </div>
-                    </div>
-                );
 
-
-
-            case 'popular':
-                const maxLikes = getMaxLikes(); // get the indices of the 2 posts with the most likes
-                return (
-                    <div className="flex justify-end items-start  transform translate-x-32 w-full min-h-screen ">
-                        <div className="grid grid-cols-1 px-4">
-                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m  animate-bounce">
-                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    Most Popular 🌟
-                                </span>
-                            </h1>
-
-                            <PostCard key={posts[maxLikes[0]]._id} post={posts[maxLikes[0]]} />
-                            <PostCard key={posts[maxLikes[1]]._id} post={posts[maxLikes[1]]} />
-                        </div>
-                    </div>
-                );
-
-            case 'pdf':
-                const pdfs = getpdfPosts();
-                return (
-                    <div className="flex justify-end items-start  transform translate-x-32  w-full min-h-screen ">
-                        <div className="grid grid-cols-1 px-4">
-                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
-                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    PDFs 📄
-                                </span>
-                            </h1>
-
-
-                            {pdfs.map((post) => (
-                                <PostCard key={post._id} post={post} />
+                                    <div
+                                        key={post._id}
+                                        className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                    >
+                                        <PostCard post={post} />
+                                    </div>
                             ))}
 
-                        </div>
+
+                                </div>
+
+                                
+
+                                
                     </div>
-                );
-
-            case 'image':
-                const images = getimagePosts();
-                return (
-                    <div className="flex justify-end items-start  transform translate-x-32 w-full min-h-screen ">
-                        <div className="grid grid-cols-1 px-4">
-                            <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
-                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    Images 📸
-                                </span>
-                            </h1>
+                        );
 
 
-                            {images.map((post) => (
-                                <PostCard key={post._id} post={post} />
-                            ))}
 
+                        case 'popular':
+                        const maxLikes = getMaxLikes(); // get the indices of the 2 posts with the most likes
+                        return (
+                        <div className="flex justify-center items-center w-full min-h-screen ">
+                            <div className="grid grid-cols-1 px-4">
+                                <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m  animate-bounce">
+                                    <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                                        Most Popular 🌟
+                                    </span>
+                                </h1>
+
+                                <div
+                                    key={posts[maxLikes[0]]._id}
+                                    className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                >
+                                    <PostCard post={posts[maxLikes[0]]} />
+                                </div>
+
+                                <div
+                                    key={posts[maxLikes[1]]._id}
+                                    className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                >
+                                    <PostCard post={posts[maxLikes[1]]} />
+                                </div>
+
+                            </div>
                         </div>
-                    </div>
-                );
+                        );
+
+                        case 'pdf':
+                        const pdfs = getpdfPosts();
+                        return (
+                        <div className="flex justify-center items-center w-full min-h-screen ">
+                            <div className="grid grid-cols-1 px-4">
+                                <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                                    <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                                        PDFs 📄
+                                    </span>
+                                </h1>
+
+
+                                {pdfs.map((post) => (
+                                    <div
+                                        key={post._id}
+                                        className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                    >
+                                        <PostCard post={post} />
+                                    </div>
+                                ))}
+
+                            </div>
+                        </div>
+                        );
+
+                        case 'image':
+                        const images = getimagePosts();
+                        return (
+                        <div className="flex justify-center items-center w-full min-h-screen ">
+                            <div className="grid grid-cols-1 px-4">
+                                <h1 className="sepia text-3xl text-center text-white font-bold drop-shadow-m animate-bounce">
+                                    <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                                        Images 📸
+                                    </span>
+                                </h1>
+
+
+                                {images.map((post) => (
+                                    <div
+                                        key={post._id}
+                                        className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                    >
+                                        <PostCard post={post} />
+                                    </div>
+                                ))}
+
+                            </div>
+                        </div>
+                        );
 
 
 
-            default:
-                return null;
+                        default:
+                        return null;
         }
     };
 
-    const sidebarStyle = {
-        height: '64vh',
-        width: isHovered ? '16rem' : '4rem',
-        opacity: isHovered ? 1 : 0.1,
-        transition: 'all 0.5s ease-in-out',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        padding: '1rem',
-        overflow: 'hidden',
+    const getOpacity = () => {
+        const width = window.innerWidth;
+                        console.log(width);
+        if (width >= 1024) return 1; // Large screens
+        if (width >= 768) return 1; // Medium screens
+
+                        return 0;
     };
 
-    if (loading) {
+                        const sidebarStyle = {
+                            opacity: getOpacity(),
+                        height: '64vh',
+                        width: '16rem',
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        padding: '1rem',
+                        overflow: 'hidden',
+    };
+
+                        if (loading) {
         return (
-            <div>
-                <Navbar />
-                <div className="flex justify-center items-center h-screen">
-                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-                </div>
-            </div>
-        );
+                        <div>
+                            <Navbar />
+                            <div className="flex justify-center items-center h-screen">
+                                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+                            </div>
+                        </div>
+                        );
     }
 
-    if (error) {
+                        if (error) {
         return (
-            <div>
-                <Navbar />
-                <div className="flex justify-center items-center h-screen">
-                    <div className="text-red-500">Error: {error}</div>
-                </div>
-            </div>
-        );
+                        <div>
+                            <Navbar />
+                            <div className="flex justify-center items-center h-screen">
+                                <div className="text-red-500">Error: {error}</div>
+                            </div>
+                        </div>
+                        );
     }
 
-    return (
-        <>
-            <div
-                style={sidebarStyle}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >
-                <nav className="flex min-w-[300px] flex-col gap-1 p-2 font-sans ">
+                        return (
+                        <>
+                            <div
+                                style={sidebarStyle}
 
-                    <Link to="/" className="flex items-center w-full p-3 rounded-lg hover:bg-white mt-16">
-                        <Search strokeWidth={3} />
-                        <div className="ml-2">Explore</div>
-                    </Link>
+                            >
+                                <nav className="flex min-w-[300px] flex-col gap-1 p-2 font-sans z-100 ">
 
-                    <hr className="border-black" />
+                                    <Link to="/" className="flex items-center w-full p-3 rounded-lg hover:bg-white mt-16">
+                                        <Search strokeWidth={3} />
+                                        <div className="ml-2">Explore</div>
+                                    </Link>
 
-
-                    <div className="flex items-center w-full p-3 rounded-lg ">
-                        <div className="mr-3 font-semibold">TOPICS</div>
-                    </div>
+                                    <hr className="border-black" />
 
 
-                    <button onClick={() => setActiveCategory('editors')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
-                        <UserPen strokeWidth={3} />
-                        <div className="ml-2 z-0">Editor's Choice</div>
-                    </button>
+                                    <div className="flex items-center w-full p-3 rounded-lg ">
+                                        <div className="mr-3 font-semibold">TOPICS</div>
+                                    </div>
 
-                    <button onClick={() => setActiveCategory('new')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
-                        <Rss strokeWidth={3} />
-                        <div className="ml-2">New</div>
-                    </button>
 
-                    <button onClick={() => setActiveCategory('popular')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
-                        <Users strokeWidth={3} />
-                        <div className="ml-2">Most Popular</div>
-                    </button>
+                                    <button onClick={() => setActiveCategory('editors')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                                        <UserPen strokeWidth={3} />
+                                        <div className="ml-2 z-0">Editor's Choice</div>
+                                    </button>
 
-                    <button onClick={() => setActiveCategory('pdf')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
-                        <FileText strokeWidth={3} />
-                        <div className="ml-2">PDFs</div>
-                    </button>
+                                    <button onClick={() => setActiveCategory('new')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                                        <Rss strokeWidth={3} />
+                                        <div className="ml-2">New</div>
+                                    </button>
 
-                    <button onClick={() => setActiveCategory('image')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
-                        <Image strokeWidth={3} />
-                        <div className="ml-2">Images</div>
-                    </button>
+                                    <button onClick={() => setActiveCategory('popular')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                                        <Users strokeWidth={3} />
+                                        <div className="ml-2">Most Popular</div>
+                                    </button>
 
-                    <hr className="border-black" />
+                                    <button onClick={() => setActiveCategory('pdf')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                                        <FileText strokeWidth={3} />
+                                        <div className="ml-2">PDFs</div>
+                                    </button>
 
-                    <br />
+                                    <button onClick={() => setActiveCategory('image')} className="flex items-center w-full p-3 rounded-lg hover:bg-white">
+                                        <Image strokeWidth={3} />
+                                        <div className="ml-2">Images</div>
+                                    </button>
 
+                                    <hr className="border-black" />
+
+                                    <br />
 
 
 
-                    {/* <div className="ml-2 mt-3 w-12 h-12 rounded-full overflow-hidden">
+
+                                    {/* <div className="ml-2 mt-3 w-12 h-12 rounded-full overflow-hidden">
                         <img
                             alt="Avatar"
                             src={user?.avatarUrl || "https://via.placeholder.com/150"}
@@ -291,13 +336,13 @@ const Sidebar = () => {
                     </div>
                     <p className="font-semibold">{user?.username || "Guest"}</p> */}
 
-                </nav>
+                                </nav>
 
-            </div>
+                            </div>
 
-            {displayPostsByCategory()}
-        </>
-    );
+                            {displayPostsByCategory()}
+                        </>
+                        );
 };
 
-export default Sidebar;
+                        export default Sidebar;

@@ -17,12 +17,14 @@ const PostCard = ({ post }) => {
 
   const renderFile = () => {
     if (!post.image) return null;
+    
 
     const fileUrl = `http://localhost:8081/api/posts/file/${post.image}`;
 
     // For PDF files
     if (post.fileType === "application/pdf") {
       return (
+      
         <div className="flex flex-col items-center p-4">
           <embed src={fileUrl} type="application/pdf" className="w-full h-96" />
           <a
@@ -61,6 +63,7 @@ const PostCard = ({ post }) => {
         <span className="text-sm text-gray-600">Likes: {post.likes || 0}</span>
       </div>
     </div>
+
   );
 };
 
