@@ -1,38 +1,31 @@
 import React, { useState } from "react";
 
-
 const PrivacyModal = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-
 
     const openModal = (e) => {
         e.preventDefault();
         setIsModalOpen(true);
     };
 
-
     const closeModal = () => {
         setIsModalOpen(false);
     };
 
-
     return (
-        <div className>
+        <div>
             {/* Terms and conditions */}
 
-
             <a onClick={openModal} className="btn btn-ghost text-xl">Privacy Policy</a>
-
 
             {/* Modal structure */}
             {isModalOpen && (
                 <div
                     id="terms-modal"
-                    className="fixed z-100 inset-0 flex items-center justify-center bg-black bg-opacity-50 "
+                    className="fixed z-50 flex justify-center overflow-auto inset-0 bg-black bg-opacity-50 "
                 >
                     <div className="font-semibold bg-white p-6 rounded-lg max-w-lg max-h-[70vh] overflow-y-auto">
-
 
                         <p>  {/* Terms and Conditions */}
                             <h2 className="text-2xl"> Privacy Policy 🔒</h2>
@@ -51,7 +44,6 @@ const PrivacyModal = () => {
                             <br />
                             <br />
 
-
                             <hr />
                             <br />
                             2. How We Use Your Information:
@@ -66,9 +58,7 @@ const PrivacyModal = () => {
                             - To analyze usage trends and monitor app performance.
                             <br />
 
-
                             <br />
-
 
                             <hr />
                             <br />
@@ -82,14 +72,12 @@ const PrivacyModal = () => {
                             <br />
                             <br />
 
-
                             <hr />
                             <br />
                             4. Data Security:
                             We implement reasonable security measures to protect your information from unauthorized access, alteration, or disclosure. However, no method of transmission over the internet or electronic storage is 100% secure.
                             <br />
                             <br />
-
 
                             <hr />
                             <br />
@@ -100,12 +88,9 @@ const PrivacyModal = () => {
                             Opt-Out: You may opt out of receiving promotional communications by following the instructions in those messages.
                             <br />
                             <br />
-                            Data Deletion: You may request the deletion of your account and associated data by contacting us at <span className="underline">
-                            prospectusucla@gmail.com
-                            </span>.
+                            Data Deletion: You may request the deletion of your account and associated data by contacting us at prospectusucla@gmail.com.
                             <br />
                             <br />
-
 
                             <hr />
                             <br />
@@ -114,7 +99,6 @@ const PrivacyModal = () => {
                             <br />
                             <br />
 
-
                             <hr />
                             <br />
                             7. Changes to This Privacy Policy:
@@ -122,14 +106,12 @@ const PrivacyModal = () => {
                             <br />
                             <br />
 
-
                             <hr />
                             <br />
                             8. Contact Us:
                             If you have any questions or concerns about this Privacy Policy, please contact us at:
-                            <br /> <span className="underline">
+                            <br />
                             prospectusucla@gmail.com
-                            </span>
 
                         </p>
                         <button
@@ -145,6 +127,5 @@ const PrivacyModal = () => {
         </div>
     );
 };
-
 
 export default PrivacyModal;

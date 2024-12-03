@@ -27,7 +27,6 @@ const Carousel = () => {
     const slides = [test1, test2, test3, test4, test5];
     const [currentIndex, setCurrentIndex] = useState(0);
 
-
     useEffect(() => {
         if (slides.length > 0) {
             const interval = setInterval(() => {
@@ -36,7 +35,6 @@ const Carousel = () => {
             return () => clearInterval(interval);
         }
     }, [slides]);
-
 
     return (
         <div
@@ -74,6 +72,5 @@ const Carousel = () => {
         </div>
     );
 };
-
 
 export default Carousel;
