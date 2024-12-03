@@ -25,17 +25,12 @@ export default function ProfileSettingsPage() {
   const [avatarPreview, setAvatarPreview] = useState(
     "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106"
   );
+  const [defaultFormValues, setDefaultFormValues] = useState({});
 
   const fetchCurrentData = async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/users/${user.userId}`
-      );
-      setValueProfile("name", response.data.name);
-      setValueProfile("username", response.data.username);
-      setValueProfile("bio", response.data.bio);
-      setValueProfile("email", response.data.email);
-      setValueProfile("university", response.data.university);
+      const response = await axios.get(`${API_BASE_URL}/users/${user.userId}`);
+      setDefaultFormValues(response.data);
     } catch (error) {
       toast.error("Error fetching user's current data");
     }
@@ -51,9 +46,9 @@ export default function ProfileSettingsPage() {
     watch: watchProfile,
     handleSubmit: handleProfileSubmit,
     reset: resetProfile,
-    setValue: setValueProfile,
   } = useForm({
     mode: "onBlur",
+    values: defaultFormValues,
   });
 
   const {
@@ -112,14 +107,9 @@ export default function ProfileSettingsPage() {
       <div className="w-1/2 mx-auto mt-4 border-2 p-4 rounded-lg">
         <Tabs
           defaultValue="profile"
-          onValueChange={(value) => {
-            if (value === "profile") {
-              resetProfile();
-              fetchCurrentData();
-            } else {
-              resetPassword();
-            }
-          }}
+          onValueChange={(value) =>
+            value === "profile" ? resetProfile() : resetPassword()
+          }
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="profile">Profile</TabsTrigger>
