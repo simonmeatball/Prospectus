@@ -168,6 +168,23 @@ const updateUserPassword = async (req, res) => {
   }
 };
 
+// Update a user's forgot password
+const updateUserForgotPassword = async (req, res) => {
+  try {
+    const updatedUser = await User.findOne({ userId: req.params.userId });
+
+    if (!updatedUser)
+      return res.status(404).json({ message: "User not found" });
+
+    updatedUser.password = req.body.newForgotPassword;
+    await updatedUser.save();
+    
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 // Delete user by ID
 const deleteUser = async (req, res) => {
   try {
@@ -358,6 +375,7 @@ module.exports = {
   createUser,
   updateUser,
   updateUserPassword,
+  updateUserForgotPassword,
   deleteUser,
   getUserPosts,
   getUserByUsername,

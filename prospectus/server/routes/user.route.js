@@ -7,6 +7,7 @@ const {
   createUser,
   updateUser,
   updateUserPassword,
+  updateUserForgotPassword,
   deleteUser,
   getUserPosts,
   getUserByUsername,
@@ -80,6 +81,9 @@ router.get("/:userId/profile-pic", getProfilePic);
 
 // Update a user's password
 router.patch("/:userId/password", updateUserPassword);
+
+// Update a user's forgot password
+router.patch("/:userId/forgot-password", updateUserForgotPassword);
 
 // Delete a user by ID
 router.delete("/:userId", deleteUser);

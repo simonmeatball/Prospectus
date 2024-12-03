@@ -4,6 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Navbar from "./Navbar";
 import { ImageUp } from "lucide-react";
 import { toast } from "sonner";
@@ -56,12 +65,24 @@ export default function ProfileSettingsPage() {
     mode: "onBlur",
   });
 
+  const {
+    register: registerForgotPassword,
+    formState: { errors: forgotPasswordErrors },
+    watch: watchForgotPassword,
+    handleSubmit: handleForgotPasswordSubmit,
+    reset: resetForgotPassword,
+  } = useForm({
+    mode: "onBlur",
+  });
+
   const name = watchProfile("name");
   const username = watchProfile("username");
   const bio = watchProfile("bio");
   const currentPassword = watchPassword("currentPassword");
   const newPassword = watchPassword("newPassword");
   const confirmPassword = watchPassword("confirmPassword");
+  const newForgotPassword = watchForgotPassword("newForgotPassword");
+  const confirmForgotPassword = watchForgotPassword("confirmForgotPassword");
 
   // Remove the second useEffect and keep only this one
   useEffect(() => {
@@ -163,6 +184,23 @@ export default function ProfileSettingsPage() {
       }
     } catch (error) {
       toast.error("Error updating password");
+    }
+  };
+
+  const onForgotPasswordSubmit = async (data) => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${user.userId}/forgot-password`,
+        {
+          newForgotPassword: data.newForgotPassword,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Password reset successfully");
+      }
+    } catch (error) {
+      toast.error("Error resetting password");
     }
   };
 
@@ -385,6 +423,120 @@ export default function ProfileSettingsPage() {
                     {passwordErrors.currentPassword.message}
                   </p>
                 )}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="link"
+                      className="text-gray-500 -m-2"
+                      onClick={resetForgotPassword}
+                    >
+                      Forgot password?
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Forgot password?</DialogTitle>
+                      <DialogDescription>
+                        Enter the password you'd like to have.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form
+                      onSubmit={(e) => {
+                        e.stopPropagation();
+                        handleForgotPasswordSubmit(onForgotPasswordSubmit)(e);
+                      }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <div className="flex justify-between items-center">
+                          <Label htmlFor="newForgotPassword">
+                            New Password
+                          </Label>
+                          <p className="text-sm text-gray-500">
+                            {newForgotPassword?.length || 0}/{PASSWORD_MAX}{" "}
+                            characters
+                          </p>
+                        </div>
+                        <Input
+                          type="password"
+                          id="newForgotPassword"
+                          {...registerForgotPassword("newForgotPassword", {
+                            required: {
+                              value: true,
+                              message: "Your new password is required",
+                            },
+                            minLength: {
+                              value: PASSWORD_MIN,
+                              message: `Your new password must be at least ${PASSWORD_MIN} characters`,
+                            },
+                            maxLength: {
+                              value: PASSWORD_MAX,
+                              message: `Your new password cannot exceed ${PASSWORD_MAX} characters`,
+                            },
+                          })}
+                          placeholder="Your new password"
+                          className={
+                            forgotPasswordErrors.newForgotPassword &&
+                            "border-red-500"
+                          }
+                        />
+                        {forgotPasswordErrors.newForgotPassword && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {forgotPasswordErrors.newForgotPassword.message}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex justify-between items-center">
+                          <Label htmlFor="confirmForgotPassword">
+                            Confirm Password
+                          </Label>
+                          <p className="text-sm text-gray-500">
+                            {confirmForgotPassword?.length || 0}/{PASSWORD_MAX}{" "}
+                            characters
+                          </p>
+                        </div>
+                        <Input
+                          type="password"
+                          id="confirmForgotPassword"
+                          {...registerForgotPassword("confirmForgotPassword", {
+                            required: {
+                              value: true,
+                              message: "Your confirmed password is required",
+                            },
+                            minLength: {
+                              value: PASSWORD_MIN,
+                              message: `Your confirmed password must be at least ${PASSWORD_MIN} characters`,
+                            },
+                            maxLength: {
+                              value: PASSWORD_MAX,
+                              message: `Your confirmed password cannot exceed ${PASSWORD_MAX} characters`,
+                            },
+                            validate: (confirmForgotPassword) => {
+                              if (confirmForgotPassword !== newForgotPassword) {
+                                return "Your new password and confirmed password do not match";
+                              }
+                              return true;
+                            },
+                          })}
+                          placeholder="Confirm your new password"
+                          className={
+                            forgotPasswordErrors.confirmForgotPassword &&
+                            "border-red-500"
+                          }
+                        />
+                        {forgotPasswordErrors.confirmForgotPassword && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {forgotPasswordErrors.confirmForgotPassword.message}
+                          </p>
+                        )}
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Reset password</Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div>
                 <div className="flex justify-between items-center">
