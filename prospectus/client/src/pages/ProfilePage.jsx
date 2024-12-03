@@ -74,8 +74,8 @@ export default function ProfilePage() {
     <div>
             
       <Navbar />
-            
-      <div className="flex flex-col items-center">
+            
+      <div className="flex flex-col items-center pt-8">
                 
         <div className="avatar mb-4">
                     
