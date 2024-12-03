@@ -4,12 +4,13 @@ const {
   getUser,
   createUser,
   updateUser,
+  updateUserPassword,
   deleteUser,
   getUserPosts,
   getUserByUsername,
   followUser,
   unfollowUser,
-  checkFollowStatus
+  checkFollowStatus,
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -31,6 +32,9 @@ router.post("/", createUser);
 
 // Update a user by ID
 router.patch("/:userId", updateUser);
+
+// Update a user's password
+router.patch("/:userId/password", updateUserPassword);
 
 // Delete a user by ID
 router.delete("/:userId", deleteUser);

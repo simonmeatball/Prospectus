@@ -57,6 +57,30 @@ const updateUser = async (req, res) => {
   }
 };
 
+// Update a user's password
+const updateUserPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const updatedUser = await User.findOne({ userId: req.params.userId });
+
+    if (!updatedUser)
+      return res.status(404).json({ message: "User not found" });
+
+    const isPasswordCorrect =
+      await updatedUser.comparePassword(currentPassword);
+
+    if (!isPasswordCorrect)
+      return res.status(401).json({ message: "Incorrect password" });
+
+    updatedUser.password = newPassword;
+    await updatedUser.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 // Delete user by ID
 const deleteUser = async (req, res) => {
   try {
@@ -142,7 +166,9 @@ const followUser = async (req, res) => {
     const targetUser = await User.findOne({ userId: targetUserId });
 
     if (!user || !targetUser) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     if (!user.following.includes(targetUserId)) {
@@ -153,7 +179,9 @@ const followUser = async (req, res) => {
       await targetUser.save();
     }
 
-    res.status(200).json({ success: true, message: "Successfully followed user" });
+    res
+      .status(200)
+      .json({ success: true, message: "Successfully followed user" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -169,16 +197,20 @@ const unfollowUser = async (req, res) => {
     const targetUser = await User.findOne({ userId: targetUserId });
 
     if (!user || !targetUser) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    user.following = user.following.filter(id => id !== targetUserId);
+    user.following = user.following.filter((id) => id !== targetUserId);
     await user.save();
 
-    targetUser.followers = targetUser.followers.filter(id => id !== userId);
+    targetUser.followers = targetUser.followers.filter((id) => id !== userId);
     await targetUser.save();
 
-    res.status(200).json({ success: true, message: "Successfully unfollowed user" });
+    res
+      .status(200)
+      .json({ success: true, message: "Successfully unfollowed user" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -191,7 +223,9 @@ const checkFollowStatus = async (req, res) => {
     const user = await User.findOne({ userId });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     const isFollowing = user.following.includes(targetUserId);
@@ -206,10 +240,11 @@ module.exports = {
   getUser,
   createUser,
   updateUser,
+  updateUserPassword,
   deleteUser,
   getUserPosts,
   getUserByUsername,
   followUser,
   unfollowUser,
-  checkFollowStatus
+  checkFollowStatus,
 };

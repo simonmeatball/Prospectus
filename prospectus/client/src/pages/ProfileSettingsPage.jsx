@@ -33,6 +33,8 @@ export default function ProfileSettingsPage() {
       name: "", // [User's previous name]
       username: "", // [User's previous username]
       bio: "", // [User's previous bio]
+      email: "", // [User's previous email]
+      university: "", // [User's previous university]
     },
   });
 
@@ -54,8 +56,6 @@ export default function ProfileSettingsPage() {
   const confirmPassword = watchPassword("confirmPassword");
 
   const onProfileSubmit = async (data) => {
-    console.log("Profile data:", data);
-    console.log(user);
     try {
       const response = await axios.patch(
         `${API_BASE_URL}/users/${user.userId}`,
@@ -70,9 +70,22 @@ export default function ProfileSettingsPage() {
     }
   };
 
-  const onPasswordSubmit = (data) => {
-    console.log("Password data:", data);
-    toast.success("Password updated successfully");
+  const onPasswordSubmit = async (data) => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${user.userId}/password`,
+        {
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Password updated successfully");
+      }
+    } catch (error) {
+      toast.error("Error updating password");
+    }
   };
 
   return (
@@ -203,6 +216,45 @@ export default function ProfileSettingsPage() {
                   </p>
                 )}
               </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  {...registerProfile("email", {
+                    required: {
+                      value: true,
+                      message: "Your email is required",
+                    },
+                  })}
+                  placeholder="Your email"
+                  className={profileErrors.email && "border-red-500"}
+                />
+                {profileErrors.email && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {profileErrors.email.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="university">University</Label>
+                <Input
+                  id="university"
+                  {...registerProfile("university", {
+                    required: {
+                      value: true,
+                      message: "Your university is required",
+                    },
+                  })}
+                  placeholder="Your university"
+                  className={profileErrors.university && "border-red-500"}
+                />
+                {profileErrors.university && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {profileErrors.university.message}
+                  </p>
+                )}
+              </div>
               <Button type="submit">Save Changes</Button>
             </form>
           </TabsContent>
@@ -300,6 +352,12 @@ export default function ProfileSettingsPage() {
                     maxLength: {
                       value: PASSWORD_MAX,
                       message: `Your confirmed password cannot exceed ${PASSWORD_MAX} characters`,
+                    },
+                    validate: (confirmPassword) => {
+                      if (confirmPassword !== newPassword) {
+                        return "Your new password and confirmed password do not match";
+                      }
+                      return true;
                     },
                   })}
                   placeholder="Confirm your new password"
