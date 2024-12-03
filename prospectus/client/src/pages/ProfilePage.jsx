@@ -126,9 +126,11 @@ export default function ProfilePage() {
       </div>
       {view == "posts" && posts && posts.length > 0 ? (
         <div className="container mx-auto px-4">
-          {posts.map((post) => (
-            <PostCard key={post._id} post={post} />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {posts.map((post) => (
+              <PostCard key={post._id} post={post} />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="text-center text-gray-500 mt-8">No posts yet</div>
