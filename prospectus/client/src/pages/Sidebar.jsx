@@ -17,7 +17,7 @@ const Sidebar = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    //const [isHovered, setIsHovered] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
 
 
@@ -244,7 +244,9 @@ const Sidebar = () => {
     const sidebarStyle = {
         opacity: getOpacity(),
         height: '64vh',
-        width: '12rem',
+        width: isHovered ? '12rem' : '4rem',
+        opacity: isHovered ? 1 : 0.1,
+        transition: 'all 0.5s ease-in-out',
         position: 'fixed',
         top: 0,
         left: 0,
@@ -278,6 +280,8 @@ const Sidebar = () => {
         <>
             <div
                 style={sidebarStyle}
+                onMouseEnter={() => setIsHovered(true)} // Set hover state to true when mouse enters
+                onMouseLeave={() => setIsHovered(false)} // Set hover state to false when mouse leaves
 
             >
                 <nav className="flex min-w-[300px] flex-col gap-1 p-2 font-sans z-100 ">
@@ -290,9 +294,7 @@ const Sidebar = () => {
                     <hr className="border-black" />
 
 
-                    <div className="flex items-center w-40 p-3 rounded-lg ">
-                        <div className="mr-3 font-semibold">TOPICS</div>
-                    </div>
+                    
 
 
                     <button onClick={() => setActiveCategory('editors')} className="flex items-center w-40 p-3 rounded-lg hover:bg-gray-200">
