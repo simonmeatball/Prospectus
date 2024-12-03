@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
 import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
 // these are based on twitters limits
 const NAME_MAX = 50;
@@ -21,6 +22,8 @@ const PASSWORD_MAX = 128;
 
 export default function ProfileSettingsPage() {
   const { user } = useAuth();
+  const [avatarPreview, setAvatarPreview] = useState("https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106");
+
   const {
     register: registerProfile,
     formState: { errors: profileErrors },
@@ -115,7 +118,7 @@ export default function ProfileSettingsPage() {
                   className="relative group rounded-full cursor-pointer"
                 >
                   <img
-                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" // [User's previous avatar]
+                    src={avatarPreview} // [User's previous avatar]
                     className="rounded-full w-48 h-48 group-hover:brightness-75"
                   />
                   <ImageUp
@@ -130,6 +133,9 @@ export default function ProfileSettingsPage() {
                 accept="image/*"
                 className="hidden"
                 id="avatar"
+                onInput={(e) => {
+                  setAvatarPreview(URL.createObjectURL(e.target.files[0]));
+                }}
                 {...registerProfile("avatar")}
               />
               <div>
