@@ -10,7 +10,8 @@ import { toast } from "sonner";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
 import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Add this import at the top
 
 // these are based on twitters limits
 const NAME_MAX = 50;
@@ -21,8 +22,11 @@ const PASSWORD_MIN = 8;
 const PASSWORD_MAX = 128;
 
 export default function ProfileSettingsPage() {
-  const { user } = useAuth();
-  const [avatarPreview, setAvatarPreview] = useState("https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106");
+  const { user, updateProfilePic } = useAuth(); // Update this line to destructure updateProfilePic
+  const navigate = useNavigate(); // Add this line
+  const [avatarPreview, setAvatarPreview] = useState(
+    "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106"
+  );
 
   const {
     register: registerProfile,
@@ -30,6 +34,7 @@ export default function ProfileSettingsPage() {
     watch: watchProfile,
     handleSubmit: handleProfileSubmit,
     reset: resetProfile,
+    setValue: setProfileValue, // Add this line
   } = useForm({
     mode: "onBlur",
     defaultValues: {
@@ -58,18 +63,88 @@ export default function ProfileSettingsPage() {
   const newPassword = watchPassword("newPassword");
   const confirmPassword = watchPassword("confirmPassword");
 
+  // Remove the second useEffect and keep only this one
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.userId) {
+        try {
+          const response = await axios.get(
+            `${API_BASE_URL}/users/username/${user.username}`
+          );
+          const userData = response.data;
+          console.log("Fetched complete user data:", userData);
+
+          // Set all form values with complete user data
+          setProfileValue("name", userData.name || "");
+          setProfileValue("username", userData.username || "");
+          setProfileValue("email", userData.email || "");
+          setProfileValue("bio", userData.bio || "");
+          setProfileValue("university", userData.university || "");
+
+          // Set avatar preview
+          setAvatarPreview(
+            userData.profilePic
+              ? `${API_BASE_URL}/users/${userData.userId}/profile-pic`
+              : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+          );
+        } catch (err) {
+          console.error("Error fetching user data:", err);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user?.userId, setProfileValue]);
+
   const onProfileSubmit = async (data) => {
+    console.log("Form submission data:", data); // Debug log
+    const formData = new FormData();
+
+    // Handle required fields
+    ["name", "username", "email"].forEach((field) => {
+      if (data[field] && data[field] !== user[field]) {
+        formData.append(field, data[field]);
+      }
+    });
+
+    // Handle optional fields (allow empty strings)
+    ["bio", "university"].forEach((field) => {
+      if (data[field] !== user[field]) {
+        formData.append(field, data[field] || "");
+      }
+    });
+
+    // Handle file separately
+    if (data.avatar && data.avatar[0]) {
+      formData.append("profilePic", data.avatar[0]);
+    }
+
+    // Don't submit if no changes were made
+    if (formData.entries().next().done) {
+      toast.info("No changes to save");
+      return;
+    }
+
     try {
       const response = await axios.patch(
         `${API_BASE_URL}/users/${user.userId}`,
-        data
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
       if (response.status === 200) {
+        await updateProfilePic(user.userId);
         toast.success("Profile updated successfully");
+        navigate(`/profile/${response.data.username || user.username}`);
+        window.location.reload();
       }
     } catch (error) {
-      toast.error("Error updating profile");
+      console.error("Update error:", error);
+      toast.error(error.response?.data?.message || "Error updating profile");
     }
   };
 
@@ -115,12 +190,15 @@ export default function ProfileSettingsPage() {
               <div className="flex justify-center">
                 <Label
                   htmlFor="avatar"
-                  className="relative group rounded-full cursor-pointer"
+                  className="relative group rounded-full cursor-pointer w-48 h-48"
                 >
-                  <img
-                    src={avatarPreview} // [User's previous avatar]
-                    className="rounded-full w-48 h-48 group-hover:brightness-75"
-                  />
+                  <div className="w-full h-full rounded-full overflow-hidden">
+                    <img
+                      src={avatarPreview}
+                      className="w-full h-full object-cover"
+                      alt="Profile preview"
+                    />
+                  </div>
                   <ImageUp
                     size={48}
                     color="#d6d6d6"
@@ -246,12 +324,7 @@ export default function ProfileSettingsPage() {
                 <Label htmlFor="university">University</Label>
                 <Input
                   id="university"
-                  {...registerProfile("university", {
-                    required: {
-                      value: true,
-                      message: "Your university is required",
-                    },
-                  })}
+                  {...registerProfile("university")}
                   placeholder="Your university"
                   className={profileErrors.university && "border-red-500"}
                 />

@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../config";
 import Logo1 from "../images/logo1.png";
 
 export default function Navbar() {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout, user, profilePic } = useAuth();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,44 +61,48 @@ export default function Navbar() {
     setLoading(true);
     setError(null);
     console.log("search initiated:", debouncedSearchQuery);
-    
-    try { 
+
+    try {
       const postsResponse = await axios.get(`${API_BASE_URL}/posts`);
       const usersResponse = await axios.get(`${API_BASE_URL}/users`);
 
-      const allPosts = postsResponse.data.success ? postsResponse.data.data : [];
+      const allPosts = postsResponse.data.success
+        ? postsResponse.data.data
+        : [];
       const allUsers = usersResponse.data || [];
 
       console.log("all posts fetched:", postsResponse.data.data);
       console.log("all users fetched:", usersResponse.data);
       console.log("users:", allUsers);
-    
-      
+
       const filteredPosts = allPosts.filter((post) => {
-        const regex = new RegExp(`\\b${debouncedSearchQuery}`, 'i');
+        const regex = new RegExp(`\\b${debouncedSearchQuery}`, "i");
         const titleMatch = regex.test(post.title.toLowerCase());
         const tagsMatch = post.tags.some((tag) => {
-          const regex = new RegExp(`^${debouncedSearchQuery.toLowerCase()}`, 'i');
+          const regex = new RegExp(
+            `^${debouncedSearchQuery.toLowerCase()}`,
+            "i"
+          );
           return regex.test(tag.toLowerCase());
-        }
-        );    
-        return titleMatch || tagsMatch; 
+        });
+        return titleMatch || tagsMatch;
       });
 
-      const filteredUsers = allUsers.filter((user) => 
-      user.username.toLowerCase().startsWith(debouncedSearchQuery.toLowerCase())
-    );
+      const filteredUsers = allUsers.filter((user) =>
+        user.username
+          .toLowerCase()
+          .startsWith(debouncedSearchQuery.toLowerCase())
+      );
 
-     setResults([
-      ...filteredPosts.map(post => ({...post, type:'post'})),
-      ...filteredUsers.map(user => ({...user, type: 'user'}))
-     ]); 
-     console.log("search results:", results); 
-    }
-    catch (err)  {
-      setError("failed to search results"); 
-    } finally { 
-      setLoading(false); 
+      setResults([
+        ...filteredPosts.map((post) => ({ ...post, type: "post" })),
+        ...filteredUsers.map((user) => ({ ...user, type: "user" })),
+      ]);
+      console.log("search results:", results);
+    } catch (err) {
+      setError("failed to search results");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,37 +114,38 @@ export default function Navbar() {
 
   const handleResultClick = (id, type) => {
     setShowResults(false);
-    
+
     if (type === "post") {
       navigate(`/post/${id}`);
     } else if (type === "user") {
-      console.log(id); 
+      console.log(id);
       navigate(`/profile/${id}`);
     }
   };
 
-  const handleSelection = (type, index) => { 
+  const handleSelection = (type, index) => {
     if (results[index]) {
-      const selectedItem = results[index]; 
-    console.log(selectedItem);
-    console.log(results[index]);
+      const selectedItem = results[index];
+      console.log(selectedItem);
+      console.log(results[index]);
 
-      if (type === 'post'){
+      if (type === "post") {
         handleResultClick(selectedItem._id, type);
-      }
-      else if (type === 'user') {
+      } else if (type === "user") {
         handleResultClick(selectedItem.username, type);
       }
     }
   };
 
-  const renderItem = (item, index) => { 
-    const isUser = item.type === 'user';
-    const isPost = item.type === 'post';
+  const renderItem = (item, index) => {
+    const isUser = item.type === "user";
+    const isPost = item.type === "post";
     return (
       <div
         key={item._id || item.username}
-        onMouseDown={() => handleResultClick(item._id|| item.username, item.type) }
+        onMouseDown={() =>
+          handleResultClick(item._id || item.username, item.type)
+        }
         ref={index === focusedIndex ? resultContainer : null}
         style={{
           backgroundColor: index === focusedIndex ? "rgba(0,0,0,0.1)" : "",
@@ -149,21 +154,28 @@ export default function Navbar() {
       >
         <div className="flex items-center gap-2">
           {isUser && (
-          <span className="text-sm text-blue-500">@{item.username}</span>
+            <span className="text-sm text-blue-500">@{item.username}</span>
           )}
 
           {isPost && (
             <>
-            {item.tags && item.tags.length > 0 && (
-              item.tags.filter(tag =>
-                tag.toLowerCase().startsWith(debouncedSearchQuery.toLowerCase())
-              ).map((matchingTag, idx) => (
-                <span key={idx} className="inline-block text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">
-                  {matchingTag}
-                </span>
-              ))
-            )}
-            <span>{item.title}</span>
+              {item.tags &&
+                item.tags.length > 0 &&
+                item.tags
+                  .filter((tag) =>
+                    tag
+                      .toLowerCase()
+                      .startsWith(debouncedSearchQuery.toLowerCase())
+                  )
+                  .map((matchingTag, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-block text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+                    >
+                      {matchingTag}
+                    </span>
+                  ))}
+              <span>{item.title}</span>
             </>
           )}
         </div>
@@ -229,10 +241,15 @@ export default function Navbar() {
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full ">
+            <div className="w-10 rounded-full">
               <img
-                alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                alt="Profile Pic"
+                src={profilePic}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg";
+                }}
               />
             </div>
           </div>
