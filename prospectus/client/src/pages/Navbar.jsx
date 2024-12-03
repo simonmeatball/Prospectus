@@ -22,11 +22,8 @@ export default function Navbar() {
 
   const debounceTimeoutRef = useRef(null);
 
-<<<<<<< HEAD
-=======
   // const debouncedSearchQuery = useDebounce(searchQuery, 500); //500 ms delay before making search request
 
->>>>>>> homePage2
   const handleDebounce = (value) => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
@@ -96,35 +93,6 @@ export default function Navbar() {
 
   const handleResultClick = (id, type) => {
     setShowResults(false);
-<<<<<<< HEAD
-    
-    if (type === "post") {
-      navigate(`/post/${id}`);
-    } else if (type === "user") {
-      console.log(id); 
-      navigate(`/profile/${id}`);
-    }
-  };
-
-  const handleSelection = (type, index) => { 
-    if (results[index]) {
-      const selectedItem = results[index]; 
-    console.log(selectedItem);
-    console.log(results[index]);
-
-      if (type === 'post'){
-        handleResultClick(selectedItem._id, type);
-      }
-      else if (type === 'user') {
-        handleResultClick(selectedItem.username, type);
-      }
-    }
-  };
-
-  const renderItem = (item, index) => { 
-    const isUser = item.type === 'user';
-    const isPost = item.type === 'post';
-=======
   };
 
   const handleSelection = (index) => {
@@ -134,7 +102,6 @@ export default function Navbar() {
   };
 
   const renderItem = (item) => {
->>>>>>> homePage2
     return (
       <div
         key={item._id || item.username}
