@@ -179,6 +179,12 @@ export default function ProfileSettingsPage() {
               resetPassword();
               fetchCurrentData();
             }
+            if (value === "profile") {
+              resetProfile();
+            } else {
+              resetPassword();
+              fetchCurrentData();
+            }
           }}
         >
           <TabsList className="grid w-full grid-cols-2">
