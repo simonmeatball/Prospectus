@@ -4,9 +4,23 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Navbar from "./Navbar";
 import { ImageUp } from "lucide-react";
 import { toast } from "sonner";
+import axios from "axios";
+import { API_BASE_URL } from "@/config";
+import { useAuth } from "@/context/AuthContext";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Add this import at the top
 
 // these are based on twitters limits
 const NAME_MAX = 50;
@@ -17,18 +31,27 @@ const PASSWORD_MIN = 8;
 const PASSWORD_MAX = 128;
 
 export default function ProfileSettingsPage() {
+  const { user, updateProfilePic } = useAuth(); // Update this line to destructure updateProfilePic
+  const navigate = useNavigate(); // Add this line
+  const [avatarPreview, setAvatarPreview] = useState(
+    "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106"
+  );
+
   const {
     register: registerProfile,
     formState: { errors: profileErrors },
     watch: watchProfile,
     handleSubmit: handleProfileSubmit,
     reset: resetProfile,
+    setValue: setProfileValue, // Add this line
   } = useForm({
     mode: "onBlur",
     defaultValues: {
       name: "", // [User's previous name]
       username: "", // [User's previous username]
       bio: "", // [User's previous bio]
+      email: "", // [User's previous email]
+      university: "", // [User's previous university]
     },
   });
 
@@ -42,21 +65,143 @@ export default function ProfileSettingsPage() {
     mode: "onBlur",
   });
 
+  const {
+    register: registerForgotPassword,
+    formState: { errors: forgotPasswordErrors },
+    watch: watchForgotPassword,
+    handleSubmit: handleForgotPasswordSubmit,
+    reset: resetForgotPassword,
+  } = useForm({
+    mode: "onBlur",
+  });
+
   const name = watchProfile("name");
   const username = watchProfile("username");
   const bio = watchProfile("bio");
   const currentPassword = watchPassword("currentPassword");
   const newPassword = watchPassword("newPassword");
   const confirmPassword = watchPassword("confirmPassword");
+  const newForgotPassword = watchForgotPassword("newForgotPassword");
+  const confirmForgotPassword = watchForgotPassword("confirmForgotPassword");
 
-  const onProfileSubmit = (data) => {
-    console.log("Profile data:", data);
-    toast.success("Profile updated successfully");
+  const fetchUserData = async () => {
+    if (user?.userId) {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/users/username/${user.username}`
+        );
+        const userData = response.data;
+        console.log("Fetched complete user data:", userData);
+
+        // Set all form values with complete user data
+        setProfileValue("name", userData.name || "");
+        setProfileValue("username", userData.username || "");
+        setProfileValue("email", userData.email || "");
+        setProfileValue("bio", userData.bio || "");
+        setProfileValue("university", userData.university || "");
+
+        // Set avatar preview
+        setAvatarPreview(
+          userData.profilePic
+            ? `${API_BASE_URL}/users/${userData.userId}/profile-pic`
+            : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+        );
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    }
   };
 
-  const onPasswordSubmit = (data) => {
-    console.log("Password data:", data);
-    toast.success("Password updated successfully");
+  // Remove the second useEffect and keep only this one
+  useEffect(() => {
+    fetchUserData();
+  }, [user?.userId, setProfileValue]);
+
+  const onProfileSubmit = async (data) => {
+    console.log("Form submission data:", data); // Debug log
+    const formData = new FormData();
+
+    // Handle required fields
+    ["name", "username", "email"].forEach((field) => {
+      if (data[field] && data[field] !== user[field]) {
+        formData.append(field, data[field]);
+      }
+    });
+
+    // Handle optional fields (allow empty strings)
+    ["bio", "university"].forEach((field) => {
+      if (data[field] !== user[field]) {
+        formData.append(field, data[field] || "");
+      }
+    });
+
+    // Handle file separately
+    if (data.avatar && data.avatar[0]) {
+      formData.append("profilePic", data.avatar[0]);
+    }
+
+    // Don't submit if no changes were made
+    if (formData.entries().next().done) {
+      toast.info("No changes to save");
+      return;
+    }
+
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${user.userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        await updateProfilePic(user.userId);
+        toast.success("Profile updated successfully");
+        navigate(`/profile/${response.data.username || user.username}`);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error(error.response?.data?.message || "Error updating profile");
+    }
+  };
+
+  const onPasswordSubmit = async (data) => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${user.userId}/password`,
+        {
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Password updated successfully");
+      }
+    } catch (error) {
+      toast.error("Error updating password");
+    }
+  };
+
+  const onForgotPasswordSubmit = async (data) => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${user.userId}/forgot-password`,
+        {
+          newForgotPassword: data.newForgotPassword,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Password reset successfully");
+      }
+    } catch (error) {
+      toast.error("Error resetting password");
+    }
   };
 
   return (
@@ -66,8 +211,13 @@ export default function ProfileSettingsPage() {
         <Tabs
           defaultValue="profile"
           onValueChange={(value) => {
-            if (value === "profile") resetProfile();
-            else resetPassword();
+            if (value === "profile") {
+              resetProfile();
+              fetchUserData();
+            } else {
+              resetPassword();
+              fetchUserData();
+            }
           }}
         >
           <TabsList className="grid w-full grid-cols-2">
@@ -83,12 +233,15 @@ export default function ProfileSettingsPage() {
               <div className="flex justify-center">
                 <Label
                   htmlFor="avatar"
-                  className="relative group rounded-full cursor-pointer"
+                  className="relative group rounded-full cursor-pointer w-48 h-48"
                 >
-                  <img
-                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" // [User's previous avatar]
-                    className="rounded-full w-48 h-48 group-hover:brightness-75"
-                  />
+                  <div className="w-full h-full rounded-full overflow-hidden">
+                    <img
+                      src={avatarPreview}
+                      className="w-full h-full object-cover"
+                      alt="Profile preview"
+                    />
+                  </div>
                   <ImageUp
                     size={48}
                     color="#d6d6d6"
@@ -101,6 +254,9 @@ export default function ProfileSettingsPage() {
                 accept="image/*"
                 className="hidden"
                 id="avatar"
+                onInput={(e) => {
+                  setAvatarPreview(URL.createObjectURL(e.target.files[0]));
+                }}
                 {...registerProfile("avatar")}
               />
               <div>
@@ -187,6 +343,40 @@ export default function ProfileSettingsPage() {
                   </p>
                 )}
               </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  {...registerProfile("email", {
+                    required: {
+                      value: true,
+                      message: "Your email is required",
+                    },
+                  })}
+                  placeholder="Your email"
+                  className={profileErrors.email && "border-red-500"}
+                />
+                {profileErrors.email && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {profileErrors.email.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="university">University</Label>
+                <Input
+                  id="university"
+                  {...registerProfile("university")}
+                  placeholder="Your university"
+                  className={profileErrors.university && "border-red-500"}
+                />
+                {profileErrors.university && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {profileErrors.university.message}
+                  </p>
+                )}
+              </div>
               <Button type="submit">Save Changes</Button>
             </form>
           </TabsContent>
@@ -228,6 +418,120 @@ export default function ProfileSettingsPage() {
                     {passwordErrors.currentPassword.message}
                   </p>
                 )}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="link"
+                      className="text-gray-500 -m-2"
+                      onClick={resetForgotPassword}
+                    >
+                      Forgot password?
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Forgot password?</DialogTitle>
+                      <DialogDescription>
+                        Enter the password you'd like to have.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form
+                      onSubmit={(e) => {
+                        e.stopPropagation();
+                        handleForgotPasswordSubmit(onForgotPasswordSubmit)(e);
+                      }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <div className="flex justify-between items-center">
+                          <Label htmlFor="newForgotPassword">
+                            New Password
+                          </Label>
+                          <p className="text-sm text-gray-500">
+                            {newForgotPassword?.length || 0}/{PASSWORD_MAX}{" "}
+                            characters
+                          </p>
+                        </div>
+                        <Input
+                          type="password"
+                          id="newForgotPassword"
+                          {...registerForgotPassword("newForgotPassword", {
+                            required: {
+                              value: true,
+                              message: "Your new password is required",
+                            },
+                            minLength: {
+                              value: PASSWORD_MIN,
+                              message: `Your new password must be at least ${PASSWORD_MIN} characters`,
+                            },
+                            maxLength: {
+                              value: PASSWORD_MAX,
+                              message: `Your new password cannot exceed ${PASSWORD_MAX} characters`,
+                            },
+                          })}
+                          placeholder="Your new password"
+                          className={
+                            forgotPasswordErrors.newForgotPassword &&
+                            "border-red-500"
+                          }
+                        />
+                        {forgotPasswordErrors.newForgotPassword && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {forgotPasswordErrors.newForgotPassword.message}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex justify-between items-center">
+                          <Label htmlFor="confirmForgotPassword">
+                            Confirm Password
+                          </Label>
+                          <p className="text-sm text-gray-500">
+                            {confirmForgotPassword?.length || 0}/{PASSWORD_MAX}{" "}
+                            characters
+                          </p>
+                        </div>
+                        <Input
+                          type="password"
+                          id="confirmForgotPassword"
+                          {...registerForgotPassword("confirmForgotPassword", {
+                            required: {
+                              value: true,
+                              message: "Your confirmed password is required",
+                            },
+                            minLength: {
+                              value: PASSWORD_MIN,
+                              message: `Your confirmed password must be at least ${PASSWORD_MIN} characters`,
+                            },
+                            maxLength: {
+                              value: PASSWORD_MAX,
+                              message: `Your confirmed password cannot exceed ${PASSWORD_MAX} characters`,
+                            },
+                            validate: (confirmForgotPassword) => {
+                              if (confirmForgotPassword !== newForgotPassword) {
+                                return "Your new password and confirmed password do not match";
+                              }
+                              return true;
+                            },
+                          })}
+                          placeholder="Confirm your new password"
+                          className={
+                            forgotPasswordErrors.confirmForgotPassword &&
+                            "border-red-500"
+                          }
+                        />
+                        {forgotPasswordErrors.confirmForgotPassword && (
+                          <p className="mt-1 text-sm text-red-500">
+                            {forgotPasswordErrors.confirmForgotPassword.message}
+                          </p>
+                        )}
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Reset password</Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div>
                 <div className="flex justify-between items-center">
@@ -284,6 +588,12 @@ export default function ProfileSettingsPage() {
                     maxLength: {
                       value: PASSWORD_MAX,
                       message: `Your confirmed password cannot exceed ${PASSWORD_MAX} characters`,
+                    },
+                    validate: (confirmPassword) => {
+                      if (confirmPassword !== newPassword) {
+                        return "Your new password and confirmed password do not match";
+                      }
+                      return true;
                     },
                   })}
                   placeholder="Confirm your new password"

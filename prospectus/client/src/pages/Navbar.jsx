@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../config";
 import Logo1 from "../images/logo1.png";
 
 export default function Navbar() {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, logout, user, profilePic } = useAuth();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -114,6 +114,7 @@ export default function Navbar() {
 
   const handleResultClick = (id, type) => {
     setShowResults(false);
+
     if (type === "post") {
       navigate(`/post/${id}`);
     } else if (type === "user") {
@@ -139,7 +140,6 @@ export default function Navbar() {
   const renderItem = (item, index) => {
     const isUser = item.type === "user";
     const isPost = item.type === "post";
-
     return (
       <div
         key={item._id || item.username}
@@ -241,10 +241,15 @@ export default function Navbar() {
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full ">
+            <div className="w-10 rounded-full">
               <img
-                alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                alt="Profile Pic"
+                src={profilePic}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src =
+                    "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg";
+                }}
               />
             </div>
           </div>

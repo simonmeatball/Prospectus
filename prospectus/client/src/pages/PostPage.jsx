@@ -389,14 +389,13 @@ export default function PostPage() {
     );
   }
 
-  // Temporary mock data for profile and reviews until we implement those features
   console.log("Current post data:", post);
   const profile = {
     name: post.user?.name || "User",
     username: post.user?.username || post.userID,
-    avatar:
-      post.user?.profilePic ||
-      "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+    avatar: post.user?.profilePic
+      ? `${API_BASE_URL}/users/${post.userID}/profile-pic`
+      : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
   };
   console.log("Profile data:", profile);
   const reviews = [];

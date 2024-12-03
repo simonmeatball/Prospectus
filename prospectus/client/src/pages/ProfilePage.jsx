@@ -74,7 +74,6 @@ export default function ProfilePage() {
     <div>
             
       <Navbar />
-            
       <div className="flex flex-col items-center pt-8">
                 
         <div className="avatar mb-4">
@@ -83,8 +82,9 @@ export default function ProfilePage() {
                         
             <img
               src={
-                profile.avatar ||
-                "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                profile.profilePic
+                  ? `${API_BASE_URL}/users/${profile.userId}/profile-pic`
+                  : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
               }
               alt={profile.name}
             />
@@ -95,17 +95,26 @@ export default function ProfilePage() {
                 <p className="text-3xl">{profile.name}</p>
                 
         <p className="text-gray-500 text-lg mb-4">@{profile.username}</p>
-                
+        {/* Add bio display */}
+        {profile.bio && (
+          <p className="text-gray-700 text-center max-w-md mb-4">
+            {profile.bio}
+          </p>
+        )}
         {profile.university && (
           <p className="text-gray-500 mb-4">{profile.university}</p>
         )}
         <div className="flex gap-8 mb-4">
           <div className="text-center">
-            <p className="text-xl font-semibold">{profile.followers?.length || 0}</p>
+            <p className="text-xl font-semibold">
+              {profile.followers?.length || 0}
+            </p>
             <p className="text-gray-500">Followers</p>
           </div>
           <div className="text-center">
-            <p className="text-xl font-semibold">{profile.following?.length || 0}</p>
+            <p className="text-xl font-semibold">
+              {profile.following?.length || 0}
+            </p>
             <p className="text-gray-500">Following</p>
           </div>
         </div>
@@ -119,7 +128,10 @@ export default function ProfilePage() {
                         Posts           
           </button>
                     
-          <FollowButton targetUserId={profile.userId} onFollowToggle={fetchProfile} />
+          <FollowButton
+            targetUserId={profile.userId}
+            onFollowToggle={fetchProfile}
+          />
                   
         </div>
               
