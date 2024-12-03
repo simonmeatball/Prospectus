@@ -5,8 +5,10 @@ const commentSchema = new mongoose.Schema(
     postID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",
-      default: null,
-      required: false,
+      // postID is required for top-level comments, optional for replies
+      required: function() {
+        return !this.parentCommentID;
+      }
     },
     parentCommentID: {
       type: mongoose.Schema.Types.ObjectId,

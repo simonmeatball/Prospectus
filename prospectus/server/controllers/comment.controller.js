@@ -3,10 +3,10 @@ const Comment = require("../models/comment.model.js");
 const getComments = async (req, res) => {
   try {
     const { postID } = req.query;
-    console.log("Fetching comments for postID:", postID); // Add debug log
+    console.log("Fetching comments for postID:", postID);
 
-    // Only get comments for the specific post and parent comment
-    const query = { postID: postID };
+    // If no postID is provided, return all comments
+    const query = postID ? { postID: postID } : {};
 
     const comments = await Comment.find(query).populate({
       path: "replies",
@@ -16,12 +16,11 @@ const getComments = async (req, res) => {
           path: "replies",
           populate: {
             path: "replies",
-            // Add more levels if needed
           },
         },
       },
     });
-    console.log("Found comments:", comments); // Add debug log
+    console.log("Found comments:", comments);
 
     res.status(200).json({ success: true, data: comments });
   } catch (err) {
@@ -36,27 +35,39 @@ const createComment = async (req, res) => {
     console.log("Received comment data:", {
       text: text || "missing",
       username: username || "missing",
+      postID: postID || "missing",
       parentCommentID: parentCommentID || "null",
     });
 
+    // Require text and username for all comments
     if (!text || !username) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields",
-        received: { text, postID, username },
+        message: "Missing required fields: text and username are required",
+        received: { text, username },
+      });
+    }
+
+    // Require postID for top-level comments (comments without a parent)
+    if (!parentCommentID && !postID) {
+      return res.status(400).json({
+        success: false,
+        message: "postID is required for top-level comments",
+        received: { postID },
       });
     }
 
     const newComment = new Comment({
       text,
-      postID: postID || null,
+      postID,
       username,
+      parentCommentID,
     });
 
     await newComment.save();
 
     if (parentCommentID) {
-      // Add the new comment to the parent comment’s replies array
+      // Add the new comment to the parent comment's replies array
       await Comment.findByIdAndUpdate(parentCommentID, {
         $push: { replies: newComment._id },
       });

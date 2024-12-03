@@ -113,24 +113,19 @@ export default function PostPage() {
       console.log("Submitting comment:", {
         text: commentText,
         postID: postID,
-        username: user.username, // Use username instead of userID
+        username: user.username,
       });
 
       const response = await axios.post(`${API_BASE_URL}/comments`, {
         text: commentText,
-        postID: postID, // Use URL param postID
-        username: user.username, // Use username instead of userID
+        postID: postID,
+        username: user.username,
         replies: [],
       });
 
       if (response.data.success) {
-        // Refresh comments after posting
-        const commentsResponse = await axios.get(`${API_BASE_URL}/comments`, {
-          params: { postID: postID },
-        });
-        if (commentsResponse.data.success) {
-          setComments(commentsResponse.data.data);
-        }
+        // Add the new comment to the existing comments
+        setComments((prevComments) => [...prevComments, response.data.data]);
         setCommentText("");
       }
     } catch (err) {

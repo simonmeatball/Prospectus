@@ -2,6 +2,7 @@ const Post = require("../models/post.model.js");
 const User = require("../models/user.model.js");
 const mongoose = require("mongoose");
 const { GridFSBucket } = require("mongodb");
+const Comment = require("../models/comment.model.js");
 
 let bucket;
 mongoose.connection.once("open", () => {
@@ -122,6 +123,15 @@ const deletePost = async (req, res) => {
       return res.status(403).json({ success: false, message: "Not authorized to delete this post" });
     }
 
+    // Delete all comments associated with the post
+    await Comment.deleteMany({ postID: id });
+
+    // Delete all replies to comments of this post
+    const comments = await Comment.find({ postID: id });
+    for (const comment of comments) {
+      await Comment.deleteMany({ parentCommentID: comment._id });
+    }
+
     // Delete the post
     await Post.findByIdAndDelete(id);
 
@@ -131,7 +141,7 @@ const deletePost = async (req, res) => {
       { $pull: { posts: id } }
     );
 
-    res.status(200).json({ success: true, message: "Post deleted successfully" });
+    res.status(200).json({ success: true, message: "Post and all associated comments deleted successfully" });
   } catch (err) {
     console.error("Error deleting post:", err);
     res.status(500).json({ success: false, message: err.message });
