@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { API_BASE_URL } from "@/config";
 import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // these are based on twitters limits
 const NAME_MAX = 50;
@@ -22,7 +22,28 @@ const PASSWORD_MAX = 128;
 
 export default function ProfileSettingsPage() {
   const { user } = useAuth();
-  const [avatarPreview, setAvatarPreview] = useState("https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106");
+  const [avatarPreview, setAvatarPreview] = useState(
+    "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106"
+  );
+
+  const fetchCurrentData = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/users/${user.userId}`
+      );
+      setValueProfile("name", response.data.name);
+      setValueProfile("username", response.data.username);
+      setValueProfile("bio", response.data.bio);
+      setValueProfile("email", response.data.email);
+      setValueProfile("university", response.data.university);
+    } catch (error) {
+      toast.error("Error fetching user's current data");
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentData();
+  }, []);
 
   const {
     register: registerProfile,
@@ -30,15 +51,9 @@ export default function ProfileSettingsPage() {
     watch: watchProfile,
     handleSubmit: handleProfileSubmit,
     reset: resetProfile,
+    setValue: setValueProfile,
   } = useForm({
     mode: "onBlur",
-    defaultValues: {
-      name: "", // [User's previous name]
-      username: "", // [User's previous username]
-      bio: "", // [User's previous bio]
-      email: "", // [User's previous email]
-      university: "", // [User's previous university]
-    },
   });
 
   const {
@@ -98,8 +113,12 @@ export default function ProfileSettingsPage() {
         <Tabs
           defaultValue="profile"
           onValueChange={(value) => {
-            if (value === "profile") resetProfile();
-            else resetPassword();
+            if (value === "profile") {
+              resetProfile();
+              fetchCurrentData();
+            } else {
+              resetPassword();
+            }
           }}
         >
           <TabsList className="grid w-full grid-cols-2">
