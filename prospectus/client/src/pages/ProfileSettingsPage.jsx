@@ -173,8 +173,12 @@ export default function ProfileSettingsPage() {
         <Tabs
           defaultValue="profile"
           onValueChange={(value) => {
-            if (value === "profile") resetProfile();
-            else resetPassword();
+            if (value === "profile") {
+              resetProfile();
+            } else {
+              resetPassword();
+              fetchCurrentData();
+            }
           }}
         >
           <TabsList className="grid w-full grid-cols-2">
