@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../config";
 
 import PostCard from "../components/PostCard";
 import Sidebar from "./sidebar.jsx";
-import Pin from "../images/pin.png"
+import Pin from "../images/pin.png";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -71,38 +71,38 @@ function HomePage() {
 
 
   const getDailyPost = (posts) => {
-    const currentDate = new Date().toISOString().split('T')[0]; /* "YYYY-MM-DD" The string produced by toISOSTRING() is 2024-11-30T15:00:00.000Z. 
+    const currentDate = new Date()
+      .toISOString()
+      .split(
+        "T"
+      )[0]; /* "YYYY-MM-DD" The string produced by toISOSTRING() is 2024-11-30T15:00:00.000Z. 
     So that's why we split by T and take the 0 index. */
 
     // get the saved date from localStorage
-    const savedDate = localStorage.getItem('featuredPostDate');
+    const savedDate = localStorage.getItem("featuredPostDate");
 
     // check if the saved date is different from the current date
     if (savedDate !== currentDate) {
-
       // pick a random post if its a new day
       const randomPost = posts[Math.floor(Math.random() * posts.length)];
 
       // save the current date and the selected post's ID to localStorage
-      localStorage.setItem('featuredPostDate', currentDate);
-      localStorage.setItem('featuredPostId', randomPost._id);
+      localStorage.setItem("featuredPostDate", currentDate);
+      localStorage.setItem("featuredPostId", randomPost._id);
 
       return randomPost;
     } else {
       // If it's the same day, get the previously saved post
-      const savedPostId = localStorage.getItem('featuredPostId');
-      const savedPost = posts.find(post => post._id === savedPostId);
+      const savedPostId = localStorage.getItem("featuredPostId");
+      const savedPost = posts.find((post) => post._id === savedPostId);
 
       return savedPost;
     }
   };
 
-
-
   const dailyPost = getDailyPost(posts);
 
   return (
-
     <div
       style={{ userSelect: "none" }}
       className="bg-white pt-10 overflow-x-hidden"
@@ -165,15 +165,12 @@ function HomePage() {
         </div>
 
 
-
         </div>
       </div>
 
       <Navbar />
-
     </div>
   );
-
 }
 
 export default HomePage;
