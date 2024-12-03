@@ -96,50 +96,55 @@ const Sidebar = () => {
             case 'editors':
                 return (
                     <div className="container mx-auto pl-56 flex justify-center items-start w-full min-h-screen">
-                        <div className="grid grid-cols-1 px-4">
-                            <h1 className=" text-3xl text-center text-black font-bold drop-shadow-m animate-bounce">
-                                <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
-                                    Editor's Choice ⭐
-                                </span>
-                            </h1>
-
-                            {posts.slice(0, 2).map((post) => (
-                                <div
-                                    key={post._id}
-                                    className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
-                                >
-                                    <PostCard post={post} />
-                                </div>
-                            ))}
+                      <div className="flex flex-col items-center w-full px-4"> {/* Use flex for vertical alignment */}
+                        <h1 className="text-3xl text-center text-black font-bold drop-shadow-m animate-bounce">
+                          <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
+                            Editor's Choice ⭐
+                          </span>
+                        </h1>
+                  
+                        <div className="flex flex-wrap justify-center w-full">
+                          {posts.slice(0, 2).map((post) => (
+                            <div
+                              key={post._id}
+                              className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                              style={{ minWidth: '320px' }}
+                            >
+                              <PostCard post={post} />
+                            </div>
+                          ))}
                         </div>
+                      </div>
                     </div>
-                );
+                  );
 
             case 'new':
                 return (
                     <div className="container mx-auto pl-56 flex justify-center items-start w-full min-h-screen">
-                        <div className="grid grid-cols-1 px-4">
+                        <div className="flex flex-col items-center w-full px-4"> 
+                        
                             <h1 className=" text-3xl text-center text-black font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     New ✨
                                 </span>
                             </h1>
 
+                            <div className="flex flex-wrap justify-center w-full">
                             {posts.slice(-2).map((post) => (
 
                                 <div
                                     key={post._id}
                                     className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                    style={{ minWidth: '320px'}}
                                 >
                                     <PostCard post={post} />
                                 </div>
                             ))}
 
+                            </div>
+
 
                         </div>
-
-
-
 
                     </div>
                 );
@@ -150,16 +155,18 @@ const Sidebar = () => {
                 const maxLikes = getMaxLikes(); // get the indices of the 2 posts with the most likes
                 return (
                     <div className="container mx-auto pl-56 flex justify-center items-start w-full min-h-screen ">
-                        <div className="grid grid-cols-1 px-4">
+                           <div className="flex flex-col items-center w-full px-4"> 
                             <h1 className="text-3xl text-center text-black font-bold drop-shadow-m  animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     Most Popular 🌟
                                 </span>
                             </h1>
 
+                            <div className="flex flex-wrap justify-center w-full">
                             <div
                                 key={posts[maxLikes[0]]._id}
                                 className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                style={{ minWidth: '320px' }}
                             >
                                 <PostCard post={posts[maxLikes[0]]} />
                             </div>
@@ -167,8 +174,10 @@ const Sidebar = () => {
                             <div
                                 key={posts[maxLikes[1]]._id}
                                 className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                style={{ minWidth: '320px' }}
                             >
                                 <PostCard post={posts[maxLikes[1]]} />
+                            </div>
                             </div>
 
                         </div>
@@ -179,22 +188,24 @@ const Sidebar = () => {
                 const pdfs = getpdfPosts();
                 return (
                     <div className="container mx-auto pl-56 flex justify-center items-start w-full min-h-screen ">
-                        <div className="grid grid-cols-1 px-4">
+                         <div className="flex flex-col items-center w-full px-4">
                             <h1 className="text-3xl text-center text-black font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     PDFs 📄
                                 </span>
                             </h1>
 
-
+                            <div className="flex flex-wrap justify-center w-full">
                             {pdfs.map((post) => (
                                 <div
                                     key={post._id}
                                     className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                    style={{ minWidth: '320px' }}
                                 >
                                     <PostCard post={post} />
                                 </div>
                             ))}
+                            </div>
 
                         </div>
                     </div>
@@ -204,22 +215,24 @@ const Sidebar = () => {
                 const images = getimagePosts();
                 return (
                     <div className="container mx-auto pl-56 flex justify-center items-start w-full min-h-screen ">
-                        <div className="grid grid-cols-1 px-4">
+                         <div className="flex flex-col items-center w-full px-4">
                             <h1 className="text-3xl text-center text-black font-bold drop-shadow-m animate-bounce">
                                 <span style={{ textShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)" }}>
                                     Images 📸
                                 </span>
                             </h1>
 
-
+                            <div className="flex flex-wrap justify-center w-full">
                             {images.map((post) => (
                                 <div
                                     key={post._id}
                                     className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
-                                >
+                                    style={{ minWidth: '320px' }}>
+                                
                                     <PostCard post={post} />
                                 </div>
                             ))}
+                            </div>
 
                         </div>
                     </div>
@@ -232,17 +245,8 @@ const Sidebar = () => {
         }
     };
 
-    const getOpacity = () => {
-        const width = window.innerWidth;
-        console.log(width);
-        if (width >= 1024) return 1; // Large screens
-        if (width >= 768) return 1; // Medium screens
-
-        return 0;
-    };
-
+    
     const sidebarStyle = {
-        opacity: getOpacity(),
         height: '64vh',
         width: isHovered ? '12rem' : '4rem',
         opacity: isHovered ? 1 : 0.1,
