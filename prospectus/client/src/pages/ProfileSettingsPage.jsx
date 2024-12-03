@@ -7,6 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navbar from "./Navbar";
 import { ImageUp } from "lucide-react";
 import { toast } from "sonner";
+import axios from "axios";
+import { API_BASE_URL } from "@/config";
+import { useAuth } from "@/context/AuthContext";
 
 // these are based on twitters limits
 const NAME_MAX = 50;
@@ -17,6 +20,7 @@ const PASSWORD_MIN = 8;
 const PASSWORD_MAX = 128;
 
 export default function ProfileSettingsPage() {
+  const { user } = useAuth();
   const {
     register: registerProfile,
     formState: { errors: profileErrors },
@@ -49,9 +53,21 @@ export default function ProfileSettingsPage() {
   const newPassword = watchPassword("newPassword");
   const confirmPassword = watchPassword("confirmPassword");
 
-  const onProfileSubmit = (data) => {
+  const onProfileSubmit = async (data) => {
     console.log("Profile data:", data);
-    toast.success("Profile updated successfully");
+    console.log(user);
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${user.userId}`,
+        data
+      );
+
+      if (response.status === 200) {
+        toast.success("Profile updated successfully");
+      }
+    } catch (error) {
+      toast.error("Error updating profile");
+    }
   };
 
   const onPasswordSubmit = (data) => {
