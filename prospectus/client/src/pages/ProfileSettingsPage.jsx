@@ -84,36 +84,36 @@ export default function ProfileSettingsPage() {
   const newForgotPassword = watchForgotPassword("newForgotPassword");
   const confirmForgotPassword = watchForgotPassword("confirmForgotPassword");
 
+  const fetchUserData = async () => {
+    if (user?.userId) {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/users/username/${user.username}`
+        );
+        const userData = response.data;
+        console.log("Fetched complete user data:", userData);
+
+        // Set all form values with complete user data
+        setProfileValue("name", userData.name || "");
+        setProfileValue("username", userData.username || "");
+        setProfileValue("email", userData.email || "");
+        setProfileValue("bio", userData.bio || "");
+        setProfileValue("university", userData.university || "");
+
+        // Set avatar preview
+        setAvatarPreview(
+          userData.profilePic
+            ? `${API_BASE_URL}/users/${userData.userId}/profile-pic`
+            : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+        );
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    }
+  };
+
   // Remove the second useEffect and keep only this one
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.userId) {
-        try {
-          const response = await axios.get(
-            `${API_BASE_URL}/users/username/${user.username}`
-          );
-          const userData = response.data;
-          console.log("Fetched complete user data:", userData);
-
-          // Set all form values with complete user data
-          setProfileValue("name", userData.name || "");
-          setProfileValue("username", userData.username || "");
-          setProfileValue("email", userData.email || "");
-          setProfileValue("bio", userData.bio || "");
-          setProfileValue("university", userData.university || "");
-
-          // Set avatar preview
-          setAvatarPreview(
-            userData.profilePic
-              ? `${API_BASE_URL}/users/${userData.userId}/profile-pic`
-              : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
-          );
-        } catch (err) {
-          console.error("Error fetching user data:", err);
-        }
-      }
-    };
-
     fetchUserData();
   }, [user?.userId, setProfileValue]);
 
@@ -213,15 +213,10 @@ export default function ProfileSettingsPage() {
           onValueChange={(value) => {
             if (value === "profile") {
               resetProfile();
+              fetchUserData();
             } else {
               resetPassword();
-              fetchCurrentData();
-            }
-            if (value === "profile") {
-              resetProfile();
-            } else {
-              resetPassword();
-              fetchCurrentData();
+              fetchUserData();
             }
           }}
         >
