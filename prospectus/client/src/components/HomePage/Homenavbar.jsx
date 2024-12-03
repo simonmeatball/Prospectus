@@ -1,21 +1,4 @@
 import React from "react";
-<<<<<<< HEAD
-import PrivacyModal from "./Privacy.jsx";
-
-export default function Homenavbar() {
-  return (
-    <div className="navbar bg-base-100">
-      <div className="flex-2">
-        <a href="mailto:prospectusucla@gmail.com" className="btn btn-ghost text-xl">Contact Us
-        </a>
-
-        <PrivacyModal/>
-      </div>
-
-    </div>
-
-  );
-=======
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -45,5 +28,4 @@ export default function Homenavbar() {
     </div>
   );
   
->>>>>>> 00948be9e99ec462a22dc78482578a02304d0dc7
 }
