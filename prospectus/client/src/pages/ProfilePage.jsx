@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
+import FollowButton from "../components/FollowButton"; // Assuming FollowButton is in this location
 
 export default function ProfilePage() {
   const { username } = useParams();
@@ -13,28 +14,28 @@ export default function ProfilePage() {
   const [view, setView] = useState("posts");
   const [posts, setPosts] = useState([]);
 
+  const fetchProfile = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/users/username/${username}`
+      );
+
+      setProfile(response.data);
+      setLoading(false);
+
+      console.log("fetched:", response.data.userId);
+      const response2 = await axios.get(
+        `${API_BASE_URL}/users/${response.data.userId}/posts`
+      );
+      console.log("r2.data.data", response2.data.data.posts);
+      setPosts(response2.data.data.posts);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to load profile");
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/users/username/${username}`
-        );
-
-        setProfile(response.data);
-        setLoading(false);
-
-        console.log("fetched:", response.data.userId);
-        const response2 = await axios.get(
-          `${API_BASE_URL}/users/${response.data.userId}/posts`
-        );
-        console.log("r2.data.data", response2.data.data.posts);
-        setPosts(response2.data.data.posts);
-      } catch (err) {
-        setError(err.response?.data?.message || "Failed to load profile");
-        setLoading(false);
-      }
-    };
-
     fetchProfile();
   }, [username]);
 
@@ -98,6 +99,16 @@ export default function ProfilePage() {
         {profile.university && (
           <p className="text-gray-500 mb-4">{profile.university}</p>
         )}
+        <div className="flex gap-8 mb-4">
+          <div className="text-center">
+            <p className="text-xl font-semibold">{profile.followers?.length || 0}</p>
+            <p className="text-gray-500">Followers</p>
+          </div>
+          <div className="text-center">
+            <p className="text-xl font-semibold">{profile.following?.length || 0}</p>
+            <p className="text-gray-500">Following</p>
+          </div>
+        </div>
                 
         <div className="flex gap-4 mb-4">
                     
@@ -107,6 +118,8 @@ export default function ProfilePage() {
           >
                         Posts           
           </button>
+                    
+          <FollowButton targetUserId={profile.userId} onFollowToggle={fetchProfile} />
                   
         </div>
               
