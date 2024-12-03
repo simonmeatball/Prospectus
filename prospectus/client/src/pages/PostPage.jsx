@@ -8,6 +8,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../config";
 import { Link } from "react-router-dom";
+import FollowButton from "../components/FollowButton";
 
 export default function PostPage() {
   const { postID } = useParams();
@@ -251,15 +252,15 @@ export default function PostPage() {
           {replyingTo === reply._id && (
             <form onSubmit={handleReplySubmit} className="mt-2">
               <textarea
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
+                value={replyText} // Use replyText instead of commentText
+                onChange={(e) => setReplyText(e.target.value)} // Use setReplyText instead of setCommentText
                 placeholder="Write a reply..."
                 className="w-full p-2 border rounded-lg mb-2"
               />
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={!replyText.trim()}
+                disabled={!replyText.trim()} // Use replyText instead of commentText
               >
                 Post Reply
               </button>
@@ -432,6 +433,9 @@ export default function PostPage() {
           <Link to={`/profile/${profile.username}`} className="text-gray-500">
             @{profile.username}
           </Link>
+          {user && user.userId !== post.userID && (
+            <FollowButton targetUserId={post.userID} />
+          )}
           <div>
             <p className="text-gray-500 mb-4">
               {new Date(post.createdAt).toLocaleString()}

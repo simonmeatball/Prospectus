@@ -29,7 +29,8 @@ const userSchema = new mongoose.Schema({
   },
   profilePic: {
     type: String,
-    default: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106",
+    default:
+      "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106",
     required: false,
   },
   bio: {
@@ -47,14 +48,30 @@ const userSchema = new mongoose.Schema({
     enum: ["recruiter", "candidate"],
     required: true,
   },
-  posts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post'
-  }],
-  likedPosts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post'
-  }]
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  likedPosts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  following: [
+    {
+      type: String,
+      ref: "User",
+    },
+  ],
+  followers: [
+    {
+      type: String,
+      ref: "User",
+    },
+  ],
 });
 
 // Hash password before saving

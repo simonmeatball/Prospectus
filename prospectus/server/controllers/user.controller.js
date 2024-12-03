@@ -76,29 +76,31 @@ const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
     console.log("Getting posts for user:", userId);
-    
+
     // Find the user and populate their posts
     const user = await User.findOne({ userId }).populate({
-      path: 'posts',
-      options: { sort: { createdAt: -1 } }
+      path: "posts",
+      options: { sort: { createdAt: -1 } },
     });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     console.log("Found user with posts:", user);
 
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       data: {
         posts: user.posts,
         user: {
           name: user.name,
           username: user.username,
-          profilePic: user.profilePic
-        }
-      }
+          profilePic: user.profilePic,
+        },
+      },
     });
   } catch (err) {
     console.error("Error fetching user posts", err);
@@ -107,34 +109,107 @@ const getUserPosts = async (req, res) => {
 };
 
 const getUserByUsername = async (req, res) => {
-  try { 
-    const user = await User.findOne({ username: req.params.username}); 
-    if (!user) return res.status(404).json({massage: "User not found"}); 
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ massage: "User not found" });
 
-    //get user's posts 
-    const posts = await Post.find({userId: user.userId}); 
+    //get user's posts
+    const posts = await Post.find({ userId: user.userId });
 
     res.status(200).json({
-      userId: user.userId, 
+      userId: user.userId,
       username: user.username,
       name: user.name,
-      email: user.email, 
+      email: user.email,
       accountType: user.accountType,
-      university: user.university, 
-      posts: posts
+      university: user.university,
+      posts: posts,
+      followers: user.followers || [],
+      following: user.following || [],
     });
-  } catch (error) { 
-    res.status(500).json({ message: error.message}); 
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
+// Follow a user
+const followUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { targetUserId } = req.params;
 
-module.exports = { 
-  getAllUsers, 
-  getUser, 
-  createUser, 
-  updateUser, 
-  deleteUser, 
-  getUserPosts, 
-  getUserByUsername
+    const user = await User.findOne({ userId });
+    const targetUser = await User.findOne({ userId: targetUserId });
+
+    if (!user || !targetUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (!user.following.includes(targetUserId)) {
+      user.following.push(targetUserId);
+      await user.save();
+
+      targetUser.followers.push(userId);
+      await targetUser.save();
+    }
+
+    res.status(200).json({ success: true, message: "Successfully followed user" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Unfollow a user
+const unfollowUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { targetUserId } = req.params;
+
+    const user = await User.findOne({ userId });
+    const targetUser = await User.findOne({ userId: targetUserId });
+
+    if (!user || !targetUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    user.following = user.following.filter(id => id !== targetUserId);
+    await user.save();
+
+    targetUser.followers = targetUser.followers.filter(id => id !== userId);
+    await targetUser.save();
+
+    res.status(200).json({ success: true, message: "Successfully unfollowed user" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Check if user is following another user
+const checkFollowStatus = async (req, res) => {
+  try {
+    const { userId, targetUserId } = req.params;
+    const user = await User.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const isFollowing = user.following.includes(targetUserId);
+    res.status(200).json({ success: true, isFollowing });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  getAllUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser,
+  getUserPosts,
+  getUserByUsername,
+  followUser,
+  unfollowUser,
+  checkFollowStatus
 };

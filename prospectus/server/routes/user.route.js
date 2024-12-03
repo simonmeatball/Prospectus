@@ -6,7 +6,10 @@ const {
   updateUser,
   deleteUser,
   getUserPosts,
-  getUserByUsername
+  getUserByUsername,
+  followUser,
+  unfollowUser,
+  checkFollowStatus
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -20,7 +23,7 @@ router.get("/:userId", getUser);
 // Get user's posts
 router.get("/:userId/posts", getUserPosts);
 
-//get user by username 
+//get user by username
 router.get("/username/:username", getUserByUsername);
 
 // Create a new user
@@ -31,5 +34,10 @@ router.patch("/:userId", updateUser);
 
 // Delete a user by ID
 router.delete("/:userId", deleteUser);
+
+// Follow routes
+router.post("/:userId/follow/:targetUserId", followUser);
+router.post("/:userId/unfollow/:targetUserId", unfollowUser);
+router.get("/:userId/following/:targetUserId", checkFollowStatus);
 
 module.exports = router;
