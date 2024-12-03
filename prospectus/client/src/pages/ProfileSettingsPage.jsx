@@ -107,9 +107,14 @@ export default function ProfileSettingsPage() {
       <div className="w-1/2 mx-auto mt-4 border-2 p-4 rounded-lg">
         <Tabs
           defaultValue="profile"
-          onValueChange={(value) =>
-            value === "profile" ? resetProfile() : resetPassword()
-          }
+          onValueChange={(value) => {
+            if (value === "profile") {
+              resetProfile();
+            } else {
+              resetPassword();
+              fetchCurrentData();
+            }
+          }}
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="profile">Profile</TabsTrigger>
