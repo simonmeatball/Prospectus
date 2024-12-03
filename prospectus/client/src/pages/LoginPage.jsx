@@ -2,19 +2,29 @@ import React from "react";
 import { useState } from "react";
 import Loginnavbar from "../components/LoginPage/Loginnavbar.jsx";
 import Registerbutton from "../components/LoginPage/Registerbutton.jsx";
-import Reviewcarousel from "../components/LoginPage/reviewCarousel.jsx"
+import Reviewcarousel from "../components/LoginPage/reviewCarousel.jsx";
 
-import Login1 from "../images/login1.jpg"
-import Login2 from "../images/login2.jpg"
-import Login3 from "../images/login3.jpg"
-import Login4 from "../images/login4.jpg"
-import ducks from "../images/ducks.png"
+import Login1 from "../images/login1.jpg";
+import Login2 from "../images/login2.jpg";
+import Login3 from "../images/login3.jpg";
+import Login4 from "../images/login4.jpg";
+import ducks from "../images/ducks.png";
+import Swal from "sweetalert2";
+
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   // Handle input changes
   const handleChange = (e) => {
@@ -30,32 +40,34 @@ function LoginPage() {
     e.preventDefault(); // Prevent the default form submission
 
     try {
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts", { // send login request to backend server
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+        email: formData.email,
+        password: formData.password,
       });
 
-      const data = await response.json();
+      if (response.data.token) {
+        console.log("User data from login:", response.data.user);
+        // Store the token
+        localStorage.setItem("token", response.data.token);
+        // Update auth context
+        login(response.data.user);
+        // Redirect to home page!
+        navigate("/home");
+      }
+    } catch (err) {
+      console.log("bob");
+      setError(err.response?.data?.message || "Login failed");
 
-      console.log("Server Response:", data);
-
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed!",
+        text: err.response?.data?.message || "Login failed",
+      });
     }
-  }
-
+  };
 
   return (
-
-    <div style={{ userSelect: "none" }} className="bg-cyan-100 font-sans" >
+    <div style={{ userSelect: "none" }} className="bg-cyan-100 font-sans">
       <Loginnavbar />
 
       <div className="absolute text-cyan-500 mt-36 ml-20 bg-white rounded-3xl p-5">
@@ -65,7 +77,7 @@ function LoginPage() {
         <form onSubmit={handleSubmit} className=" max-w-sm mt-5 bg-local">
           <div className="mb-6">
             <label
-              for="email"
+              htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
             >
               Email address:
@@ -84,7 +96,7 @@ function LoginPage() {
 
           <div className="mb-9">
             <label
-              for="password"
+              htmlFor="password"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
             >
               Password:
@@ -99,70 +111,48 @@ function LoginPage() {
             />
           </div>
 
-          <button type="submit"
-            className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-cyan-500 dark:hover:bg-cyan-600 w-full"> Sign In</button>
-
-
+          <button
+            type="submit"
+            className="btn btn-primary w-50 h-10 text-white ml-15 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-cyan-400 hover:bg-cyan-500 w-full"
+          >
+            {" "}
+            Sign In
+          </button>
         </form>
-
 
         <Registerbutton />
       </div>
 
       <div className="carousel h-screen w-screen">
-
         <div id="slide1" className="carousel-item w-full">
           <img
-            src={ducks} draggable="false"
-            className=" w-full h-3/5 object-cover" />
-
-
+            src={ducks}
+            draggable="false"
+            className=" w-full h-3/5 object-cover"
+          />
         </div>
 
         <div id="slide2" className="carousel-item w-full">
-          <img
-            src={Login1}
-            className="w-full h-3/5 object-cover" />
-
-
+          <img src={Login1} className="w-full h-3/5 object-cover" />
         </div>
         <div id="slide3" className="carousel-item w-full">
-          <img
-            src={Login2}
-            className="w-full h-3/5 object-cover" />
-
+          <img src={Login2} className="w-full h-3/5 object-cover" />
         </div>
 
         <div id="slide4" className="carousel-item w-full">
-          <img
-            src={Login3}
-            className="w-full h-3/5 object-cover" />
-
-
+          <img src={Login3} className="w-full h-3/5 object-cover" />
         </div>
 
         <div id="slide5" className="carousel-item w-full">
-          <img
-            src={Login4}
-            className="w-full h-3/5 object-cover" />
-
+          <img src={Login4} className="w-full h-3/5 object-cover" />
         </div>
       </div>
 
       <div className="w-full flex justify-end pr-52" alt="Testimonal">
         <p className="italic max-w-md -mt-60">
-
-        <Reviewcarousel/>
-
-          {/* <span className="animate-pulse">
-            "Prospectus transformed my job application process! The personalized feedback was spot-on, and the clear, actionable suggestions helped me craft a resume that stood out to employers. Thanks to Prospectus, I landed my dream internship this summer. I can't recommend it enough!"
-          </span>
-
-          <span className="animate-none not-italic font-bold">- Jason Ni</span> */}
+          <Reviewcarousel />
         </p>
       </div>
-
-
     </div>
   );
 }

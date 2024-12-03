@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Navbar from "./Navbar.jsx";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../config";
 
 // change the character limit of title and body here
 const TITLELIMIT = 75;
@@ -17,11 +19,14 @@ const formDataToObject = (formData) => {
 
 function UploadPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [titleCount, setTitleCount] = useState(0);
   const [bodyCount, setBodyCount] = useState(0);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [file, setFile] = useState(null);
+  const [tagsInput, setTagsInput] = useState(""); 
+  const [tags, setTags] = useState([]); 
 
   const handleTitleChange = (event) => {
     const newTitle = event.target.value;
@@ -39,29 +44,46 @@ function UploadPage() {
     setFile(event.target.files[0]);
   };
 
+  const handleTagsChange = (event) =>  { 
+    const newTagsInput = event.target.value; 
+    setTagsInput(newTagsInput);
+
+    const newTags = newTagsInput
+      .split(",")
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0);
+    setTags(newTags);
+
+  };
+
   const isTitleLimitReached = titleCount >= TITLELIMIT;
   const isBodyLimitReached = bodyCount >= BODYLIMIT;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!user) {
+      console.error("No user logged in");
+      navigate("/login");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("body", body);
+    formData.append("userID", user.userId); // Make sure we're using the correct case
+    formData.append("tags", JSON.stringify(tags));
     if (file) {
       formData.append("file", file);
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/posts",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      console.log("Uploading post with userID:", user.userId);
+      const response = await axios.post(`${API_BASE_URL}/posts`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.data.success) {
         console.log("Post created successfully:", response.data);
@@ -71,6 +93,8 @@ function UploadPage() {
         setFile(null);
         setTitleCount(0);
         setBodyCount(0);
+        setTagsInput(""); 
+        setTags([]);
         // Redirect to posts page
         navigate("/posts");
       }
@@ -152,8 +176,39 @@ function UploadPage() {
                 onChange={handleFileChange}
               />
             </div>
+            <div className="mb-7">
+              <label 
+                htmlFor="tags"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+                >
+                  Tags
+                </label>
+                <input 
+                  type="text"
+                  id="tags"
+                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                  placeholder="enter tags separated by commas"
+                  value={tagsInput}
+                  onChange={handleTagsChange}
+                  />
+            </div>
+            {tags.length > 0 && (
+            <div className="mt-2">
+              <p className="text-sm text-gray-500">Tags:</p>
+              <ul className="flex flex-wrap gap-2">
+                {tags.map((tag, index) => (
+                  <li
+                    key={index}
+                    className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs"
+                  >
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 hover:bg-blue-700 mt-4 text-white font-bold py-2.5 px-4 rounded-lg focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Submit
