@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-//import Homenavbar from "../components/HomePage/Homenavbar.jsx";
 
 import Navbar from "./Navbar.jsx";
 import axios from "axios";
@@ -16,8 +15,6 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [greeting, setGreeting] = useState(""); // State for the greeting
-
-  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPosts = async () => {

@@ -6,6 +6,7 @@
     "start": "concurrently \"npm run start --prefix server\" \"npm run start --prefix client\""
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.2",
     "@tabler/icons-react": "^3.23.0",
     "axios": "^1.7.8",
     "clsx": "^2.1.1",
