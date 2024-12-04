@@ -235,56 +235,51 @@ export default function Navbar() {
             })}
           </div>
         )}
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar"
-          >
-            <div className="w-10 rounded-full">
-              <img
-                alt="Profile Pic"
-                src={profilePic}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg";
-                }}
-              />
+        
+        {isAuthenticated && (
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar"
+            >
+              <div className="w-10 rounded-full">
+                <img
+                  alt="Profile Pic"
+                  src={profilePic}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src =
+                      "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg";
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-          >
-            <li>
-              <Link
-                to={`/profile/${user?.username}`}
-                className="justify-between"
-              >
-                Profile
-                <span className="badge">New</span>
-              </Link>
-            </li>
-            <li>
-              <Link to={`/profile/${user?.username}/settings`}>Settings</Link>
-            </li>
-            {isAuthenticated && (
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+            >
+              <li>
+                <Link
+                  to={`/profile/${user?.username}`}
+                  className="justify-between"
+                >
+                  Profile
+                  <span className="badge">New</span>
+                </Link>
+              </li>
+              <li>
+                <Link to={`/profile/${user?.username}/settings`}>Settings</Link>
+              </li>
               <li>
                 <Link to="/upload">Upload Post</Link>
               </li>
-            )}
-            {isAuthenticated ? (
               <li>
                 <a onClick={handleLogout}>Logout</a>
               </li>
-            ) : (
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-            )}
-          </ul>
-        </div>
+            </ul>
+          </div>
+        )}
 
         {isAuthenticated ? (
           <button
