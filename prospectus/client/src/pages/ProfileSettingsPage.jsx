@@ -20,7 +20,7 @@ import axios from "axios";
 import { API_BASE_URL } from "@/config";
 import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Add this import at the top
+import { useNavigate } from "react-router-dom";
 
 // these are based on twitters limits
 const NAME_MAX = 50;
@@ -31,8 +31,8 @@ const PASSWORD_MIN = 8;
 const PASSWORD_MAX = 128;
 
 export default function ProfileSettingsPage() {
-  const { user, updateProfilePic } = useAuth(); // Update this line to destructure updateProfilePic
-  const navigate = useNavigate(); // Add this line
+  const { user, updateProfilePic, logout } = useAuth();
+  const navigate = useNavigate();
   const [avatarPreview, setAvatarPreview] = useState(
     "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106"
   );
@@ -43,7 +43,7 @@ export default function ProfileSettingsPage() {
     watch: watchProfile,
     handleSubmit: handleProfileSubmit,
     reset: resetProfile,
-    setValue: setProfileValue, // Add this line
+    setValue: setProfileValue,
   } = useForm({
     mode: "onBlur",
     defaultValues: {
@@ -112,7 +112,6 @@ export default function ProfileSettingsPage() {
     }
   };
 
-  // Remove the second useEffect and keep only this one
   useEffect(() => {
     fetchUserData();
   }, [user?.userId, setProfileValue]);
@@ -204,6 +203,21 @@ export default function ProfileSettingsPage() {
     }
   };
 
+  const onDeleteAccount = async () => {
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/users/${user.userId}`
+      );
+      if (response.status === 200) {
+        toast.success("Account deleted successfully");
+        logout();
+        navigate("/login");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error deleting account");
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -220,9 +234,10 @@ export default function ProfileSettingsPage() {
             }
           }}
         >
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="password">Password</TabsTrigger>
+            <TabsTrigger value="danger">Advanced</TabsTrigger>
           </TabsList>
           <TabsContent value="profile">
             <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
@@ -607,6 +622,41 @@ export default function ProfileSettingsPage() {
               </div>
               <Button type="submit">Save Changes</Button>
             </form>
+          </TabsContent>
+          <TabsContent value="danger" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-destructive mb-4">
+                Advanced
+              </h2>
+              <div className="space-y-4">
+                <div className="border border-destructive rounded-lg p-4">
+                  <h3 className="text-lg font-semibold mb-2">Delete Account</h3>
+                  <p className="text-muted-foreground mb-4">
+                    This action is permanent and will delete all your data.
+                  </p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive">Delete Account</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your account and remove all your data from our
+                          servers.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="destructive" onClick={onDeleteAccount}>
+                          Yes, delete my account
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
