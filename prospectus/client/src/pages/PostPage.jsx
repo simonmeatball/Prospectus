@@ -19,9 +19,10 @@ export default function PostPage() {
   const [sortBy, setSortBy] = useState("Most recent");
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
-  const [replyText, setReplyText] = useState(""); // Add new state for reply text
+  const [replyText, setReplyText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [postUser, setPostUser] = useState(null);
   const moreMenuRef = useRef(null);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -38,6 +39,12 @@ export default function PostPage() {
           console.log("Post data received:", response.data.data);
           setPost(response.data.data);
           setLiked(response.data.data.isLiked);
+          
+          // Fetch user info
+          const userResponse = await axios.get(`${API_BASE_URL}/users/${response.data.data.userID}`);
+          if (userResponse.data) {
+            setPostUser(userResponse.data);
+          }
         }
       } catch (err) {
         console.error("Error fetching post:", err);
@@ -473,7 +480,12 @@ export default function PostPage() {
         <div className="w-3/4">
           <div className="max-w-3xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
             <div className="flex justify-between items-start mb-4">
-              <h1 className="text-3xl font-bold">{post.title}</h1>
+              <div>
+                <h1 className="text-3xl font-bold">{post.title}</h1>
+                <Link to={`/profile/${postUser?.username}`} className="text-gray-600 hover:text-gray-800 text-sm mt-2 block">
+                  Posted by {postUser?.name || "Unknown"}
+                </Link>
+              </div>
               {user && post.userID === user.userId && (
                 <div className="relative" ref={moreMenuRef}>
                   <button

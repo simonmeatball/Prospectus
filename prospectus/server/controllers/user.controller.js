@@ -2,6 +2,7 @@ const User = require("../models/user.model.js");
 const Post = require("../models/post.model.js");
 const mongoose = require("mongoose");
 const { GridFSBucket } = require("mongodb");
+const Comment = require("../models/comment.model.js");
 
 let bucket;
 mongoose.connection.once("open", () => {
@@ -187,15 +188,79 @@ const updateUserForgotPassword = async (req, res) => {
 
 // Delete user by ID
 const deleteUser = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    const deletedUser = await User.findOneAndDelete({
-      userId: req.params.userId,
-    });
-    if (!deletedUser)
+    // Verify user exists
+    const user = await User.findOne({ userId: req.params.userId });
+    if (!user) {
+      await session.abortTransaction();
       return res.status(404).json({ message: "User not found" });
-    res.status(200).json({ message: "User deleted successfully" });
+    }
+
+    // Remove user from everyone's followers and following lists
+    await Promise.all([
+      User.updateMany(
+        { followers: user.userId },
+        { $pull: { followers: user.userId } },
+        { session }
+      ),
+      User.updateMany(
+        { following: user.userId },
+        { $pull: { following: user.userId } },
+        { session }
+      ),
+    ]);
+
+    // Get all posts that the user has liked and update them
+    const likedPosts = await Post.find({ _id: { $in: user.likedPosts } });
+    for (const post of likedPosts) {
+      post.likes = Math.max(0, post.likes - 1);
+      post.likedBy = post.likedBy.filter(username => username !== user.username);
+      await post.save({ session });
+    }
+
+    // Get all posts by the user
+    const userPosts = await Post.find({ userID: user.userId });
+
+    // Remove user's posts from other users' likedPosts arrays
+    const userPostIds = userPosts.map(post => post._id);
+    await User.updateMany(
+      { likedPosts: { $in: userPostIds } },
+      { $pull: { likedPosts: { $in: userPostIds } } },
+      { session }
+    );
+
+    // Delete all comments on user's posts
+    await Comment.deleteMany(
+      { postID: { $in: userPostIds } },
+      { session }
+    );
+
+    // Delete all comments by this user
+    await Comment.deleteMany(
+      { username: user.username },
+      { session }
+    );
+
+    // Delete all posts by this user
+    await Post.deleteMany(
+      { userID: user.userId },
+      { session }
+    );
+
+    // Delete the user
+    await User.findOneAndDelete({ userId: req.params.userId }, { session });
+
+    // Commit the transaction
+    await session.commitTransaction();
+    res.status(200).json({ message: "Account and associated data deleted successfully" });
   } catch (error) {
+    await session.abortTransaction();
     res.status(500).json({ message: error.message });
+  } finally {
+    session.endSession();
   }
 };
 

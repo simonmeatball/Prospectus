@@ -1,9 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "@/config";
+import axios from "axios";
+import { MessageCircle } from "lucide-react";
 
 const PostCard = ({ post }) => {
   const navigate = useNavigate();
+  const [commentCount, setCommentCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCommentCount = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/comments`, {
+          params: { postID: post._id }
+        });
+        if (response.data.success) {
+          setCommentCount(response.data.data.length);
+        }
+      } catch (err) {
+        console.error("Error fetching comments:", err);
+      }
+    };
+
+    fetchCommentCount();
+  }, [post._id]);
 
   const handleClick = () => {
     navigate(`/post/${post._id}`);
@@ -83,10 +103,20 @@ const PostCard = ({ post }) => {
             )}
             </div>
         )}
-        <span className="text-sm text-gray-600">Likes: {post.likes || 0}</span>
+        <div className="flex items-center gap-4 mt-2">
+          <div className="flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span className="text-sm text-gray-600">{post.likes || 0}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <MessageCircle className="h-5 w-5 text-gray-600" />
+            <span className="text-sm text-gray-600">{commentCount}</span>
+          </div>
+        </div>
       </div>
     </div>
-
   );
 };
 
