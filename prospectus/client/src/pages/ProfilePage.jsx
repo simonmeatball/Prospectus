@@ -11,7 +11,6 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [view, setView] = useState("posts");
   const [posts, setPosts] = useState([]);
 
   const fetchProfile = async () => {
@@ -23,11 +22,9 @@ export default function ProfilePage() {
       setProfile(response.data);
       setLoading(false);
 
-      console.log("fetched:", response.data.userId);
       const response2 = await axios.get(
         `${API_BASE_URL}/users/${response.data.userId}/posts`
       );
-      console.log("r2.data.data", response2.data.data.posts);
       setPosts(response2.data.data.posts);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load profile");
@@ -121,13 +118,6 @@ export default function ProfilePage() {
                 
         <div className="flex gap-4 mb-4">
                     
-          <button
-            className={`btn ${view === "posts" ? "btn-primary" : ""}`}
-            onClick={() => setView("posts")}
-          >
-                        Posts           
-          </button>
-                    
           <FollowButton
             targetUserId={profile.userId}
             onFollowToggle={fetchProfile}
@@ -136,7 +126,7 @@ export default function ProfilePage() {
         </div>
               
       </div>
-      {view == "posts" && posts && posts.length > 0 ? (
+      {posts && posts.length > 0 ? (
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.map((post) => (
