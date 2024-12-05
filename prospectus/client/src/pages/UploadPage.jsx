@@ -1,67 +1,38 @@
-import React, { useState } from "react";
-import Navbar from "./Navbar.jsx";
+import { useForm } from "react-hook-form";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import Navbar from "./Navbar";
 import axios from "axios";
+import { API_BASE_URL } from "@/config";
+import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { API_BASE_URL } from "../config";
 
-// change the character limit of title and body here
-const TITLELIMIT = 75;
-const BODYLIMIT = 500;
+const TITLE_MAX = 100;
+const BODY_MAX = 1000;
 
-const formDataToObject = (formData) => {
-  const obj = {};
-  formData.forEach((value, key) => {
-    obj[key] = value;
-  });
-  return obj;
-};
-
-function UploadPage() {
+export default function UploadPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [titleCount, setTitleCount] = useState(0);
-  const [bodyCount, setBodyCount] = useState(0);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [file, setFile] = useState(null);
-  const [tagsInput, setTagsInput] = useState(""); 
-  const [tags, setTags] = useState([]); 
+  const [tags, setTags] = useState([]);
 
-  const handleTitleChange = (event) => {
-    const newTitle = event.target.value;
-    setTitle(newTitle);
-    setTitleCount(newTitle.length);
-  };
+  const {
+    register,
+    formState: { errors },
+    watch,
+    handleSubmit,
+    reset,
+    setValue,
+  } = useForm({
+    mode: "onBlur",
+  });
 
-  const handleBodyChange = (event) => {
-    const newBody = event.target.value;
-    setBody(newBody);
-    setBodyCount(newBody.length);
-  };
+  const title = watch("title");
+  const body = watch("body");
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
-
-  const handleTagsChange = (event) =>  { 
-    const newTagsInput = event.target.value; 
-    setTagsInput(newTagsInput);
-
-    const newTags = newTagsInput
-      .split(",")
-      .map(tag => tag.trim())
-      .filter(tag => tag.length > 0);
-    setTags(newTags);
-
-  };
-
-  const isTitleLimitReached = titleCount >= TITLELIMIT;
-  const isBodyLimitReached = bodyCount >= BODYLIMIT;
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const onSubmit = async (data) => {
     if (!user) {
       console.error("No user logged in");
       navigate("/login");
@@ -69,33 +40,23 @@ function UploadPage() {
     }
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("body", body);
-    formData.append("userID", user.userId); // Make sure we're using the correct case
+    formData.append("title", data.title);
+    formData.append("body", data.body);
+    formData.append("userID", user.userId);
     formData.append("tags", JSON.stringify(tags));
     if (file) {
-      formData.append("file", file);
+      formData.append("file", data.resume[0]);
     }
 
     try {
       console.log("Uploading post with userID:", user.userId);
       const response = await axios.post(`${API_BASE_URL}/posts`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response.data.success) {
         console.log("Post created successfully:", response.data);
-        // Reset form
-        setTitle("");
-        setBody("");
-        setFile(null);
-        setTitleCount(0);
-        setBodyCount(0);
-        setTagsInput(""); 
-        setTags([]);
-        // Redirect to posts page
+        reset();
         navigate("/posts");
       }
     } catch (error) {
@@ -103,120 +64,128 @@ function UploadPage() {
         "Error creating post:",
         error.response?.data || error.message
       );
-      // You might want to show an error message to the user here
     }
   };
 
   return (
     <div>
       <Navbar />
-      <div className="bg-[url('../images/homebg.png')] bg-cover bg-no-repeat bg-center h-screen w-full px-4">
-        <div className="font-sans">
-          <form
-            onSubmit={handleSubmit}
-            className="max-w-sm mx-auto mt-12 bg-local"
-          >
-            <div className="text-2xl font-bold pb-4">Create Post</div>
-            <div className="mb-7">
-              <label
-                htmlFor="title"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-              >
-                Title<span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="title"
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                placeholder="Title"
-                maxLength={TITLELIMIT}
-                value={title}
-                onChange={handleTitleChange}
-                required
-              />
+      <div className="w-1/2 mx-auto mt-4 border-2 p-4 rounded-lg">
+        <h1 className="text-2xl font-bold mb-4">Create Post</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="title">
+                Title <span className="text-red-500">*</span>
+              </Label>
               <p
-                className={`text-sm ${isTitleLimitReached ? "text-red-500" : "text-gray-500"} mt-1`}
+                className={`text-sm ${
+                  errors.title ? "text-red-500" : "text-gray-500"
+                }`}
               >
-                {titleCount}/{TITLELIMIT} characters
+                {title?.length || 0}/{TITLE_MAX} characters
               </p>
             </div>
-            <div className="mb-7">
-              <label
-                htmlFor="body"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-              >
-                Body
-              </label>
-              <textarea
-                id="body"
-                className="shadow-sm h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                maxLength={BODYLIMIT}
-                onChange={handleBodyChange}
-                placeholder="Description"
-              />
+            <Input
+              id="title"
+              {...register("title", {
+                required: "Title is required",
+                maxLength: {
+                  value: TITLE_MAX,
+                  message: `Title cannot exceed ${TITLE_MAX} characters`,
+                },
+              })}
+              placeholder="Enter your post title"
+              className={errors.title && "border-red-500"}
+            />
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.title.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="body">Body</Label>
               <p
-                className={`text-sm ${isBodyLimitReached ? "text-red-500" : "text-gray-500"} mt-1`}
+                className={`text-sm ${
+                  errors.body ? "text-red-500" : "text-gray-500"
+                }`}
               >
-                {bodyCount}/{BODYLIMIT} characters
+                {body?.length || 0}/{BODY_MAX} characters
               </p>
             </div>
-            <div className="mb-9">
-              <label
-                htmlFor="resume"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-              >
-                Upload Resume
-              </label>
-              <input
-                type="file"
-                id="resume"
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                required={bodyCount === 0}
-                onChange={handleFileChange}
-              />
-            </div>
-            <div className="mb-7">
-              <label 
-                htmlFor="tags"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
-                >
-                  Tags
-                </label>
-                <input 
-                  type="text"
-                  id="tags"
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                  placeholder="enter tags separated by commas"
-                  value={tagsInput}
-                  onChange={handleTagsChange}
-                  />
-            </div>
+            <Textarea
+              id="body"
+              {...register("body", {
+                maxLength: {
+                  value: BODY_MAX,
+                  message: `Body cannot exceed ${BODY_MAX} characters`,
+                },
+              })}
+              placeholder="Enter your post body"
+              className={`h-48 ${errors.body && "border-red-500"}`}
+            />
+            {errors.body && (
+              <p className="mt-1 text-sm text-red-500">{errors.body.message}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="resume">
+              Resume <span className={body ? "hidden" : "text-red-500"}>*</span>
+            </Label>
+            <Input
+              type="file"
+              id="resume"
+              {...register("resume", {
+                required: {
+                  value: !body,
+                  message: "Resume is required if body is empty",
+                },
+              })}
+              className={errors.resume && "border-red-500"}
+            />
+            {errors.resume && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.resume.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="tags">Tags</Label>
+            <Input
+              id="tags"
+              {...register("tags")}
+              placeholder="Type a tag and press Enter"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  const newTag = e.target.value.trim();
+                  if (newTag && !tags.includes(newTag)) {
+                    setTags([...tags, newTag]);
+                    setValue("tags", "");
+                  }
+                }
+              }}
+            />
             {tags.length > 0 && (
-            <div className="mt-2">
-              <p className="text-sm text-gray-500">Tags:</p>
-              <ul className="flex flex-wrap gap-2">
+              <div className="flex gap-2 mt-2">
                 {tags.map((tag, index) => (
-                  <li
+                  <button
                     key={index}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs"
+                    type="button"
+                    onClick={() => setTags(tags.filter((t) => t !== tag))}
+                    className="px-3 py-1 rounded-full text-sm bg-gray-200"
                   >
                     {tag}
-                  </li>
+                  </button>
                 ))}
-              </ul>
-            </div>
-          )}
-            <button
-              className="bg-blue-500 hover:bg-blue-700 mt-4 text-white font-bold py-2.5 px-4 rounded-lg focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Submit
-            </button>
-          </form>
-        </div>
+              </div>
+            )}
+          </div>
+          <Button type="submit">Create Post</Button>
+        </form>
       </div>
     </div>
   );
 }
-
-export default UploadPage;
