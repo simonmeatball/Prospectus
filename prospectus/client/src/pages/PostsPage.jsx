@@ -14,7 +14,10 @@ function PostsPage() {
       try {
         const response = await axios.get(`${API_BASE_URL}/posts`);
         if (response.data.success) {
-          setPosts(response.data.data);
+          const sortedPosts = response.data.data.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+          setPosts(sortedPosts);
         }
       } catch (err) {
         setError(err.message);
