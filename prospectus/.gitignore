@@ -1,47 +1,48 @@
-# Node modules
+# Dependencies
 node_modules/
+jspm_packages/
 
-# Build output
+# Build and output
 dist/
-
-# Vite cache
+dist-ssr/
 .vite/
+coverage/
 
 # Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# Dependency directories
-jspm_packages/
+# Environment and local files
+.env
+.env.local
+.env.*.local
+*.local
+prospectus-35l-admin.json
 
 # IDEs and editors
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 .idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-node_modules
+*.sw?
 
 # OS-specific files
 .DS_Store
 Thumbs.db
 
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Optional lock files
+# Package manager files
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
-# Test output
-coverage/
-
-# Other
-*.log
-.env
+# Upload directory
+/uploads/*
+!uploads/.gitkeep
