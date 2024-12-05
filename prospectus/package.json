@@ -3,7 +3,8 @@
     "concurrently": "^9.1.0"
   },
   "scripts": {
-    "start": "concurrently \"npm run start --prefix server\" \"npm run start --prefix client\""
+    "start": "concurrently \"npm run start --prefix server\" \"npm run start --prefix client\"",
+    "install-all": "npm install && concurrently \"npm install --prefix client\" \"npm install --prefix server\""
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",
