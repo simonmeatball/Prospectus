@@ -14,28 +14,18 @@ const app = express();
 
 const VITE_PORT = process.env.VITE_APP_PORT | 5173;
 
-// Configure CORS to allow requests from your frontend
 app.use(
   cors({
-    origin: `http://localhost:${VITE_PORT}`, // Vite's default port
+    origin: `http://localhost:${VITE_PORT}`,
     credentials: true,
   })
 );
 
-app.use(express.json()); // For parsing application/json requests
-app.use("/api/posts", postRoutes); // Using postRoutes for handling post-related routes
+app.use(express.json());
+app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes); // Add authentication routes
-app.use("/api/comments", commentRoutes); // Add this line
-
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Add this line to serve files from the uploads directory
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/auth", authRoutes);
+app.use("/api/comments", commentRoutes);
 
 const PORT = process.env.PORT | 8080;
 

@@ -26,8 +26,6 @@ export default function DropdownMenu({
             {[
               "Most recent",
               "Least recent",
-              "Highest rating",
-              "Lowest rating",
             ].map((option) => (
               <li>
                 <a
