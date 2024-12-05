@@ -47,28 +47,22 @@ const Sidebar = () => {
 
 
     const getMaxLikes = () => {
-        const likeCounts = [];
-
-        for (let i = 0; i < posts.length; i++) {
-            likeCounts.push(posts[i].likes);
-        }
-
+        if (!posts || posts.length === 0) return [];
+        
+        const likeCounts = posts.map(post => post.likes || 0);
+        
+        if (posts.length === 1) return [0];
+        
         const max1 = Math.max(...likeCounts);
-
-
         const indexOfMax1 = likeCounts.indexOf(max1);
-
+        
         const arrayWithoutMax1 = [...likeCounts];
-        arrayWithoutMax1.splice(indexOfMax1, 1);
-
+        arrayWithoutMax1[indexOfMax1] = -1; // Set to -1 instead of removing to keep indices intact
+        
         const max2 = Math.max(...arrayWithoutMax1);
-
         const indexOfMax2 = arrayWithoutMax1.indexOf(max2);
-
-        // Adjust the index of max2 to account for the removed value of max1
-        const finalIndexOfMax2 = (indexOfMax2 >= indexOfMax1) ? indexOfMax2 + 1 : indexOfMax2;
-
-        return [indexOfMax1, finalIndexOfMax2];
+        
+        return [indexOfMax1, indexOfMax2];
     }
 
     const getpdfPosts = () => {
@@ -174,23 +168,32 @@ const Sidebar = () => {
                             </h1>
 
                             <div className="flex flex-wrap justify-center w-full">
-                                <div
-                                    key={posts[maxLikes[0]]._id}
-                                    className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
-                                    style={{ minWidth: '320px' }}
-                                >
-                                    <PostCard post={posts[maxLikes[0]]} />
-                                </div>
+                                {maxLikes.length > 0 ? (
+                                    <>
+                                        <div
+                                            key={posts[maxLikes[0]]._id}
+                                            className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                            style={{ minWidth: '320px' }}
+                                        >
+                                            <PostCard post={posts[maxLikes[0]]} />
+                                        </div>
 
-                                <div
-                                    key={posts[maxLikes[1]]._id}
-                                    className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
-                                    style={{ minWidth: '320px' }}
-                                >
-                                    <PostCard post={posts[maxLikes[1]]} />
-                                </div>
+                                        {maxLikes.length > 1 && (
+                                            <div
+                                                key={posts[maxLikes[1]]._id}
+                                                className="lg:w-80 md:w-50 sm:w-30 h-auto bg-amber-200 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                                                style={{ minWidth: '320px' }}
+                                            >
+                                                <PostCard post={posts[maxLikes[1]]} />
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="text-center mt-6">
+                                        No posts available
+                                    </div>
+                                )}
                             </div>
-
                         </div>
                     </div>
                 );

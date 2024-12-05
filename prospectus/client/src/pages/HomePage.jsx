@@ -12,6 +12,7 @@ import { useAuth } from "../context/AuthContext";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
+  const [dailyPost, setDailyPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [greeting, setGreeting] = useState(""); // State for the greeting
@@ -22,6 +23,8 @@ function HomePage() {
         const response = await axios.get(`${API_BASE_URL}/posts`);
         if (response.data.success) {
           setPosts(response.data.data);
+          // Set the first post as daily post or null if no posts
+          setDailyPost(response.data.data[0] || null);
         }
       } catch (err) {
         setError(err.message);
@@ -33,11 +36,9 @@ function HomePage() {
 
     fetchPosts();
 
-
     const greetings = ["Welcome ", "Hello ", "Greetings ", "Salutations ", "A'hoy ", "What's good ", "Nice to see you "];
     const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
     setGreeting(randomGreeting)
-
   }, []);
 
 
@@ -62,8 +63,6 @@ function HomePage() {
         </div>
       </div>
     );
-
-
   }
 
 
@@ -97,8 +96,6 @@ function HomePage() {
     }
   };
 
-  const dailyPost = getDailyPost(posts);
-
   return (
     <div
       style={{ userSelect: "none" }}
@@ -123,15 +120,20 @@ function HomePage() {
           </h1>
 
           <div style={{ position: 'relative', width: '100%' }}>
-
-            <div
-              key={dailyPost._id}
-              className="lg:w-80 md:w-50 sm:w-30 h-auto bg-red-400 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
-              style={{ minWidth: '320px'}}>
-              <PostCard post={dailyPost} />
-            </div>
-
-
+            {dailyPost ? (
+              <div
+                key={dailyPost._id}
+                className="lg:w-80 md:w-50 sm:w-30 h-auto bg-red-400 rounded-sm shadow-md overflow-hidden mx-auto mt-6"
+                style={{ minWidth: '320px'}}>
+                <PostCard post={dailyPost} />
+              </div>
+            ) : (
+              <div 
+                className="lg:w-80 md:w-50 sm:w-30 h-32 bg-red-400 rounded-sm shadow-md overflow-hidden mx-auto mt-6 flex items-center justify-center"
+                style={{ minWidth: '320px'}}>
+                <span className="text-white text-lg font-semibold">No posts available</span>
+              </div>
+            )}
             <img
               src={Pin}
               alt="Pin"
@@ -155,11 +157,7 @@ function HomePage() {
                 pointerEvents: 'none'
               }}
             />
-
-
           </div>
-
-
         </div>
       </div>
 
