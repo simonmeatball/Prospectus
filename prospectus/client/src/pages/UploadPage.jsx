@@ -44,7 +44,7 @@ export default function UploadPage() {
     formData.append("body", data.body);
     formData.append("userID", user.userId);
     formData.append("tags", JSON.stringify(tags));
-    if (file) {
+    if (data.resume[0]) {
       formData.append("file", data.resume[0]);
     }
 
