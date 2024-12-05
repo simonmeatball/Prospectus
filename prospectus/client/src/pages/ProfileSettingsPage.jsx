@@ -24,8 +24,6 @@ import { useNavigate } from "react-router-dom";
 
 // these are based on twitters limits
 const NAME_MAX = 50;
-const USERNAME_MIN = 5;
-const USERNAME_MAX = 15;
 const BIO_MAX = 160;
 const PASSWORD_MIN = 8;
 const PASSWORD_MAX = 128;
@@ -48,7 +46,6 @@ export default function ProfileSettingsPage() {
     mode: "onBlur",
     defaultValues: {
       name: "", // [User's previous name]
-      username: "", // [User's previous username]
       bio: "", // [User's previous bio]
       email: "", // [User's previous email]
       university: "", // [User's previous university]
@@ -76,7 +73,6 @@ export default function ProfileSettingsPage() {
   });
 
   const name = watchProfile("name");
-  const username = watchProfile("username");
   const bio = watchProfile("bio");
   const currentPassword = watchPassword("currentPassword");
   const newPassword = watchPassword("newPassword");
@@ -95,7 +91,6 @@ export default function ProfileSettingsPage() {
 
         // Set all form values with complete user data
         setProfileValue("name", userData.name || "");
-        setProfileValue("username", userData.username || "");
         setProfileValue("email", userData.email || "");
         setProfileValue("bio", userData.bio || "");
         setProfileValue("university", userData.university || "");
@@ -121,7 +116,7 @@ export default function ProfileSettingsPage() {
     const formData = new FormData();
 
     // Handle required fields
-    ["name", "username", "email"].forEach((field) => {
+    ["name", "email"].forEach((field) => {
       if (data[field] && data[field] !== user[field]) {
         formData.append(field, data[field]);
       }
@@ -299,38 +294,6 @@ export default function ProfileSettingsPage() {
                 {profileErrors.name && (
                   <p className="mt-1 text-sm text-red-500">
                     {profileErrors.name.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="username">Username</Label>
-                  <p className="text-sm text-gray-500">
-                    {username?.length || 0}/{USERNAME_MAX} characters
-                  </p>
-                </div>
-                <Input
-                  id="username"
-                  {...registerProfile("username", {
-                    required: {
-                      value: true,
-                      message: "Your username is required",
-                    },
-                    minLength: {
-                      value: USERNAME_MIN,
-                      message: `Your username must be at least ${USERNAME_MIN} characters`,
-                    },
-                    maxLength: {
-                      value: USERNAME_MAX,
-                      message: `Your username cannot exceed ${USERNAME_MAX} characters`,
-                    },
-                  })}
-                  placeholder="Your username"
-                  className={profileErrors.username && "border-red-500"}
-                />
-                {profileErrors.username && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {profileErrors.username.message}
                   </p>
                 )}
               </div>
