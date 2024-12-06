@@ -23,7 +23,7 @@ A resume reviewing portal for college students to share and get feedback on thei
     - `cd server`
     - `touch .env`
 9. Expand your server folder and now you will see your .env file that you just created
-10. Inside this .env file paste you must replace `(name)` and `(password)` with the database credentials you wrote down earlier:
+10. Inside this .env file paste the following. You must replace `(name)` and `(password)` with the database credentials you created and wrote down earlier:
 ```
 PORT=8080
 MONGO_URI=mongodb+srv://(name):(password)@prospectus.pbsaq.mongodb.net/prospectus?retryWrites=true&w=majority&appName=prospectus  
