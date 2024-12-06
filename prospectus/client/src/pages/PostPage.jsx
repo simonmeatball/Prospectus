@@ -439,7 +439,9 @@ export default function PostPage() {
                 <img src={profile.avatar} alt="Profile" />
               </div>
             </div>
-            <div className="text-gray-500">@{profile.username}</div>
+            <div className="text-gray-500 text-center mb-1">
+              @{profile.username}
+            </div>
           </Link>
           {user && user.userId !== post.userID && (
             <FollowButton targetUserId={post.userID} />
