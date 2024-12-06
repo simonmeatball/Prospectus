@@ -39,9 +39,11 @@ export default function PostPage() {
           console.log("Post data received:", response.data.data);
           setPost(response.data.data);
           setLiked(response.data.data.isLiked);
-          
+
           // Fetch user info
-          const userResponse = await axios.get(`${API_BASE_URL}/users/${response.data.data.userID}`);
+          const userResponse = await axios.get(
+            `${API_BASE_URL}/users/${response.data.data.userID}`
+          );
           if (userResponse.data) {
             setPostUser(userResponse.data);
           }
@@ -431,13 +433,13 @@ export default function PostPage() {
       <Navbar />
       <div className="flex gap-8 m-8 justify-center">
         <div className="flex flex-col items-center">
-          <div className="avatar mb-2 cursor-pointer">
-            <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
-              <img src={profile.avatar} alt="Profile" />
+          <Link to={`/profile/${profile.username}`}>
+            <div className="avatar mb-2 cursor-pointer">
+              <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring ring-offset-2">
+                <img src={profile.avatar} alt="Profile" />
+              </div>
             </div>
-          </div>
-          <Link to={`/profile/${profile.username}`} className="text-gray-500">
-            @{profile.username}
+            <div className="text-gray-500">@{profile.username}</div>
           </Link>
           {user && user.userId !== post.userID && (
             <FollowButton targetUserId={post.userID} />
@@ -482,7 +484,10 @@ export default function PostPage() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h1 className="text-3xl font-bold">{post.title}</h1>
-                <Link to={`/profile/${postUser?.username}`} className="text-gray-600 hover:text-gray-800 text-sm mt-2 block">
+                <Link
+                  to={`/profile/${postUser?.username}`}
+                  className="text-gray-600 hover:text-gray-800 text-sm mt-2 block"
+                >
                   Posted by {postUser?.name || "Unknown"}
                 </Link>
               </div>
