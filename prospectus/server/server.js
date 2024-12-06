@@ -12,7 +12,7 @@ const fs = require("fs");
 dotenv.config();
 const app = express();
 
-const VITE_PORT = process.env.VITE_APP_PORT | 5173;
+const VITE_PORT = process.env.VITE_APP_PORT | 5174;
 
 app.use(
   cors({
