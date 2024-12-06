@@ -6,6 +6,15 @@ import { API_BASE_URL } from "../config";
 
 import Logo1 from "../images/logo1.png";
 
+const getTagColor = (tag) => {
+  const hash = tag.toLowerCase().split('').reduce((acc, char) => {
+    return char.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+  
+  const hue = Math.abs(hash % 360);
+  return `hsl(${hue}, 40%, 85%)`;
+};
+
 export default function Navbar() {
   const { isAuthenticated, logout, user, profilePic } = useAuth();
   const navigate = useNavigate();
@@ -170,7 +179,8 @@ export default function Navbar() {
                   .map((matchingTag, idx) => (
                     <span
                       key={idx}
-                      className="inline-block text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+                      className="inline-block text-xs text-gray-700 px-2 py-1 rounded-full"
+                      style={{ backgroundColor: getTagColor(matchingTag) }}
                     >
                       {matchingTag}
                     </span>

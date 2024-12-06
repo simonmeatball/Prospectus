@@ -10,6 +10,15 @@ import { API_BASE_URL } from "../config";
 import { Link } from "react-router-dom";
 import FollowButton from "../components/FollowButton";
 
+const getTagColor = (tag) => {
+  const hash = tag.toLowerCase().split('').reduce((acc, char) => {
+    return char.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+  
+  const hue = Math.abs(hash % 360);
+  return `hsl(${hue}, 40%, 85%)`;
+};
+
 export default function PostPage() {
   const { postID } = useParams();
   const [post, setPost] = useState(null);
@@ -527,7 +536,8 @@ export default function PostPage() {
                 {post.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm font-medium"
+                    className="text-gray-700 py-1 px-3 rounded-full text-sm font-medium"
+                    style={{ backgroundColor: getTagColor(tag) }}
                   >
                     {tag}
                   </span>

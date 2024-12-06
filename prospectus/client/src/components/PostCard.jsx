@@ -4,6 +4,15 @@ import { API_BASE_URL } from "@/config";
 import axios from "axios";
 import { MessageCircle } from "lucide-react";
 
+const getTagColor = (tag) => {
+  const hash = tag.toLowerCase().split('').reduce((acc, char) => {
+    return char.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+  
+  const hue = Math.abs(hash % 360);
+  return `hsl(${hue}, 40%, 85%)`;
+};
+
 const PostCard = ({ post }) => {
   const navigate = useNavigate();
   const [commentCount, setCommentCount] = useState(0);
@@ -88,8 +97,9 @@ const PostCard = ({ post }) => {
           <div className="flex flex-wrap gap-2 mt-2">
             {displayedTags.map((tag, index) => (
               <span 
-              key={index}
-              className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs"
+                key={index}
+                className="text-gray-700 px-3 py-1 rounded-full text-xs"
+                style={{ backgroundColor: getTagColor(tag) }}
               >
                 {tag}
               </span>

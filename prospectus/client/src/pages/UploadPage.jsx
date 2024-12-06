@@ -13,6 +13,15 @@ import { useNavigate } from "react-router-dom";
 const TITLE_MAX = 100;
 const BODY_MAX = 1000;
 
+const getTagColor = (tag) => {
+  const hash = tag.toLowerCase().split('').reduce((acc, char) => {
+    return char.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+  
+  const hue = Math.abs(hash % 360);
+  return `hsl(${hue}, 40%, 85%)`;
+};
+
 export default function UploadPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -175,7 +184,8 @@ export default function UploadPage() {
                     key={index}
                     type="button"
                     onClick={() => setTags(tags.filter((t) => t !== tag))}
-                    className="px-3 py-1 rounded-full text-sm bg-gray-200"
+                    className="px-3 py-1 rounded-full text-sm text-gray-700"
+                    style={{ backgroundColor: getTagColor(tag) }}
                   >
                     {tag}
                   </button>
