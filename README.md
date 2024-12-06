@@ -32,3 +32,12 @@ MONGO_URI=mongodb+srv://(name):(password)@prospectus.pbsaq.mongodb.net/prospectu
     - `cd ..`
     - `npm start`
 12. Follow the link that pops up in your terminal in any web browser and now the app should be running!
+## Help I Have a Network Error!
+If you get a network error when launching the website this may be an issue related to your ports. Here is how you can fix this
+   - Expand the `server` folder. You need to modify two files: `server.js and .env`
+   - Inside `.env` change `PORT=8080` to any free port on your network. Remember this port
+   - Inside `server.js` go to line 15 and change `5173` to any other free port on your network. This cannot be the same number from the previous step
+   - Next, expand the `client` folder and then expand the `src` folder. You need to modify the file `config.js`
+   - Inside this file on line 1, change the port to match the number that you set the port to in your `.env` file within the server folder
+   - Now naviagte to `(Your Root Folder)/Prospectus/prospectus/` again and run `npm start`
+   - Navigate to the link in the terminal and you should be good to go!
