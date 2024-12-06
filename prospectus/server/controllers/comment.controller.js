@@ -8,18 +8,18 @@ const getComments = async (req, res) => {
     // If no postID is provided, return all comments
     const query = postID ? { postID: postID } : {};
 
-    const comments = await Comment.find(query).populate({
-      path: "replies",
-      populate: {
+    const populateReplies = (depth) => {
+      if (depth === 0) return null;
+      return {
         path: "replies",
         populate: {
           path: "replies",
-          populate: {
-            path: "replies",
-          },
+          populate: populateReplies(depth - 1),
         },
-      },
-    });
+      };
+    };
+
+    const comments = await Comment.find(query).populate(populateReplies(4));
     console.log("Found comments:", comments);
 
     res.status(200).json({ success: true, data: comments });
