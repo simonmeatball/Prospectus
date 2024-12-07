@@ -16,7 +16,7 @@ const VITE_PORT = process.env.VITE_APP_PORT | 5173;
 
 app.use(
   cors({
-    origin: `http://localhost:${VITE_PORT}`,
+    origin: true,
     credentials: true,
   })
 );
