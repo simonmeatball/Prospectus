@@ -5,11 +5,10 @@ import axios from "axios";
 import { API_BASE_URL } from "../config";
 
 import PostCard from "../components/PostCard";
-import Sidebar from "./sidebar.jsx";
+import Sidebar from "./Sidebar.jsx";
 import Pin from "../images/pin.png";
 
 import { useAuth } from "../context/AuthContext";
-
 
 const getDailyPost = (posts) => {
   const currentDate = new Date()
@@ -117,7 +116,6 @@ function HomePage() {
       </div>
     );
   }
-
 
   return (
     <div
