@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "react-scripts build",
     "preview": "vite preview",
-    "start": "vite",
-    "build": "react-scripts build"
+    "start": "vite"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
