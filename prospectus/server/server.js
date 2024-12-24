@@ -29,19 +29,21 @@ app.use("/api/comments", commentRoutes);
 
 const PORT = process.env.PORT || 8080;
 
-async function startServer() {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") {
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
       app.listen(PORT, () => {
         console.log("Server started on port", PORT);
       });
-    }
-  } catch (err) {
-    console.log(err);
-  }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
-startServer();
-
-module.exports = app;
+// For Vercel serverless function
+module.exports = async (req, res) => {
+  await mongoose.connect(process.env.MONGO_URI);
+  return app(req, res);
+};
