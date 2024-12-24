@@ -1,10 +1,15 @@
 {
-  "projects": {
-    "client": "./client",
-    "api": "./server"
+  "version": 2,
+  "buildCommand": {
+    "client": "cd client && npm install && npm run build",
+    "api": "cd server && npm install"
+  },
+  "outputDirectory": {
+    "client": "client/dist",
+    "api": "server"
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/server/api/$1" },
-    { "source": "/(.*)", "destination": "/client/$1" }
+    { "source": "/api/(.*)", "destination": "/api/server.js" },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }

@@ -27,17 +27,21 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/comments", commentRoutes);
 
-const PORT = process.env.PORT | 8080;
+const PORT = process.env.PORT || 8080;
 
 async function startServer() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    app.listen(PORT, () => {
-      console.log("Server started on port", PORT);
-    });
+    if (process.env.NODE_ENV !== "production") {
+      app.listen(PORT, () => {
+        console.log("Server started on port", PORT);
+      });
+    }
   } catch (err) {
     console.log(err);
   }
 }
 
 startServer();
+
+module.exports = app;
